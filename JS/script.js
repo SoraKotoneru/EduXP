@@ -41,15 +41,24 @@ function handleSubmit() {
   }
 
   if (mode === 'login') {
-    if (!users[login] || users[login] !== pass) {
-      document.getElementById('username').classList.add('input-error');
-      document.getElementById('password').classList.add('input-error');
-      document.getElementById('username-error').textContent = 'Неверный логин или пароль';
-      document.getElementById('username-error').classList.remove('hidden');
-      document.getElementById('password-error').textContent = 'Неверный логин или пароль';
-      document.getElementById('password-error').classList.remove('hidden');
-      return;
-    }
-    alert('Успешный вход');
+  // Если пользователя не существует или пароль не совпадает
+  if (!users[login] || users[login] !== pass) {
+    document.getElementById('username').classList.add('input-error');
+    document.getElementById('password').classList.add('input-error');
+
+    const err1 = document.getElementById('username-error');
+    const err2 = document.getElementById('password-error');
+    err1.textContent = 'Неверный логин или пароль';
+    err2.textContent = 'Неверный логин или пароль';
+    err1.classList.remove('hidden');
+    err2.classList.remove('hidden');
+    return;
   }
+
+  // Сохраняем имя вошедшего пользователя в браузере
+  localStorage.setItem('currentUser', login);
+
+  // Переходим на игру
+  window.location.href = "game.html";
 }
+
