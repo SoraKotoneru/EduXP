@@ -2,13 +2,29 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EduXP — Игра</title>
+  <title>Вход и регистрация</title>
   <link rel="stylesheet" href="CSS/style.css">
+  <style>
+    .hidden { display: none; }
+    .input-error { border: 2px solid red; }
+    .error-msg { color: red; font-size: 0.9em; margin: 5px 0; }
+  </style>
 </head>
 <body>
-  <h1>Добро пожаловать в игру EduXP</h1>
-  <h2>Проверка загрузки на GitHub</h2>
+  <h1>EduXP — вход / регистрация</h1>
+
+  <button onclick="showForm('register')">Регистрация</button>
+  <button onclick="showForm('login')">Вход</button>
+
+  <div id="form-block" class="hidden">
+    <input type="text" id="username" placeholder="Логин">
+    <div id="username-error" class="error-msg hidden">Текст</div>
+
+    <input type="password" id="password" placeholder="Пароль">
+    <div id="password-error" class="error-msg hidden">Текст</div>
+
+    <button onclick="handleSubmit()">Отправить</button>
+  </div>
 
   <script src="JS/script.js"></script>
 </body>
