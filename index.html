@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Вход и регистрация</title>
+  <title>Вход / Регистрация</title>
   <link rel="stylesheet" href="CSS/style.css">
   <style>
     .hidden { display: none; }
@@ -11,21 +11,24 @@
   </style>
 </head>
 <body>
-  <h1>EduXP — вход / регистрация</h1>
+  <h1>EduXP</h1>
 
+  <!-- Кнопки для выбора режима -->
   <button onclick="showForm('register')">Регистрация</button>
   <button onclick="showForm('login')">Вход</button>
 
+  <!-- Блок формы, скрытый по умолчанию -->
   <div id="form-block" class="hidden">
     <input type="text" id="username" placeholder="Логин">
-    <div id="username-error" class="error-msg hidden">Текст</div>
+    <div id="username-error" class="error-msg hidden">Ошибка логина</div>
 
     <input type="password" id="password" placeholder="Пароль">
-    <div id="password-error" class="error-msg hidden">Текст</div>
+    <div id="password-error" class="error-msg hidden">Ошибка пароля</div>
 
     <button onclick="handleSubmit()">Отправить</button>
   </div>
 
+  <!-- Подключение JS -->
   <script src="JS/script.js"></script>
 </body>
 </html>
