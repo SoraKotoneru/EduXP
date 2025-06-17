@@ -17,7 +17,7 @@ function clearErrors() {
   document.getElementById('password-error').classList.add('hidden');
 }
 
-function handleSubmit() {
+function handleSubmit() 
   clearErrors();
 
   const login = document.getElementById('username').value.trim();
@@ -61,4 +61,3 @@ function handleSubmit() {
   // Переходим на игру
   window.location.href = "game.html";
 }
-
