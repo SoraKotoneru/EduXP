@@ -1,6 +1,16 @@
-body {
-  background-color: #fdf6f9;
-  color: #333;
-  font-family: sans-serif;
-  text-align: center;
+/* Скрытый блок формы */
+.hidden {
+  display: none;
+}
+
+/* Красная рамка при ошибке */
+.input-error {
+  border: 2px solid red;
+}
+
+/* Текст сообщений об ошибке */
+.error-msg {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 4px;
 }

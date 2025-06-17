@@ -2,33 +2,37 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Вход / Регистрация</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EduXP — вход / регистрация</title>
   <link rel="stylesheet" href="CSS/style.css">
-  <style>
-    .hidden { display: none; }
-    .input-error { border: 2px solid red; }
-    .error-msg { color: red; font-size: 0.9em; margin: 5px 0; }
-  </style>
 </head>
 <body>
   <h1>EduXP</h1>
 
-  <!-- Кнопки для выбора режима -->
+  <!-- Кнопки выбора режима -->
   <button onclick="showForm('register')">Регистрация</button>
   <button onclick="showForm('login')">Вход</button>
 
-  <!-- Блок формы, скрытый по умолчанию -->
+  <!-- Форма (скрыта по умолчанию) -->
   <div id="form-block" class="hidden">
-    <input type="text" id="username" placeholder="Логин">
-    <div id="username-error" class="error-msg hidden">Ошибка логина</div>
+    <!-- Логин -->
+    <input type="text"
+           id="username"
+           placeholder="Логин"
+           oninput="checkUniqueLogin()">
+    <div id="username-error" class="error-msg hidden"></div>
 
-    <input type="password" id="password" placeholder="Пароль">
-    <div id="password-error" class="error-msg hidden">Ошибка пароля</div>
+    <!-- Пароль -->
+    <input type="password"
+           id="password"
+           placeholder="Пароль">
+    <div id="password-error" class="error-msg hidden"></div>
 
+    <!-- Отправить -->
     <button onclick="handleSubmit()">Отправить</button>
   </div>
 
-  <!-- Подключение JS -->
+  <!-- Подключаем логику -->
   <script src="JS/script.js"></script>
 </body>
 </html>
