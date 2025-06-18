@@ -8,6 +8,28 @@ const saveBtn       = document.getElementById('save-btn');
 const resetBtn      = document.getElementById('reset-btn');
 const notifications = document.getElementById('notifications');
 
+// порядок слоёв (0 – самый задний, 13 – самый передний)
+const layerOrder = {
+  background:     0,
+  hair_back:      1,
+  tail:           2,
+  body:           3,
+  hair_main:      4,
+  face:           5, // сюда можно объединить глаза/рот/аксессуары
+  hair_strands:   6,
+  bangs:          7,
+  headwear:       8,
+  shoes:          9,
+  pants:         10,
+  top:           11,
+  dress:         10, // платье занимает сразу брюки+рубашку слоем 10
+  jumpsuit:      10, // тоже
+  coat:          12,
+  accessory:     12, // аксессуары после пальто
+  pet:           13
+};
+
+
 // ——— ЗАГЛУШКА: список всех предметов и их доступных цветов ———
 const itemsList = {
   hair: [
@@ -131,22 +153,27 @@ resetBtn.addEventListener('click', () => {
 
 // Накладываем выбранный предмет на канвас
 function applyToAvatar(category, itemId, color) {
-  // удаляем старый элемент этого категории
-  const old = avatarCanvas.querySelector(`img[data-category="${category}"]`);
+  // 1. Удаляем старый элемент этого же слоя
+  const old = avatarCanvas.querySelector(`img[data-layer="${layerOrder[category]}"]`);
   if (old) avatarCanvas.removeChild(old);
 
-  // создаём новый
+  // 2. Создаём новый слой
   const el = document.createElement('img');
   el.src = `assets/clothes/${category}/${itemId}.png`;
-  el.dataset.category = category;
-  el.style.position = 'absolute';
-  el.style.top = '0';
-  el.style.left = '0';
-  el.style.width = '100%';
-  el.style.height = '100%';
+  
+  // 3. Указываем z-index на основании общего порядка слоёв
+  const z = layerOrder[category] ?? 0;
+  el.style.zIndex = z;
+
+  // 4. Помечаем слой в data-атрибуте, чтобы можно было удалить потом
+  el.dataset.layer = z;
+
+  // 5. Применяем цвет, если указан
   if (color) {
-    // простой цветовой фильтр (можно заменить на сложную перекраску)
     el.style.filter = `drop-shadow(0 0 0 ${color})`;
   }
+
+  // 6. Добавляем в canvas
   avatarCanvas.appendChild(el);
 }
+
