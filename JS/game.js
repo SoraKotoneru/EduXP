@@ -8,6 +8,25 @@ const saveBtn       = document.getElementById('save-btn');
 const resetBtn      = document.getElementById('reset-btn');
 const notifications = document.getElementById('notifications');
 
+// ——— ЗАГЛУШКА: список всех предметов и их доступных цветов ———
+const itemsList = {
+  hair: [
+    { id: 'hair1', colors: ['#000000', '#555555', '#aaaaaa'] },
+    { id: 'hair2', colors: ['#a52a2a', '#ffcc00', '#ff66cc'] }
+  ],
+  top: [
+    { id: 'top1', colors: ['#ff0000', '#00ff00'] },
+    { id: 'top2', colors: ['#0000ff', '#00ffff'] }
+  ],
+  bottom: [
+    { id: 'bottom1', colors: ['#333333', '#dddddd'] }
+  ],
+  accessory: [
+    { id: 'acc1', colors: ['#ffff00', '#ff00ff'] }
+  ]
+};
+
+
 // 1. Logout
 logoutBtn.addEventListener('click', () => {
   localStorage.removeItem('currentUser');
