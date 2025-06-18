@@ -2,20 +2,58 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>EduXP — игра</title>
+  <!-- Подключаем общий стиль -->
   <link rel="stylesheet" href="CSS/style.css">
 </head>
 <body>
-  <h1>Добро пожаловать в игру, <span id="username"></span>!</h1>
+  <!-- 1. Шапка -->
+  <header id="header">
+    <div class="logo">EduXP</div>
+    <div class="header-controls">
+      <!-- Logout -->
+      <button id="logout-btn">Выйти</button>
+      <!-- Кнопка Галерея, пока скрыта -->
+      <button id="gallery-btn" class="hidden">Галерея</button>
+    </div>
+  </header>
 
-  <script>
-    // Проверяем, что пользователь авторизован
-    const user = localStorage.getItem('currentUser');
-    if (!user) {
-      window.location.href = 'index.html';
-    } else {
-      document.getElementById('username').textContent = user;
-    }
-  </script>
+  <!-- Контейнер для Sidebar + Main -->
+  <div id="container">
+    <!-- 2. Боковая панель -->
+    <aside id="sidebar">
+      <h2>Категории</h2>
+      <ul id="category-list">
+        <li data-category="hair">Волосы</li>
+        <li data-category="top">Верх</li>
+        <li data-category="bottom">Низ</li>
+        <li data-category="accessory">Аксессуары</li>
+      </ul>
+    </aside>
+
+    <!-- 3. Основная зона (Main Canvas) -->
+    <main id="main-canvas">
+      <!-- Здесь будем рисовать аватар -->
+      <div id="avatar-canvas"></div>
+    </main>
+  </div>
+
+  <!-- 4. Панель предметов (Inventory Bar) -->
+  <section id="inventory-bar">
+    <!-- Сюда JS подставит иконки доступных предметов -->
+  </section>
+
+  <!-- 5. Управляющие кнопки (Controls) -->
+  <section id="controls">
+    <button id="save-btn">Сохранить образ</button>
+    <button id="reset-btn">Сбросить</button>
+  </section>
+
+  <!-- 6. Всплывающие уведомления (Notifications) -->
+  <div id="notifications"></div>
+
+  <!-- Подключаем логику страницы -->
+  <script src="JS/game.js"></script>
 </body>
 </html>
