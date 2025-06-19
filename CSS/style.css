@@ -44,7 +44,7 @@ body {
   display: flex;
 }
 #sidebar {
-  background: #282828; /* более тёмный оттенок для боковой панели */
+  background: #666666; /* цвет блока категорий */
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   width: 80px;
@@ -403,7 +403,7 @@ body {
 }
 
 #sidebar {
-  background: #282828; /* более тёмный оттенок для боковой панели */
+  background: #666666; /* цвет блока категорий */
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   width: 80px;
@@ -546,6 +546,9 @@ body {
   width: 6vh;
   height: 6vh;
   font-size: 3vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 #sidebar .nav-button:hover {
   color: var(--accent);
