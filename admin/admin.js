@@ -69,6 +69,16 @@ document.addEventListener('DOMContentLoaded', () => {
     {value: 'accessory', label: 'Аксессуары'},
     {value: 'pet', label: 'Питомец'}
   ];
+
+  // Заполняем список зарегистрированных игроков
+  const usersData = JSON.parse(localStorage.getItem('users') || '{}');
+  const usersListEl = document.getElementById('users-list');
+  Object.keys(usersData).forEach(username => {
+    const li = document.createElement('li');
+    li.textContent = username;
+    usersListEl.appendChild(li);
+  });
+
   const storageKey = 'categoriesVisibility';
   let visibilitySettings = JSON.parse(localStorage.getItem(storageKey) || '{}');
   // Инициализация: если нет настроек, делаем все категории видимыми

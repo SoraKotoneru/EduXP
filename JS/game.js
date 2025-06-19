@@ -39,19 +39,21 @@ const layerOrder = {
   pet:            12
 };
 
+// Загружаем разблокированные временные предметы из localStorage
+let unlockedItems = JSON.parse(localStorage.getItem('unlockedItems') || '[]');
 
-// ——— ЗАГЛУШКА: список всех предметов и их доступных цветов ———
+// ——— ЗАГЛУШКА: список всех предметов и их доступных цветов с availability ———
 const itemsList = {
   background: [],
   hair_back: [
-    { id: 'hair1', colors: ['#000000', '#555555', '#aaaaaa'] },
-    { id: 'hair2', colors: ['#a52a2a', '#ffcc00', '#ff66cc'] }
+    { id: 'hair1', colors: ['#000000', '#555555', '#aaaaaa'], availability: 'public' },
+    { id: 'hair2', colors: ['#a52a2a', '#ffcc00'], availability: 'time-limited', start: '2025-07-01', end: '2025-07-31' }
   ],
   tail: [],
   body: [
-    { id: 'skin_light', colors: [] },
-    { id: 'skin_medium', colors: [] },
-    { id: 'skin_dark', colors: [] }
+    { id: 'skin_light', colors: [], availability: 'public' },
+    { id: 'skin_medium', colors: [], availability: 'public' },
+    { id: 'skin_dark', colors: [], availability: 'public' }
   ],
   eyes: [],
   mouth: [],
@@ -98,8 +100,24 @@ categoryList.addEventListener('click', e => {
 // Заглушка: подгрузка предметов
 // функция подгрузки списка предметов выбранной категории
 function loadItems(category) {
-  inventoryBar.innerHTML = '';           // 1. Очищаем панель перед вставкой новых иконок
-  const list = itemsList[category] || []; // 2. Берём из объекта itemsList массив предметов по ключу category
+  inventoryBar.innerHTML = '';           // очищаем панель
+  const now = new Date();
+  // Фильтруем по availability + разблокированным
+  const list = (itemsList[category] || []).filter(item => {
+    if (item.availability === 'public') return true;
+    if (item.availability === 'time-limited') {
+      const start = new Date(item.start);
+      const end = new Date(item.end);
+      if (now >= start && now <= end) return true;
+      return unlockedItems.includes(item.id);
+    }
+    if (item.availability === 'private') {
+      const users = item.users?.split(',') || [];
+      const currentUser = localStorage.getItem('currentUser');
+      return users.includes(currentUser);
+    }
+    return false;
+  });
 
   list.forEach(item => {
     // 3. Создаём контейнер <div> для одного предмета
@@ -162,6 +180,15 @@ function loadItems(category) {
       }
       // г) Вызываем функцию нанесения предмета на аватар
       applyToAvatar(category, item.id, color);
+      // Сохраняем разблокированный временный предмет
+      if (item.availability === 'time-limited') {
+        const start = new Date(item.start);
+        const end = new Date(item.end);
+        if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
+          unlockedItems.push(item.id);
+          localStorage.setItem('unlockedItems', JSON.stringify(unlockedItems));
+        }
+      }
     });
 
     // 12. Добавляем готовый div в панель inventoryBar
