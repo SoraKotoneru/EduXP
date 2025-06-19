@@ -243,7 +243,7 @@ button:disabled {
 #game-container {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: stretch;  /* Растягиваем sidebar по высоте main-area */
   padding: 24px;
   gap: 16px;
   background: var(--bg-light);
@@ -513,4 +513,18 @@ body {
 }
 .submit-button:hover {
   background: #ffd850;
+}
+
+/* Категории: прозрачные кнопки */
+#sidebar .category-item {
+  background: transparent;
+}
+
+/* Стрелки категорий: видимые */
+#sidebar .nav-button {
+  color: #fff;
+  background: none;
+}
+#sidebar .nav-button:hover {
+  color: var(--accent);
 }
