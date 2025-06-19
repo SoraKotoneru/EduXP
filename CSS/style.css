@@ -28,6 +28,7 @@ body {
   background: var(--bg-light);
   font-family: 'Poppins', sans-serif;
   color: var(--text-color);
+  overflow: hidden;
 }
 #header {
   display: flex;
@@ -239,15 +240,21 @@ button:disabled {
   }
 }
 
+/* Отключаем прокрутку страницы */
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
 /* контейнер игры: боковая панель + основная зона */
 #game-container {
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: stretch;  /* Растягиваем sidebar по высоте main-area */
   padding: 24px;
   gap: 16px;
   background: var(--bg-light);
+  overflow: hidden; /* Запрещаем прокрутку контейнера */
 }
 
 /* Основная зона с аватаром и панелью предметов */
