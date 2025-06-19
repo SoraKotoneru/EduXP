@@ -14,7 +14,9 @@ const layerOrder = {
   hair_back:      1,
   tail:           2,
   body:           3,
-  face:           4,
+  eyes:           4,
+  mouth:          4,
+  face_accessory: 4,
   hair_strands:   5,
   bangs:          6,
   headwear:       7,
@@ -31,25 +33,38 @@ const layerOrder = {
 
 // ——— ЗАГЛУШКА: список всех предметов и их доступных цветов ———
 const itemsList = {
-  hair: [
+  background: [],
+  hair_back: [
     { id: 'hair1', colors: ['#000000', '#555555', '#aaaaaa'] },
     { id: 'hair2', colors: ['#a52a2a', '#ffcc00', '#ff66cc'] }
   ],
+  tail: [],
   body: [
     { id: 'skin_light', colors: [] },
     { id: 'skin_medium', colors: [] },
     { id: 'skin_dark', colors: [] }
   ],
+  eyes: [],
+  mouth: [],
+  face_accessory: [],
+  hair_strands: [],
+  bangs: [],
+  headwear: [],
+  shoes: [],
+  pants: [
+    { id: 'bottom1', colors: ['#333333', '#dddddd'] }
+  ],
   top: [
     { id: 'top1', colors: ['#ff0000', '#00ff00'] },
     { id: 'top2', colors: ['#0000ff', '#00ffff'] }
   ],
-  bottom: [
-    { id: 'bottom1', colors: ['#333333', '#dddddd'] }
-  ],
+  dress: [],
+  jumpsuit: [],
+  coat: [],
   accessory: [
     { id: 'acc1', colors: ['#ffff00', '#ff00ff'] }
-  ]
+  ],
+  pet: []
 };
 
 
@@ -213,8 +228,8 @@ function renderCategoryList() {
 
 // Накладываем выбранный предмет на канвас
 function applyToAvatar(category, itemId, color) {
-  // 1. Удаляем старый элемент этого же слоя
-  const old = avatarCanvas.querySelector(`img[data-layer="${layerOrder[category]}"]`);
+  // Удаляем старый элемент этой категории
+  const old = avatarCanvas.querySelector(`img[data-category=\"${category}\"]`);
   if (old) avatarCanvas.removeChild(old);
 
   // 2. Создаём новый слой
@@ -231,6 +246,8 @@ function applyToAvatar(category, itemId, color) {
   const z = layerOrder[category] ?? 0;
   el.style.zIndex = z;
 
+  // Помечаем категорию в data-атрибуте
+  el.dataset.category = category;
   // 4. Помечаем слой в data-атрибуте, чтобы можно было удалить потом
   el.dataset.layer = z;
 

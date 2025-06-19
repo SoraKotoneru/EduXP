@@ -50,14 +50,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Настройка видимости категорий
   const categoryConfigs = [
-    {value: 'hair', label: 'Волосы'},
-    {value: 'body', label: 'Кожа'},
-    {value: 'top', label: 'Верх'},
-    {value: 'bottom', label: 'Низ'},
-    {value: 'accessory', label: 'Аксессуары'},
+    {value: 'background', label: 'Фон'},
+    {value: 'hair_back', label: 'Волосы сзади'},
+    {value: 'tail', label: 'Хвост'},
+    {value: 'body', label: 'Тело'},
+    {value: 'eyes', label: 'Глаза'},
+    {value: 'mouth', label: 'Рот'},
+    {value: 'face_accessory', label: 'Аксессуар'},
+    {value: 'hair_strands', label: 'Хвостики волос'},
+    {value: 'bangs', label: 'Челка'},
+    {value: 'headwear', label: 'Головной убор'},
+    {value: 'shoes', label: 'Обувь'},
+    {value: 'pants', label: 'Брюки'},
+    {value: 'top', label: 'Рубашка'},
     {value: 'dress', label: 'Платье'},
     {value: 'jumpsuit', label: 'Комбинезон'},
     {value: 'coat', label: 'Пальто'},
+    {value: 'accessory', label: 'Аксессуары'},
     {value: 'pet', label: 'Питомец'}
   ];
   const storageKey = 'categoriesVisibility';
