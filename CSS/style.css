@@ -254,3 +254,35 @@ button:disabled {
   display: flex;
   gap: 8px;
 }
+
+/* Навигационные стрелки */
+.nav-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #007bff;
+  padding: 4px;
+  transition: color 0.2s;
+}
+.nav-button:hover {
+  color: #0056b3;
+}
+
+/* Обертки для инвентаря и палитры */
+#inventory-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#inventory-bar {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+}
+#color-bar-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}

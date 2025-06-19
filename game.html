@@ -23,6 +23,7 @@
   <div id="game-container">
     <!-- 2. Боковая панель -->
     <aside id="sidebar">
+      <button id="cat-up" class="nav-button">&#9650;</button>
       <h2>Категории</h2>
       <ul id="category-list">
         <li data-category="hair">Волосы</li>
@@ -31,13 +32,22 @@
         <li data-category="bottom">Низ</li>
         <li data-category="accessory">Аксессуары</li>
       </ul>
+      <button id="cat-down" class="nav-button">&#9660;</button>
     </aside>
 
     <!-- 3. Основная зона -->
     <div id="main-area">
       <div id="avatar-canvas"></div>
-      <div id="color-bar"></div>
-      <section id="inventory-bar"></section>
+      <div id="inventory-wrapper">
+        <button id="inv-prev" class="nav-button">&#9664;</button>
+        <section id="inventory-bar"></section>
+        <button id="inv-next" class="nav-button">&#9654;</button>
+      </div>
+      <div id="color-bar-wrapper">
+        <button id="color-prev" class="nav-button">&#9664;</button>
+        <div id="color-bar"></div>
+        <button id="color-next" class="nav-button">&#9654;</button>
+      </div>
     </div>
 
   </div>  <!-- конец #game-container -->
