@@ -286,3 +286,28 @@ button:disabled {
   justify-content: center;
   gap: 8px;
 }
+
+/* Категории: квадратные кнопки с миниатюрными иконками */
+.category-item {
+  list-style: none;
+  width: 60px;
+  height: 60px;
+  margin: 4px 0;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s;
+}
+.category-item.selected {
+  border-color: #007bff;
+}
+.category-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+}

@@ -205,5 +205,15 @@ function applyToAvatar(category, itemId, color) {
 
   // 6. Добавляем в canvas
   avatarCanvas.appendChild(el);
+
+  // Обновляем превью в списке категорий
+  const catItem = categoryList.querySelector(`.category-item[data-category="${category}"]`);
+  if (catItem) {
+    const catImg = catItem.querySelector('img');
+    if (catImg) {
+      catImg.src = `./assets/сlothes/${category}/${itemId}.png`;
+      catImg.style.filter = color ? `drop-shadow(0 0 0 ${color})` : 'none';
+    }
+  }
 }
 
