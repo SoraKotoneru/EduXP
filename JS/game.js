@@ -42,12 +42,12 @@ const layerOrder = {
 // Загружаем разблокированные временные предметы из localStorage
 let unlockedItems = JSON.parse(localStorage.getItem('unlockedItems') || '[]');
 
-// ——— ЗАГЛУШКА: список всех предметов и их доступных цветов с availability ———
-const itemsList = {
+// Статический список предметов по категориям (default)
+const defaultItemsList = {
   background: [],
   hair_back: [
     { id: 'hair1', colors: ['#000000', '#555555', '#aaaaaa'], availability: 'public' },
-    { id: 'hair2', colors: ['#a52a2a', '#ffcc00'], availability: 'time-limited', start: '2025-07-01', end: '2025-07-31' }
+    { id: 'hair2', colors: ['#a52a2a', '#ffcc00', '#ff66cc'], availability: 'public' }
   ],
   tail: [],
   body: [
@@ -63,21 +63,43 @@ const itemsList = {
   headwear: [],
   shoes: [],
   pants: [
-    { id: 'bottom1', colors: ['#333333', '#dddddd'] }
+    { id: 'bottom1', colors: ['#333333', '#dddddd'], availability: 'public' }
   ],
   top: [
-    { id: 'top1', colors: ['#ff0000', '#00ff00'] },
-    { id: 'top2', colors: ['#0000ff', '#00ffff'] }
+    { id: 'top1', colors: ['#ff0000', '#00ff00'], availability: 'public' },
+    { id: 'top2', colors: ['#0000ff', '#00ffff'], availability: 'public' }
   ],
   dress: [],
   jumpsuit: [],
   coat: [],
   accessory: [
-    { id: 'acc1', colors: ['#ffff00', '#ff00ff'] }
+    { id: 'acc1', colors: ['#ffff00', '#ff00ff'], availability: 'public' }
   ],
   pet: []
 };
 
+// Динамический список предметов из localStorage
+const categoriesOrder = ['background','body','hair_back','hair_strands','bangs','headwear','tail','eyes','mouth','face_accessory','shoes','pants','top','dress','jumpsuit','coat','accessory','pet'];
+let itemsList = {};
+
+function loadItemsList() {
+  // Используем статический default, клонируем его
+  itemsList = JSON.parse(JSON.stringify(defaultItemsList));
+  // Загружаем сохранённые предметы и дополняем default
+  const stored = JSON.parse(localStorage.getItem('items') || '[]');
+  stored.forEach(item => {
+    const cat = item.category;
+    if (!itemsList[cat]) itemsList[cat] = [];
+    itemsList[cat].push({
+      id: item.id,
+      colors: item.color ? [item.color] : [],
+      availability: item.availability,
+      start: item.start,
+      end: item.end,
+      users: item.users
+    });
+  });
+}
 
 // 1. Logout
 logoutBtn.addEventListener('click', () => {
@@ -217,8 +239,6 @@ function renderCategoryList() {
   const visibilitySettings = JSON.parse(localStorage.getItem('categoriesVisibility') || '{}');
   // Список категорий, которые пока пусты и не должны отображаться
   const hideEmpty = ['hair_back','pants','top','accessory'];
-  // SECOND_EDIT: жёсткий порядок категорий
-  const categoriesOrder = ['background','body','hair_back','hair_strands','bangs','headwear','tail','eyes','mouth','face_accessory','shoes','pants','top','dress','jumpsuit','coat','accessory','pet'];
   categoryList.innerHTML = '';  // очищаем старые элементы
   categoriesOrder.forEach(category => {
     // Пропускаем явно пустые категории и те без предметов
@@ -250,6 +270,7 @@ function renderCategoryList() {
 
 // Инициализация страницы
 (function init() {
+  loadItemsList();
   // Генерируем категории
   renderCategoryList();
   // Отрисовываем аватар
