@@ -387,11 +387,13 @@ body {
 }
 
 .header-controls button {
-  background: transparent;
-  box-shadow: none;
+  background: var(--accent);
+  color: var(--text-color);
+  border-radius: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .header-controls button:hover {
-  background: transparent;
+  background: #ffd850;
 }
 
 #game-container {
