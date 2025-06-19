@@ -62,6 +62,10 @@ logoutBtn.addEventListener('click', () => {
 // 2. Выбор категории
 categoryList.addEventListener('click', e => {
   if (e.target.tagName === 'LI') {
+    // Подсветить выбранную категорию
+    categoryList.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+    e.target.classList.add('selected');
+    // Загрузить предметы
     const category = e.target.dataset.category;
     loadItems(category);
   }
