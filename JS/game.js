@@ -82,7 +82,7 @@ function loadItems(category) {
 
     // 4. Создаём иконку <img>
     const img = document.createElement('img');
-    img.src = `assets/clothes/${category}/${item.id}.png`; // путь к картинке
+    img.src = `./assets/clothes/${category}/${item.id}.png`; // путь к картинке
     div.appendChild(img);
 
     // 5. Блок для цветовых вариантов
@@ -163,7 +163,7 @@ function applyToAvatar(category, itemId, color) {
 
   // 2. Создаём новый слой
   const el = document.createElement('img');
-  el.src = `assets/clothes/${category}/${itemId}.png`;
+  el.src = `./assets/clothes/${category}/${itemId}.png`;
   
   // 3. Указываем z-index на основании общего порядка слоёв
   const z = layerOrder[category] ?? 0;
