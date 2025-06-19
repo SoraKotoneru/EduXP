@@ -8,25 +8,24 @@ const saveBtn       = document.getElementById('save-btn');
 const resetBtn      = document.getElementById('reset-btn');
 const notifications = document.getElementById('notifications');
 
-// порядок слоёв (0 – самый задний, 13 – самый передний)
+// порядок слоёв (0 – самый задний, 12 – самый передний)
 const layerOrder = {
   background:     0,
   hair_back:      1,
   tail:           2,
   body:           3,
-  hair_main:      4,
-  face:           5, // сюда можно объединить глаза/рот/аксессуары
-  hair_strands:   6,
-  bangs:          7,
-  headwear:       8,
-  shoes:          9,
-  pants:         10,
-  top:           11,
-  dress:         10, // платье занимает сразу брюки+рубашку слоем 10
-  jumpsuit:      10, // тоже
-  coat:          12,
-  accessory:     12, // аксессуары после пальто
-  pet:           13
+  face:           4,
+  hair_strands:   5,
+  bangs:          6,
+  headwear:       7,
+  shoes:          8,
+  pants:          9,
+  top:            10,
+  dress:          9,  // платье занимает сразу брюки и рубашку
+  jumpsuit:       9,  // тоже
+  coat:           11,
+  accessory:      11, // аксессуары после пальто
+  pet:            12
 };
 
 
