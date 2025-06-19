@@ -241,6 +241,7 @@ button:disabled {
 
 /* контейнер игры: боковая панель + основная зона */
 #game-container {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: stretch;  /* Растягиваем sidebar по высоте main-area */
@@ -518,12 +519,19 @@ body {
 /* Категории: прозрачные кнопки */
 #sidebar .category-item {
   background: transparent;
+  width: 6vh;
+  aspect-ratio: 1 / 1;
+  margin: 1vh 0;
 }
 
 /* Стрелки категорий: видимые */
 #sidebar .nav-button {
   color: #fff;
   background: none;
+  width: 6vh;
+  height: 6vh;
+  font-size: 3vh;
+  margin: 1vh 0;
 }
 #sidebar .nav-button:hover {
   color: var(--accent);
