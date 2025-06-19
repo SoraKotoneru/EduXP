@@ -39,8 +39,31 @@ const layerOrder = {
   pet:            12
 };
 
+// Функция для выполнения GET-запроса
+async function fetchData(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Ошибка загрузки данных');
+  return await response.json();
+}
+
+// Функция для выполнения POST-запроса
+async function postData(url, data) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!response.ok) throw new Error('Ошибка сохранения данных');
+  return await response.json();
+}
+
 // Загружаем разблокированные временные предметы из localStorage
-let unlockedItems = JSON.parse(localStorage.getItem('unlockedItems') || '[]');
+let unlockedItems = [];
+fetchData('/api/unlockedItems').then(data => {
+  unlockedItems = data;
+}).catch(console.error);
 
 // Статический список предметов по категориям (default)
 const defaultItemsList = {
@@ -83,22 +106,9 @@ const categoriesOrder = ['background','body','hair_back','hair_strands','bangs',
 let itemsList = {};
 
 function loadItemsList() {
-  // Используем статический default, клонируем его
-  itemsList = JSON.parse(JSON.stringify(defaultItemsList));
-  // Загружаем сохранённые предметы и дополняем default
-  const stored = JSON.parse(localStorage.getItem('items') || '[]');
-  stored.forEach(item => {
-    const cat = item.category;
-    if (!itemsList[cat]) itemsList[cat] = [];
-    itemsList[cat].push({
-      id: item.id,
-      colors: item.color ? [item.color] : [],
-      availability: item.availability,
-      start: item.start,
-      end: item.end,
-      users: item.users
-    });
-  });
+  fetchData('/api/items').then(data => {
+    itemsList = data;
+  }).catch(console.error);
 }
 
 // 1. Logout
@@ -210,7 +220,7 @@ function loadItems(category) {
         const end = new Date(item.end);
         if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
           unlockedItems.push(item.id);
-          localStorage.setItem('unlockedItems', JSON.stringify(unlockedItems));
+          saveUnlockedItems();
         }
       }
     });
@@ -320,5 +330,10 @@ function applyToAvatar(category, itemId, color) {
 
   // 6. Добавляем в canvas
   avatarCanvas.appendChild(el);
+}
+
+// Заменяем сохранение разблокированных предметов
+function saveUnlockedItems() {
+  postData('/api/unlockedItems', unlockedItems).catch(console.error);
 }
 
