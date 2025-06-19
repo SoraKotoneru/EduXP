@@ -5,7 +5,6 @@ const categoryList  = document.getElementById('category-list');
 const inventoryBar  = document.getElementById('inventory-bar');
 const avatarCanvas  = document.getElementById('avatar-canvas');
 const saveBtn       = document.getElementById('save-btn');
-const resetBtn      = document.getElementById('reset-btn');
 const notifications = document.getElementById('notifications');
 
 // порядок слоёв (0 – самый задний, 12 – самый передний)
@@ -173,11 +172,6 @@ saveBtn.addEventListener('click', () => {
   notifications.classList.remove('hidden');
   setTimeout(() => notifications.classList.add('hidden'), 2000);
   // TODO: сохранить config в localStorage или на сервер
-});
-
-// 5. Сброс образа
-resetBtn.addEventListener('click', () => {
-  renderAvatar();
 });
 
 // Функция генерации списка категорий с превью
