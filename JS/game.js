@@ -203,6 +203,10 @@ function renderCategoryList() {
       img.className = 'category-thumb';
       img.src = `./assets/icons/categories/${category}.png`;
       img.alt = category;
+      // Удаляем категорию, если иконка не загрузилась
+      img.addEventListener('error', () => {
+        li.remove();
+      });
       li.appendChild(img);
       // Добавляем подпись категории
       const label = document.createElement('span');
