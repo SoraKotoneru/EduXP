@@ -47,4 +47,45 @@ document.addEventListener('DOMContentLoaded', () => {
     form.reset();
     settings.innerHTML = '';
   });
+
+  // Настройка видимости категорий
+  const categoryConfigs = [
+    {value: 'hair', label: 'Волосы'},
+    {value: 'body', label: 'Кожа'},
+    {value: 'top', label: 'Верх'},
+    {value: 'bottom', label: 'Низ'},
+    {value: 'accessory', label: 'Аксессуары'},
+    {value: 'dress', label: 'Платье'},
+    {value: 'jumpsuit', label: 'Комбинезон'},
+    {value: 'coat', label: 'Пальто'},
+    {value: 'pet', label: 'Питомец'}
+  ];
+  const storageKey = 'categoriesVisibility';
+  let visibilitySettings = JSON.parse(localStorage.getItem(storageKey) || '{}');
+  // Инициализация: если нет настроек, делаем все категории видимыми
+  if (Object.keys(visibilitySettings).length === 0) {
+    visibilitySettings = {};
+    categoryConfigs.forEach(({value}) => visibilitySettings[value] = true);
+    localStorage.setItem(storageKey, JSON.stringify(visibilitySettings));
+  }
+  const settingsList = document.getElementById('category-settings-list');
+  categoryConfigs.forEach(({value, label}) => {
+    const row = document.createElement('div');
+    row.className = 'form-row';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `cat-${value}`;
+    checkbox.checked = visibilitySettings[value];
+    checkbox.dataset.category = value;
+    const lab = document.createElement('label');
+    lab.htmlFor = checkbox.id;
+    lab.textContent = label;
+    lab.prepend(checkbox);
+    row.appendChild(lab);
+    settingsList.appendChild(row);
+    checkbox.addEventListener('change', () => {
+      visibilitySettings[value] = checkbox.checked;
+      localStorage.setItem(storageKey, JSON.stringify(visibilitySettings));
+    });
+  });
 });
