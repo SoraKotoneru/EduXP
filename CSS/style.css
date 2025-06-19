@@ -55,7 +55,6 @@ body {
 #avatar-canvas {
   width: 80%;
   max-width: 300px;
-  aspect-ratio: 3 / 4;
   background: var(--bg-light);
   position: relative;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);

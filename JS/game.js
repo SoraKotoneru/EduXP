@@ -189,6 +189,12 @@ function applyToAvatar(category, itemId, color) {
 
   // 2. Создаём новый слой
   const el = document.createElement('img');
+  // При загрузке изображения устанавливаем aspect-ratio контейнера
+  el.addEventListener('load', () => {
+    const w = el.naturalWidth;
+    const h = el.naturalHeight;
+    avatarCanvas.style.aspectRatio = `${w} / ${h}`;
+  });
   el.src = `./assets/сlothes/${category}/${itemId}.png`;
   
   // 3. Указываем z-index на основании общего порядка слоёв
