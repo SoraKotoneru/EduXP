@@ -62,29 +62,39 @@ document.addEventListener('DOMContentLoaded', () => {
   // Обработка отправки формы
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    // Категория и слой общие для всех файлов
+    // Собираем общие параметры
     const category = document.getElementById('item-category').value;
     const layer = document.getElementById('item-layer').value;
     const availability = document.getElementById('item-availability').value;
     const startDate = availability === 'time-limited' ? document.getElementById('start-date').value : undefined;
     const endDate = availability === 'time-limited' ? document.getElementById('end-date').value : undefined;
     const users = availability === 'private' ? document.getElementById('user-list').value : undefined;
-    // Миниатюра общая
-    const thumbnailFile = document.getElementById('item-thumbnail').files[0];
     // Файлы PNG – несколько
     const files = Array.from(document.getElementById('item-files').files);
-    // Обрабатываем каждый файл отдельно
-    const itemsArr = JSON.parse(localStorage.getItem('items') || '[]');
+    // Группируем по ID (из имени до подчёркивания)
+    const groups = {};
     files.forEach(f => {
-      // Парсим имя файла: expected id_colorHEX.png
-      const name = f.name.replace(/\.png$/i, '');
-      const parts = name.split('_');
+      const base = f.name.replace(/\.png$/i, '');
+      const parts = base.split('_');
       const colorHex = parts.pop();
-      const itemId = parts.join('_');
-      const color = `#${colorHex}`;
-      const newItem = { id: itemId, category, layer, color, availability, start: startDate, end: endDate, users };
+      const id = parts.join('_');
+      if (!groups[id]) groups[id] = { id, colors: new Set() };
+      groups[id].colors.add(`#${colorHex}`);
+    });
+    // Сохраняем группу предметов
+    const itemsArr = JSON.parse(localStorage.getItem('items') || '[]');
+    Object.values(groups).forEach(group => {
+      const newItem = {
+        id: group.id,
+        category,
+        layer,
+        colors: Array.from(group.colors),
+        availability,
+        start: startDate,
+        end: endDate,
+        users
+      };
       itemsArr.push(newItem);
-      // TODO: сохранить thumbnail и файл f на сервер или localStorage
     });
     localStorage.setItem('items', JSON.stringify(itemsArr));
     renderItemsList();
