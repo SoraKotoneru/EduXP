@@ -44,7 +44,7 @@ body {
   display: flex;
 }
 #sidebar {
-  background: #666666; /* цвет блока категорий */
+  background: #806d89; /* цвет блока категорий */
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   width: 80px;
@@ -403,7 +403,7 @@ body {
 }
 
 #sidebar {
-  background: #666666; /* цвет блока категорий */
+  background: #806d89; /* цвет блока категорий */
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   width: 80px;
@@ -532,8 +532,11 @@ body {
   background: transparent;
   width: 6vh;
   aspect-ratio: 1 / 1;
-  margin: 1vh 0;
+  margin: 1vh auto; /* центрируем блок по горизонтали */
+  display: flex;
   justify-content: center;
+  align-items: center;
+  padding: 0; /* убираем внутренний отступ */
 }
 #sidebar .category-label {
   display: none;
