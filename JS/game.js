@@ -109,12 +109,14 @@ logoutBtn.addEventListener('click', () => {
 
 // 2. Выбор категории
 categoryList.addEventListener('click', e => {
-  if (e.target.tagName === 'LI') {
+  // Определяем li.category-item, на который кликнули
+  const li = e.target.closest('li.category-item');
+  if (li && categoryList.contains(li)) {
     // Подсветить выбранную категорию
-    categoryList.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
-    e.target.classList.add('selected');
+    categoryList.querySelectorAll('li').forEach(item => item.classList.remove('selected'));
+    li.classList.add('selected');
     // Загрузить предметы
-    const category = e.target.dataset.category;
+    const category = li.dataset.category;
     loadItems(category);
   }
 });
