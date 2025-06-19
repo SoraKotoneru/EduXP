@@ -1,0 +1,34 @@
+{
+  "background": [],
+  "hair_back": [
+    { "id": "hair1", "colors": ["#000000", "#555555", "#aaaaaa"], "availability": "public" },
+    { "id": "hair2", "colors": ["#a52a2a", "#ffcc00", "#ff66cc"], "availability": "public" }
+  ],
+  "tail": [],
+  "body": [
+    { "id": "skin_light", "colors": [], "availability": "public" },
+    { "id": "skin_medium", "colors": [], "availability": "public" },
+    { "id": "skin_dark", "colors": [], "availability": "public" }
+  ],
+  "eyes": [],
+  "mouth": [],
+  "face_accessory": [],
+  "hair_strands": [],
+  "bangs": [],
+  "headwear": [],
+  "shoes": [],
+  "pants": [
+    { "id": "bottom1", "colors": ["#333333", "#dddddd"], "availability": "public" }
+  ],
+  "top": [
+    { "id": "top1", "colors": ["#ff0000", "#00ff00"], "availability": "public" },
+    { "id": "top2", "colors": ["#0000ff", "#00ffff"], "availability": "public" }
+  ],
+  "dress": [],
+  "jumpsuit": [],
+  "coat": [],
+  "accessory": [
+    { "id": "acc1", "colors": ["#ffff00", "#ff00ff"], "availability": "public" }
+  ],
+  "pet": []
+}

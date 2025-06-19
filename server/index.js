@@ -27,11 +27,17 @@ app.use(express.json());
 })();
 
 // 9. Раздаём статические файлы вашего клиента
-app.use(express.static(path.join(__dirname, '..', 'EduXP')));
+app.use(express.static(path.join(__dirname, '..')));
 
 // 10. Подключаем API-маршруты
 app.use('/api/auth', authRouter);
 app.use('/api/avatar', avatarRouter);
+
+// Добавляем маршруты для списка предметов и разблокированных предметов
+const itemsRouter = require('./routes/items');
+const unlockedItemsRouter = require('./routes/unlockedItems');
+app.use('/api/items', itemsRouter);
+app.use('/api/unlockedItems', unlockedItemsRouter);
 
 // 11. Для любых других GET-запросов отдаём index.html (незаменимо для SPA)
 app.get('*', (req, res) => {

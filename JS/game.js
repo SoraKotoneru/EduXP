@@ -106,7 +106,7 @@ const categoriesOrder = ['background','body','hair_back','hair_strands','bangs',
 let itemsList = {};
 
 function loadItemsList() {
-  fetchData('/api/items').then(data => {
+  return fetchData('/api/items').then(data => {
     itemsList = data;
     console.log('Загруженные данные:', itemsList); // Отладка данных
   }).catch(console.error);
@@ -282,8 +282,8 @@ function renderCategoryList() {
 }
 
 // Инициализация страницы
-(function init() {
-  loadItemsList();
+(async function init() {
+  await loadItemsList();
   console.log('Элемент categoryList:', categoryList); // Отладка структуры DOM
   // Генерируем категории
   renderCategoryList();
