@@ -46,8 +46,9 @@ body {
   align-items: center;
 }
 #avatar-canvas {
-  width: 300px;
-  height: 400px;
+  width: 80%;
+  max-width: 300px;
+  aspect-ratio: 3 / 4;
   background: #eaeaea;
   position: relative;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -98,8 +99,9 @@ body {
 
 /* Иконка предмета */
 .inventory-item img {
-  width: 60px;
-  height: 60px;
+  width: 8vw;
+  max-width: 60px;
+  height: auto;
   object-fit: contain;
   border: 2px solid transparent;
   border-radius: 4px;
@@ -164,7 +166,7 @@ body {
 
 /* Кнопки */
 button {
-  padding: 8px 16px;
+  padding: 0.5em 1em;
   border: none;
   background: #007bff;
   color: #fff;
@@ -179,4 +181,42 @@ button:hover {
 button:disabled {
   background: #ccc;
   cursor: default;
+}
+
+/* Адаптивные настройки */
+@media (max-width: 600px) {
+  /* Вертикальная компоновка на узких экранах */
+  #container {
+    flex-direction: column;
+  }
+  #sidebar {
+    width: 100%;
+  }
+  /* Горизонтальный скролл для категорий */
+  #category-list {
+    display: flex;
+    overflow-x: auto;
+    gap: 4px;
+  }
+  #category-list li {
+    flex: 1 0 auto;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+  /* Инвентарь */
+  #inventory-bar {
+    gap: 6px;
+  }
+  .inventory-item img {
+    width: 12vw;
+    max-width: 50px;
+  }
+  /* Уменьшаем аватар */
+  #avatar-canvas {
+    max-width: 200px;
+  }
+  /* Кнопки и уведомления */
+  button {
+    font-size: 0.9rem;
+  }
 }
