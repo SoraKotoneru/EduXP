@@ -430,3 +430,68 @@ body {
 .nav-button:hover {
   color: var(--primary);
 }
+
+/* --- Auth page styles --- */
+#auth-container {
+  width: 90%;
+  max-width: 360px;
+  margin: 6vh auto;
+  background: var(--panel-bg);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.auth-header h1 {
+  font-size: 2rem;
+  text-align: center;
+  color: var(--primary-dark);
+  margin: 0 0 16px;
+}
+.auth-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.toggle-button {
+  flex: 1;
+  padding: 8px 0;
+  background: var(--bg-light);
+  border: 2px solid var(--primary);
+  color: var(--primary-dark);
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.toggle-button.selected {
+  background: var(--primary);
+  color: #fff;
+}
+.auth-card {
+  display: flex;
+  flex-direction: column;
+}
+.form-row {
+  margin-bottom: 16px;
+}
+.form-row input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  background: var(--accent);
+  color: var(--text-color);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.submit-button:hover {
+  background: #ffd850;
+}

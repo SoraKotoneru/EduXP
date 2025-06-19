@@ -4,6 +4,10 @@ let mode = null;
 // Показать нужную форму
 function showForm(selectedMode) {
   mode = selectedMode;                             // запомним режим
+  // Подсветка кнопки режима
+  document.querySelectorAll('.toggle-button').forEach(btn => btn.classList.remove('selected'));
+  const activeBtn = document.getElementById(selectedMode === 'register' ? 'btn-register' : 'btn-login');
+  if (activeBtn) activeBtn.classList.add('selected');
   const form = document.getElementById('form-block');
   form.classList.remove('hidden');                 // показываем форму
   clearErrors();                                   // сбросим старые ошибки

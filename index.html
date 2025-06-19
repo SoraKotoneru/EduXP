@@ -7,31 +7,28 @@
   <link rel="stylesheet" href="CSS/style.css">
 </head>
 <body>
-  <h1>EduXP</h1>
-
-  <!-- Кнопки выбора режима -->
-  <button onclick="showForm('register')">Регистрация</button>
-  <button onclick="showForm('login')">Вход</button>
-
-  <!-- Форма (скрыта по умолчанию) -->
-  <div id="form-block" class="hidden">
-    <!-- Логин -->
-    <input type="text"
-           id="username"
-           placeholder="Логин"
-           oninput="checkUniqueLogin()">
-    <div id="username-error" class="error-msg hidden"></div>
-
-    <!-- Пароль -->
-    <input type="password"
-           id="password"
-           placeholder="Пароль">
-    <div id="password-error" class="error-msg hidden"></div>
-
-    <!-- Отправить -->
-    <button onclick="handleSubmit()">Отправить</button>
+  <div id="auth-container">
+    <header class="auth-header">
+      <h1>EduXP</h1>
+    </header>
+    <div class="auth-toggle">
+      <button id="btn-register" class="toggle-button">Регистрация</button>
+      <button id="btn-login" class="toggle-button">Вход</button>
+    </div>
+    <div class="auth-card">
+      <div id="form-block" class="hidden">
+        <div class="form-row">
+          <input type="text" id="username" placeholder="Логин" oninput="checkUniqueLogin()">
+          <div id="username-error" class="error-msg hidden"></div>
+        </div>
+        <div class="form-row">
+          <input type="password" id="password" placeholder="Пароль">
+          <div id="password-error" class="error-msg hidden"></div>
+        </div>
+        <button id="submit-btn" class="submit-button" onclick="handleSubmit()">Отправить</button>
+      </div>
+    </div>
   </div>
-
   <!-- Подключаем логику -->
   <script src="JS/script.js"></script>
 </body>
