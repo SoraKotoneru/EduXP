@@ -20,22 +20,29 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background: var(--bg-light);
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-color);
 }
 #header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background: #f0f0f0;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 #container {
   flex: 1;
   display: flex;
 }
 #sidebar {
-  width: 180px;
-  background: #fafafa;
+  width: 80px;
+  background: var(--panel-bg);
   padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 #main-canvas {
   flex: 1;
@@ -49,11 +56,12 @@ body {
   width: 80%;
   max-width: 300px;
   aspect-ratio: 3 / 4;
-  background: #eaeaea;
+  background: var(--bg-light);
   position: relative;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   border-radius: 8px;
   overflow: hidden;
+  border: 2px dashed var(--primary);
 }
 #inventory-bar,
 #controls {
@@ -104,7 +112,7 @@ body {
   height: auto;
   object-fit: contain;
   border: 2px solid transparent;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 /* Выбранный предмет */
@@ -221,8 +229,9 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 16px;
+  padding: 24px;
   gap: 16px;
+  background: var(--bg-light);
 }
 
 /* Основная зона с аватаром и панелью предметов */
@@ -233,6 +242,10 @@ button:disabled {
   width: 100%;
   max-width: 400px;
   gap: 16px;
+  background: var(--panel-bg);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 /* Панель выбора цвета (цветовая палитра) */
@@ -261,12 +274,12 @@ button:disabled {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #007bff;
+  color: var(--primary-dark);
   padding: 4px;
   transition: color 0.2s;
 }
 .nav-button:hover {
-  color: #0056b3;
+  color: var(--primary);
 }
 
 /* Обертки для инвентаря и палитры */
@@ -274,6 +287,9 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 8px;
+  background: var(--bg-light);
+  padding: 8px;
+  border-radius: 12px;
 }
 #inventory-bar {
   display: flex;
@@ -285,6 +301,9 @@ button:disabled {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  background: var(--bg-light);
+  padding: 8px;
+  border-radius: 12px;
 }
 
 /* Категории: квадратные кнопки с миниатюрными иконками */
@@ -300,14 +319,115 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.2s;
+  transition: background 0.3s, transform 0.2s;
+  background: var(--panel-bg);
+}
+.category-item:hover {
+  background: var(--primary);
+  transform: scale(1.05);
 }
 .category-item.selected {
-  border-color: #007bff;
+  border-color: var(--primary);
 }
 .category-thumb {
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: center center;
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
+}
+
+/* --- Theme: Pastel Lavender & Yellow --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+:root {
+  --primary: #c491ff;
+  --primary-dark: #8d6ef1;
+  --accent: #ffe28a;
+  --bg-light: #f7f1ff;
+  --panel-bg: #ffffff;
+  --text-color: #333333;
+}
+
+body {
+  background: var(--bg-light);
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-color);
+}
+
+#header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.header-controls button {
+  background: var(--accent);
+  color: var(--text-color);
+  border-radius: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-controls button:hover {
+  background: #ffd850;
+}
+
+#game-container {
+  background: var(--bg-light);
+  padding: 24px;
+}
+
+#sidebar {
+  background: var(--panel-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  width: 80px;
+}
+
+.category-item {
+  background: var(--panel-bg);
+  transition: background 0.3s, transform 0.2s;
+}
+
+.category-item:hover {
+  background: var(--primary);
+  transform: scale(1.05);
+}
+
+.category-item.selected {
+  border-color: var(--primary);
+}
+
+.category-thumb {
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
+}
+
+#main-area {
+  background: var(--panel-bg);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+#avatar-canvas {
+  background: var(--bg-light);
+  border: 2px dashed var(--primary);
+}
+
+#inventory-wrapper,
+#color-bar-wrapper {
+  background: var(--bg-light);
+  padding: 8px;
+  border-radius: 12px;
+}
+
+.inventory-item img {
+  border-radius: 8px;
+}
+
+.nav-button {
+  color: var(--primary-dark);
+}
+.nav-button:hover {
+  color: var(--primary);
 }
