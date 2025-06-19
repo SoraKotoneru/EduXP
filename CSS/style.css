@@ -572,3 +572,8 @@ body {
     opacity: 0.7;
   }
 }
+
+/* Цвет фона выделенной категории */
+#sidebar .category-item.selected {
+  background: #ffffff;
+}
