@@ -7,6 +7,16 @@ const avatarCanvas  = document.getElementById('avatar-canvas');
 const saveBtn       = document.getElementById('save-btn');
 const notifications = document.getElementById('notifications');
 
+// FIRST_EDIT: кнопки прокрутки категорий
+const catUpBtn = document.getElementById('cat-up');
+const catDownBtn = document.getElementById('cat-down');
+catUpBtn.addEventListener('click', () => {
+  categoryList.scrollBy({ top: -100, behavior: 'smooth' });
+});
+catDownBtn.addEventListener('click', () => {
+  categoryList.scrollBy({ top: 100, behavior: 'smooth' });
+});
+
 // порядок слоёв (0 – самый задний, 12 – самый передний)
 const layerOrder = {
   background:     0,
@@ -178,10 +188,10 @@ saveBtn.addEventListener('click', () => {
 function renderCategoryList() {
   // Читаем настройки видимости категорий из localStorage
   const visibilitySettings = JSON.parse(localStorage.getItem('categoriesVisibility') || '{}');
-  // Берём список категорий из itemsList
-  const categories = Object.keys(itemsList);
+  // SECOND_EDIT: жёсткий порядок категорий
+  const categoriesOrder = ['background','body','hair_back','hair_strands','bangs','headwear','tail','eyes','mouth','face_accessory','shoes','pants','top','dress','jumpsuit','coat','accessory','pet'];
   categoryList.innerHTML = '';  // очищаем старые элементы
-  categories.forEach(category => {
+  categoriesOrder.forEach(category => {
     if (visibilitySettings[category]) {
       const li = document.createElement('li');
       li.className = 'category-item';
