@@ -196,11 +196,11 @@ function renderCategoryList() {
       const li = document.createElement('li');
       li.className = 'category-item';
       li.dataset.category = category;
-      // Превью: берем первый item
-      const firstItem = itemsList[category][0];
+      // Превью: иконка категории
       const img = document.createElement('img');
       img.className = 'category-thumb';
-      if (firstItem) img.src = `./assets/сlothes/${category}/${firstItem.id}.png`;
+      img.src = `./assets/icons/categories/${category}.png`;
+      img.alt = category;
       li.appendChild(img);
       // Добавляем подпись категории
       const label = document.createElement('span');
@@ -262,15 +262,5 @@ function applyToAvatar(category, itemId, color) {
 
   // 6. Добавляем в canvas
   avatarCanvas.appendChild(el);
-
-  // Обновляем превью в списке категорий
-  const catItem = categoryList.querySelector(`.category-item[data-category="${category}"]`);
-  if (catItem) {
-    const catImg = catItem.querySelector('img');
-    if (catImg) {
-      catImg.src = `./assets/сlothes/${category}/${itemId}.png`;
-      catImg.style.filter = color ? `drop-shadow(0 0 0 ${color})` : 'none';
-    }
-  }
 }
 
