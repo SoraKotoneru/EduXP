@@ -12,15 +12,15 @@
   <header id="header">
     <div class="logo">EduXP</div>
     <div class="header-controls">
-      <!-- Logout -->
-      <button id="logout-btn">Выйти</button>
-      <!-- Кнопка Галерея, пока скрыта -->
       <button id="gallery-btn" class="hidden">Галерея</button>
+      <button id="save-btn">Сохранить образ</button>
+      <button id="reset-btn">Сбросить</button>
+      <button id="logout-btn">Выйти</button>
     </div>
   </header>
 
   <!-- Контейнер для Sidebar + Main -->
-  <div id="container">
+  <div id="game-container">
     <!-- 2. Боковая панель -->
     <aside id="sidebar">
       <h2>Категории</h2>
@@ -33,22 +33,14 @@
       </ul>
     </aside>
 
-    <!-- 3. Основная зона (Main Canvas) -->
-    <main id="main-canvas">
-      <!-- Здесь будем рисовать аватар -->
+    <!-- 3. Основная зона -->
+    <div id="main-area">
       <div id="avatar-canvas"></div>
-    </main>
+      <div id="color-bar"></div>
+      <section id="inventory-bar"></section>
+    </div>
 
-    </div>  <!-- конец #container -->
-
-  <!-- 4. Панель предметов (Inventory Bar) -->
-  <section id="inventory-bar"></section>
-
-  <!-- 5. Управляющие кнопки (Controls) -->
-  <section id="controls">
-    <button id="save-btn">Сохранить образ</button>
-    <button id="reset-btn">Сбросить</button>
-  </section>
+  </div>  <!-- конец #game-container -->
 
   <!-- 6. Всплывающие уведомления (Notifications) -->
   <div id="notifications"></div>
