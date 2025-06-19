@@ -188,13 +188,15 @@ saveBtn.addEventListener('click', () => {
 function renderCategoryList() {
   // Читаем настройки видимости категорий из localStorage
   const visibilitySettings = JSON.parse(localStorage.getItem('categoriesVisibility') || '{}');
+  // Список категорий, которые пока пусты и не должны отображаться
+  const hideEmpty = ['hair_back','pants','top','accessory'];
   // SECOND_EDIT: жёсткий порядок категорий
   const categoriesOrder = ['background','body','hair_back','hair_strands','bangs','headwear','tail','eyes','mouth','face_accessory','shoes','pants','top','dress','jumpsuit','coat','accessory','pet'];
   categoryList.innerHTML = '';  // очищаем старые элементы
   categoriesOrder.forEach(category => {
-    // Показываем только видимые категории с предметами
+    // Пропускаем явно пустые категории и те без предметов
     const items = itemsList[category] || [];
-    if (visibilitySettings[category] && items.length > 0) {
+    if (visibilitySettings[category] && items.length > 0 && !hideEmpty.includes(category)) {
       const li = document.createElement('li');
       li.className = 'category-item';
       li.dataset.category = category;
