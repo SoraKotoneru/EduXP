@@ -165,19 +165,49 @@ resetBtn.addEventListener('click', () => {
   renderAvatar();
 });
 
+// Функция генерации списка категорий с превью
+function renderCategoryList() {
+  // Читаем настройки видимости категорий из localStorage
+  const visibilitySettings = JSON.parse(localStorage.getItem('categoriesVisibility') || '{}');
+  // Берём список категорий из itemsList
+  const categories = Object.keys(itemsList);
+  categoryList.innerHTML = '';  // очищаем старые элементы
+  categories.forEach(category => {
+    if (visibilitySettings[category]) {
+      const li = document.createElement('li');
+      li.className = 'category-item';
+      li.dataset.category = category;
+      // Превью: берем первый item
+      const firstItem = itemsList[category][0];
+      const img = document.createElement('img');
+      img.className = 'category-thumb';
+      if (firstItem) img.src = `./assets/сlothes/${category}/${firstItem.id}.png`;
+      li.appendChild(img);
+      // Добавляем подпись категории
+      const label = document.createElement('span');
+      label.className = 'category-label';
+      label.textContent = category[0].toUpperCase() + category.slice(1);
+      li.appendChild(label);
+      // Добавляем в список
+      categoryList.appendChild(li);
+    }
+  });
+}
+
 // Инициализация страницы
 (function init() {
+  // Генерируем категории
+  renderCategoryList();
+  // Отрисовываем аватар
   renderAvatar();
-  // Выбираем категорию "Кожа" по умолчанию
-  categoryList.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
-  const defaultCat = categoryList.querySelector('li[data-category="body"]');
+  // Подсветка и загрузка дефолтной категории "Кожа"
+  document.querySelectorAll('.category-item').forEach(li => li.classList.remove('selected'));
+  const defaultCat = categoryList.querySelector(`.category-item[data-category="body"]`);
   if (defaultCat) defaultCat.classList.add('selected');
-  // Загружаем предметы
+  // Загружаем предметы и выделяем дефолтный
   loadItems('body');
-  // Подсветка дефолтного скина
   const defaultItem = inventoryBar.querySelector('.inventory-item[data-item-id="skin_light"]');
   if (defaultItem) defaultItem.classList.add('selected');
-  // Накладываем дефолтный скин
   applyToAvatar('body', 'skin_light', null);
 })();
 
