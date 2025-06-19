@@ -185,13 +185,6 @@ button:disabled {
 
 /* Адаптивные настройки */
 @media (max-width: 600px) {
-  /* Вертикальная компоновка на узких экранах */
-  #container {
-    flex-direction: column;
-  }
-  #sidebar {
-    width: 100%;
-  }
   /* Горизонтальный скролл для категорий */
   #category-list {
     display: flex;
