@@ -80,41 +80,49 @@ function loadItems(category) {
   list.forEach(item => {
     // 3. Создаём контейнер <div> для одного предмета
     const div = document.createElement('div');
-    div.className = 'inventory-item';     // класс для CSS-оформления
-    div.dataset.category = category;      // сохраняем категорию в data-атрибут
-    div.dataset.itemId   = item.id;       // сохраняем ID предмета
+    div.className = 'inventory-item';
+    div.dataset.category = category;
+    div.dataset.itemId   = item.id;
 
-    // 4. Создаём иконку <img>
-    const img = document.createElement('img');
-    img.src = `./assets/сlothes/${category}/${item.id}.png`; // путь к картинке
-    div.appendChild(img);
+    // 4. Показываем картинку только если нет вариантов цвета
+    let imgEl = null;
+    if (!item.colors || item.colors.length === 0) {
+      imgEl = document.createElement('img');
+      imgEl.src = `./assets/сlothes/${category}/${item.id}.png`;
+      div.appendChild(imgEl);
+    }
 
     // 5. Блок для цветовых вариантов
-    const colorsDiv = document.createElement('div');
-    colorsDiv.className = 'color-options';
+    let colorsDiv = null;
+    if (item.colors && item.colors.length > 0) {
+      colorsDiv = document.createElement('div');
+      colorsDiv.className = 'color-options';
 
-    // 6. Перебираем все цвета для этого предмета
-    item.colors.forEach(color => {
-      const swatch = document.createElement('span');
-      swatch.className = 'color-swatch';     // класс для круга цвета
-      swatch.style.backgroundColor = color;  // задаём цвет фона круга
-      swatch.dataset.color = color;          // сохраняем цвет в data-атрибут
+      // 6. Перебираем все цвета для этого предмета
+      item.colors.forEach(color => {
+        const swatch = document.createElement('span');
+        swatch.className = 'color-swatch';
+        swatch.style.backgroundColor = color;
+        swatch.dataset.color = color;
 
-      // 7. Обработчик клика по кругу цвета
-      swatch.addEventListener('click', e => {
-        e.stopPropagation(); // предотвращаем выбор самого предмета
-        // 8. Снимаем выделение со всех кругов внутри этого colorsDiv
-        colorsDiv.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
-        // 9. Отмечаем кликнутый круг
-        swatch.classList.add('selected');
-        // 10. Применяем визуальный фильтр к иконке предмета (для наглядности)
-        img.style.filter = `drop-shadow(0 0 0 ${color})`;
+        // 7. Обработчик клика по кругу цвета
+        swatch.addEventListener('click', e => {
+          e.stopPropagation();
+          // 8. Снимаем выделение со всех кругов внутри этого colorsDiv
+          if (colorsDiv) colorsDiv.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+          // 9. Отмечаем кликнутый круг
+          swatch.classList.add('selected');
+          // 10. Применяем визуальный фильтр к иконке предмета (если есть)
+          if (imgEl) imgEl.style.filter = `drop-shadow(0 0 0 ${color})`;
+        });
+
+        // Добавляем кружок цвета
+        colorsDiv.appendChild(swatch);
       });
 
-      colorsDiv.appendChild(swatch);
-    });
-
-    div.appendChild(colorsDiv);
+      // Добавляем блок цветов
+      div.appendChild(colorsDiv);
+    }
 
     // 11. Обработчик клика по самому предмету
     div.addEventListener('click', () => {
@@ -122,9 +130,12 @@ function loadItems(category) {
       inventoryBar.querySelectorAll('.inventory-item').forEach(el => el.classList.remove('selected'));
       // б) Отмечаем текущий предмет
       div.classList.add('selected');
-      // в) Находим выбранный цвет, если есть
-      const sw = colorsDiv.querySelector('.color-swatch.selected');
-      const color = sw?.dataset.color || null;
+      // в) Определяем выбранный цвет, если есть
+      let color = null;
+      if (colorsDiv) {
+        const sw = colorsDiv.querySelector('.color-swatch.selected');
+        color = sw?.dataset.color || null;
+      }
       // г) Вызываем функцию нанесения предмета на аватар
       applyToAvatar(category, item.id, color);
     });
