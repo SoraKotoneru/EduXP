@@ -108,6 +108,7 @@ let itemsList = {};
 function loadItemsList() {
   fetchData('/api/items').then(data => {
     itemsList = data;
+    console.log('Загруженные данные:', itemsList); // Отладка данных
   }).catch(console.error);
 }
 
@@ -283,6 +284,7 @@ function renderCategoryList() {
 // Инициализация страницы
 (function init() {
   loadItemsList();
+  console.log('Элемент categoryList:', categoryList); // Отладка структуры DOM
   // Генерируем категории
   renderCategoryList();
   // Отрисовываем аватар
