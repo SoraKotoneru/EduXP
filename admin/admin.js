@@ -21,38 +21,74 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Загружаем существующие предметы из localStorage
+  function renderItemsList() {
+    const items = JSON.parse(localStorage.getItem('items') || '[]');
+    const tbody = document.querySelector('#items-table tbody');
+    tbody.innerHTML = '';
+    items.forEach(item => {
+      const tr = document.createElement('tr');
+      // ID
+      const tdId = document.createElement('td'); tdId.textContent = item.id; tr.appendChild(tdId);
+      // Категория
+      const tdCat = document.createElement('td'); tdCat.textContent = item.category; tr.appendChild(tdCat);
+      // Слой
+      const tdLayer = document.createElement('td'); tdLayer.textContent = item.layer; tr.appendChild(tdLayer);
+      // Цвет
+      const tdColor = document.createElement('td');
+      const sw = document.createElement('span');
+      sw.style.display = 'inline-block'; sw.style.width = '16px'; sw.style.height = '16px';
+      sw.style.backgroundColor = item.color; sw.style.border = '1px solid #000';
+      tdColor.appendChild(sw);
+      tr.appendChild(tdColor);
+      // Доступность
+      const tdAvail = document.createElement('td'); tdAvail.textContent = item.availability; tr.appendChild(tdAvail);
+      // Действия
+      const tdAct = document.createElement('td');
+      const delBtn = document.createElement('button'); delBtn.textContent = 'Удалить';
+      delBtn.addEventListener('click', () => {
+        const newItems = items.filter(x => x.id !== item.id);
+        localStorage.setItem('items', JSON.stringify(newItems));
+        renderItemsList();
+      });
+      tdAct.appendChild(delBtn);
+      tr.appendChild(tdAct);
+      tbody.appendChild(tr);
+    });
+  }
+  // Инициализируем список предметов
+  renderItemsList();
+
   // Обработка отправки формы
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    // Категория
-    data.append('category', document.getElementById('item-category').value);
-    // Цвет
-    const color = document.getElementById('item-color').value;
-    data.append('color', color);
-    // Генерируем уникальный ID
-    const itemId = (crypto.randomUUID ? crypto.randomUUID() : `item_${Date.now()}`);
-    data.append('id', itemId);
-    // Слой
-    data.append('layer', document.getElementById('item-layer').value);
-    // Миниатюра
-    const thumbnail = document.getElementById('item-thumbnail').files[0];
-    if (thumbnail) data.append('thumbnail', thumbnail);
-    const files = document.getElementById('item-files').files;
-    for (let f of files) {
-      data.append('files', f);
-    }
-    data.append('availability', availability.value);
-    if (availability.value === 'time-limited') {
-      data.append('start', document.getElementById('start-date').value);
-      data.append('end', document.getElementById('end-date').value);
-    } else if (availability.value === 'private') {
-      data.append('users', document.getElementById('user-list').value);
-    }
-
-    // TODO: отправить на сервер или сохранить в localStorage
-    console.log('Отправка данных:', Object.fromEntries(data.entries()));
-    alert('Предмет добавлен (заглушка)');
+    // Категория и слой общие для всех файлов
+    const category = document.getElementById('item-category').value;
+    const layer = document.getElementById('item-layer').value;
+    const availability = document.getElementById('item-availability').value;
+    const startDate = availability === 'time-limited' ? document.getElementById('start-date').value : undefined;
+    const endDate = availability === 'time-limited' ? document.getElementById('end-date').value : undefined;
+    const users = availability === 'private' ? document.getElementById('user-list').value : undefined;
+    // Миниатюра общая
+    const thumbnailFile = document.getElementById('item-thumbnail').files[0];
+    // Файлы PNG – несколько
+    const files = Array.from(document.getElementById('item-files').files);
+    // Обрабатываем каждый файл отдельно
+    const itemsArr = JSON.parse(localStorage.getItem('items') || '[]');
+    files.forEach(f => {
+      // Парсим имя файла: expected id_colorHEX.png
+      const name = f.name.replace(/\.png$/i, '');
+      const parts = name.split('_');
+      const colorHex = parts.pop();
+      const itemId = parts.join('_');
+      const color = `#${colorHex}`;
+      const newItem = { id: itemId, category, layer, color, availability, start: startDate, end: endDate, users };
+      itemsArr.push(newItem);
+      // TODO: сохранить thumbnail и файл f на сервер или localStorage
+    });
+    localStorage.setItem('items', JSON.stringify(itemsArr));
+    renderItemsList();
+    alert('Предметы добавлены');
     form.reset();
     settings.innerHTML = '';
   });
