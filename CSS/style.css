@@ -556,3 +556,19 @@ body {
 #sidebar .nav-button:hover {
   color: var(--accent);
 }
+
+/* Стили для атрибуции */
+.attribution {
+  text-align: center;
+  color: #888888;
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .attribution {
+    font-size: 0.6rem;
+    opacity: 0.7;
+  }
+}
