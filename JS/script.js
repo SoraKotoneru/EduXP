@@ -91,3 +91,11 @@ function handleSubmit() {
     window.location.href = 'game.html';
   }
 }
+
+// После определения функций добавляем слушатели на кнопки переключения режима
+document.addEventListener('DOMContentLoaded', () => {
+  const btnRegister = document.getElementById('btn-register');
+  const btnLogin = document.getElementById('btn-login');
+  if (btnRegister) btnRegister.addEventListener('click', () => showForm('register'));
+  if (btnLogin)    btnLogin.addEventListener('click',    () => showForm('login'));
+});
