@@ -27,13 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = new FormData();
     // Категория
     data.append('category', document.getElementById('item-category').value);
-    // Парсим ID и цвет из формата name_colorHEX
-    const rawId = document.getElementById('item-id').value.trim();
-    const parts = rawId.split('_');
-    const colorHex = parts.pop();
-    const itemId = parts.join('_');
+    // Цвет
+    const color = document.getElementById('item-color').value;
+    data.append('color', color);
+    // Генерируем уникальный ID
+    const itemId = (crypto.randomUUID ? crypto.randomUUID() : `item_${Date.now()}`);
     data.append('id', itemId);
-    data.append('color', `#${colorHex}`);
     // Слой
     data.append('layer', document.getElementById('item-layer').value);
     // Миниатюра
