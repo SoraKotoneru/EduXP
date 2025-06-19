@@ -192,7 +192,9 @@ function renderCategoryList() {
   const categoriesOrder = ['background','body','hair_back','hair_strands','bangs','headwear','tail','eyes','mouth','face_accessory','shoes','pants','top','dress','jumpsuit','coat','accessory','pet'];
   categoryList.innerHTML = '';  // очищаем старые элементы
   categoriesOrder.forEach(category => {
-    if (visibilitySettings[category]) {
+    // Показываем только видимые категории с предметами
+    const items = itemsList[category] || [];
+    if (visibilitySettings[category] && items.length > 0) {
       const li = document.createElement('li');
       li.className = 'category-item';
       li.dataset.category = category;
