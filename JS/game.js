@@ -35,6 +35,11 @@ const itemsList = {
     { id: 'hair1', colors: ['#000000', '#555555', '#aaaaaa'] },
     { id: 'hair2', colors: ['#a52a2a', '#ffcc00', '#ff66cc'] }
   ],
+  body: [
+    { id: 'skin_light', colors: [] },
+    { id: 'skin_medium', colors: [] },
+    { id: 'skin_dark', colors: [] }
+  ],
   top: [
     { id: 'top1', colors: ['#ff0000', '#00ff00'] },
     { id: 'top2', colors: ['#0000ff', '#00ffff'] }
