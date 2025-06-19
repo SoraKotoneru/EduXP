@@ -1,3 +1,8 @@
+/* Box sizing для всех элементов */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 /* Скрытый блок формы */
 .hidden {
   display: none;
