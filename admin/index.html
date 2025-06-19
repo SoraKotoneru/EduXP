@@ -41,20 +41,34 @@
           </select>
         </div>
         <div class="form-row">
-          <label for="item-id">ID предмета:</label>
-          <input type="text" id="item-id" placeholder="unique_id" required>
+          <label for="item-id">ID предмета (name_colorHEX):</label>
+          <input type="text" id="item-id" placeholder="shirt_ff0000" required>
         </div>
         <div class="form-row">
-          <label for="item-layer">Слой (0–12):</label>
-          <input type="number" id="item-layer" min="0" max="12" value="0" required>
+          <label for="item-layer">Слой:</label>
+          <select id="item-layer" required>
+            <option value="0">0 - Фон</option>
+            <option value="1">1 - Волосы сзади</option>
+            <option value="2">2 - Хвост</option>
+            <option value="3">3 - Тело</option>
+            <option value="4">4 - Лицо</option>
+            <option value="5">5 - Хвостики волос</option>
+            <option value="6">6 - Чёлка</option>
+            <option value="7">7 - Головной убор</option>
+            <option value="8">8 - Обувь</option>
+            <option value="9">9 - Брюки/Платье/Комбинезон</option>
+            <option value="10">10 - Рубашка</option>
+            <option value="11">11 - Пальто/Аксессуары</option>
+            <option value="12">12 - Питомец</option>
+          </select>
         </div>
         <div class="form-row">
-          <label for="item-colors">Цвета (HEX, через запятую):</label>
-          <input type="text" id="item-colors" placeholder="#ff0000,#00ff00">
+          <label for="item-thumbnail">Миниатюра (PNG):</label>
+          <input type="file" id="item-thumbnail" accept="image/png" required>
         </div>
         <div class="form-row">
           <label for="item-files">Изображения (PNG, несколько):</label>
-          <input type="file" id="item-files" accept="image/png" multiple>
+          <input type="file" id="item-files" accept="image/png" multiple required>
         </div>
         <div class="form-row">
           <label for="item-availability">Доступность:</label>

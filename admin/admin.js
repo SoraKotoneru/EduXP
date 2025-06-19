@@ -25,10 +25,20 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = new FormData();
+    // Категория
     data.append('category', document.getElementById('item-category').value);
-    data.append('id', document.getElementById('item-id').value);
+    // Парсим ID и цвет из формата name_colorHEX
+    const rawId = document.getElementById('item-id').value.trim();
+    const parts = rawId.split('_');
+    const colorHex = parts.pop();
+    const itemId = parts.join('_');
+    data.append('id', itemId);
+    data.append('color', `#${colorHex}`);
+    // Слой
     data.append('layer', document.getElementById('item-layer').value);
-    data.append('colors', document.getElementById('item-colors').value);
+    // Миниатюра
+    const thumbnail = document.getElementById('item-thumbnail').files[0];
+    if (thumbnail) data.append('thumbnail', thumbnail);
     const files = document.getElementById('item-files').files;
     for (let f of files) {
       data.append('files', f);
@@ -41,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
       data.append('users', document.getElementById('user-list').value);
     }
 
-    // TODO: отправить на сервер
+    // TODO: отправить на сервер или сохранить в localStorage
     console.log('Отправка данных:', Object.fromEntries(data.entries()));
     alert('Предмет добавлен (заглушка)');
     form.reset();
