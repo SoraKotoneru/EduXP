@@ -137,7 +137,8 @@ function loadItems(category) {
 
 // 3. Отрисовка аватара (пустой)
 function renderAvatar() {
-  avatarCanvas.innerHTML = '<p>Аватар появится здесь</p>';
+  // Очищаем canvas без плейсхолдера
+  avatarCanvas.innerHTML = '';
 }
 
 // 4. Сохранение образа
@@ -156,7 +157,17 @@ resetBtn.addEventListener('click', () => {
 // Инициализация страницы
 (function init() {
   renderAvatar();
-  loadItems('hair');  // теперь показывает предметы и панели цветов
+  // Выбираем категорию "Кожа" по умолчанию
+  categoryList.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+  const defaultCat = categoryList.querySelector('li[data-category="body"]');
+  if (defaultCat) defaultCat.classList.add('selected');
+  // Загружаем предметы
+  loadItems('body');
+  // Подсветка дефолтного скина
+  const defaultItem = inventoryBar.querySelector('.inventory-item[data-item-id="skin_light"]');
+  if (defaultItem) defaultItem.classList.add('selected');
+  // Накладываем дефолтный скин
+  applyToAvatar('body', 'skin_light', null);
 })();
 
 // Накладываем выбранный предмет на канвас
