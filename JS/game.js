@@ -1,3 +1,8 @@
+// Проверяем авторизацию и перенаправляем на страницу входа, если нет токена
+if (!localStorage.getItem('token')) {
+  window.location.href = 'index.html';
+}
+
 // Получаем элементы
 const logoutBtn     = document.getElementById('logout-btn');
 const galleryBtn    = document.getElementById('gallery-btn');

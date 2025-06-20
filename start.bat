@@ -21,7 +21,7 @@ popd
 REM Ожидаем несколько секунд, чтобы сервер успел запуститься
 timeout /t 3 /nobreak >nul
 
-echo Opening game in browser...
-start "" "http://localhost:3000/game.html"
+echo Opening app in browser...
+start "" "http://localhost:3000/"
 
 echo Done. 
