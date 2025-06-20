@@ -26,8 +26,20 @@ app.use(express.json());
   }
 })();
 
-// --- Basic Auth для панели администратора ---
+// --- Basic Auth и cookie для панели администратора ---
 app.use('/admin', (req, res, next) => {
+  // Проверяем cookie adminAuth (Base64 логин:пароль)
+  const cookieHeader = req.headers.cookie || '';
+  const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
+    const [key, value] = cookie.trim().split('=');
+    acc[key] = value;
+    return acc;
+  }, {});
+  const expectedEncoded = Buffer.from('SoraKotoneru:ghbywtccf@3141').toString('base64');
+  if (cookies.adminAuth === expectedEncoded) {
+    return next();
+  }
+  // Дальше HTTP Basic Auth если нет валидного cookie
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.set('WWW-Authenticate', 'Basic realm="Admin Area"');
