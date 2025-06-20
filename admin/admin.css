@@ -80,3 +80,22 @@ section {
 #category-settings-list input[type="checkbox"] {
   width: auto;
 }
+/* Стили для таблицы игроков */
+#users-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+#users-list-table th,
+#users-list-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+#users-list-table th {
+  background: #f0e6ff;
+  font-weight: 600;
+}
+#users-list-table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}

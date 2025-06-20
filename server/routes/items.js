@@ -39,6 +39,8 @@ router.post('/', upload.fields([
   { name: 'thumbnail', maxCount: 1 },
   { name: 'files', maxCount: 50 }
 ]), async (req, res) => {
+  console.log('DEBUG POST /api/items body:', req.body);
+  console.log('DEBUG POST /api/items files:', req.files);
   try {
     const { category, layer, availability, start, end, users } = req.body;
     // Обрабатываем thumbnail
@@ -75,8 +77,8 @@ router.post('/', upload.fields([
     }
     res.status(201).json(created);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    console.error('Ошибка при добавлении предмета:', err);
+    res.status(500).json({ error: err.message });
   }
 });
 

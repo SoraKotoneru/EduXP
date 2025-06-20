@@ -124,9 +124,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const usersListEl = document.getElementById('users-list');
     usersListEl.innerHTML = '';
     users.forEach(user => {
-      const li = document.createElement('li');
-      li.textContent = `${user.username} (ID: ${user.id})`;
-      usersListEl.appendChild(li);
+      const tr = document.createElement('tr');
+      const tdId = document.createElement('td');
+      tdId.textContent = user.id;
+      tr.appendChild(tdId);
+      const tdName = document.createElement('td');
+      tdName.textContent = user.username;
+      tr.appendChild(tdName);
+      usersListEl.appendChild(tr);
     });
   }
   // Инициализируем список игроков
