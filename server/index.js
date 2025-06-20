@@ -26,6 +26,25 @@ app.use(express.json());
   }
 })();
 
+// --- Basic Auth для панели администратора ---
+app.use('/admin', (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    res.set('WWW-Authenticate', 'Basic realm="Admin Area"');
+    return res.status(401).send('Authentication required');
+  }
+  const [scheme, encoded] = authHeader.split(' ');
+  if (scheme !== 'Basic' || !encoded) {
+    return res.status(400).send('Bad request');
+  }
+  const [user, pass] = Buffer.from(encoded, 'base64').toString().split(':');
+  if (user === 'SoraKotoneru' && pass === 'ghbywtccf@3141') {
+    return next();
+  }
+  res.set('WWW-Authenticate', 'Basic realm="Admin Area"');
+  return res.status(401).send('Invalid credentials');
+});
+
 // 9. Раздаём статические файлы вашего клиента
 app.use(express.static(path.join(__dirname, '..')));
 
