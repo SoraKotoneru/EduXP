@@ -192,12 +192,18 @@ function loadItems(category) {
     div.dataset.category = category;
     div.dataset.itemId = item.id;
 
-    // 4. Показываем превью предмета (первая вариация или базовый файл)
+    // 4. Показываем превью предмета (миниатюра или первая вариация или базовый файл)
     const imgEl = document.createElement('img');
     const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
-    imgEl.src = defaultColor
-      ? `./assets/сlothes/${category}/${item.id}_${defaultColor.slice(1)}.png`
-      : `./assets/сlothes/${category}/${item.id}.png`;
+    let previewSrc;
+    if (item.thumbnail) {
+      previewSrc = `./assets/сlothes/${category}/${item.thumbnail}`;
+    } else if (defaultColor) {
+      previewSrc = `./assets/сlothes/${category}/${item.id}_${defaultColor.slice(1)}.png`;
+    } else {
+      previewSrc = `./assets/сlothes/${category}/${item.id}.png`;
+    }
+    imgEl.src = previewSrc;
     div.appendChild(imgEl);
 
     // Обработчик клика по предмету: применяем предмет и показываем варианты цвета
