@@ -196,7 +196,6 @@ function loadItems(category) {
     const imgEl = document.createElement('img');
     const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
     let previewSrc;
-    // Показываем превью по миниатюре или первой вариации или базовому файлу
     if (item.thumbnail) {
       previewSrc = `./assets/сlothes/${category}/${item.thumbnail}`;
     } else if (defaultColor) {
@@ -257,15 +256,32 @@ function renderCategoryList() {
   categoryList.innerHTML = '';
   categoriesOrder.forEach(category => {
     const items = itemsList[category] || [];
-    // Всегда показываем категории 'body' и 'eyes'
-    if ((category === 'body' || category === 'eyes') || (items.length > 0 && (visibilitySettings[category] !== false))) {
+    // Всегда показываем категорию 'body', остальные по настройкам + наличию предметов
+    if (category === 'body' || (items.length > 0 && (visibilitySettings[category] !== false))) {
       const li = document.createElement('li');
       li.className = 'category-item';
       li.dataset.category = category;
-      // Превью: иконка категории
+      // Превью: иконка категории или миниатюра для body
       const img = document.createElement('img');
       img.className = 'category-thumb';
-      img.src = `./assets/icons/categories/${category}.png`;
+      let src;
+      if (category === 'body') {
+        if (items.length > 0) {
+          const first = items[0];
+          if (first.thumbnail) {
+            src = `./assets/сlothes/${category}/${first.thumbnail}`;
+          } else if (first.colors && first.colors.length > 0) {
+            src = `./assets/сlothes/${category}/${first.id}_${first.colors[0].slice(1)}.png`;
+          } else {
+            src = `./assets/сlothes/${category}/${first.id}.png`;
+          }
+        } else {
+          src = `./assets/icons/categories/${category}.png`;
+        }
+      } else {
+        src = `./assets/icons/categories/${category}.png`;
+      }
+      img.src = src;
       img.alt = category;
       li.appendChild(img);
       // Подпись категории
