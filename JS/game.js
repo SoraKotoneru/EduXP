@@ -263,37 +263,18 @@ saveBtn.addEventListener('click', () => {
 
 // Функция генерации списка категорий с превью
 function renderCategoryList() {
-  // Читаем настройки видимости категорий из localStorage
   const visibilitySettings = JSON.parse(localStorage.getItem('categoriesVisibility') || '{}');
   categoryList.innerHTML = '';
   categoriesOrder.forEach(category => {
     const items = itemsList[category] || [];
-    // Всегда показываем категорию 'body', остальные по настройкам + наличию предметов
     if (category === 'body' || (items.length > 0 && (visibilitySettings[category] !== false))) {
       const li = document.createElement('li');
       li.className = 'category-item';
       li.dataset.category = category;
-      // Превью: иконка категории или миниатюра для body
+      // Превью: статическая иконка категории
       const img = document.createElement('img');
       img.className = 'category-thumb';
-      let src;
-      if (category === 'body') {
-        if (items.length > 0) {
-          const first = items[0];
-          if (first.thumbnail) {
-            src = `./assets/сlothes/${category}/${first.thumbnail}`;
-          } else if (first.colors && first.colors.length > 0) {
-            src = `./assets/сlothes/${category}/${first.id}_${first.colors[0].slice(1)}.png`;
-          } else {
-            src = `./assets/сlothes/${category}/${first.id}.png`;
-          }
-        } else {
-          src = `./assets/icons/categories/${category}.png`;
-        }
-      } else {
-        src = `./assets/icons/categories/${category}.png`;
-      }
-      img.src = src;
+      img.src = `./assets/icons/categories/${category}.png`;
       img.alt = category;
       li.appendChild(img);
       // Подпись категории

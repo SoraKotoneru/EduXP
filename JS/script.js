@@ -59,8 +59,8 @@ async function handleSubmit() {
   }
   // Если это админ, сохраняем cookie и перенаправляем без API
   if (username === 'SoraKotoneru' && password === 'ghbywtccf@3141') {
-    // Устанавливаем cookie для сервера
-    document.cookie = `adminAuth=${btoa(username + ':' + password)}; path=/`;
+    // устанавливаем cookie только для пути /admin
+    document.cookie = `adminAuth=${btoa(username + ':' + password)}; path=/admin`;
     window.location.href = 'admin/index.html';
     return;
   }
