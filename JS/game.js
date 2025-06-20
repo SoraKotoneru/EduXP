@@ -180,6 +180,8 @@ function loadItems(category) {
   const now = new Date();
   // Фильтруем по availability + разблокированным
   const list = (itemsList[category] || []).filter(item => {
+    // Для админа (cookie adminAuth) показываем все предметы
+    if (document.cookie.includes('adminAuth=')) return true;
     if (item.availability === 'public') return true;
     if (item.availability === 'time-limited') {
       const start = new Date(item.start);
