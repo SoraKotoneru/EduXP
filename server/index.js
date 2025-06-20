@@ -18,11 +18,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 8. Синхронизируем модели (создаём таблицы users и avatars в SQLite)
+// 8. Синхронизация моделей: alter:true добавит отсутствующие столбцы без удаления данных
 (async () => {
   try {
-    await sequelize.sync();
-    console.log('Database synced');
+    await sequelize.sync({ alter: true });
+    console.log('Database synced (alter:true)');
   } catch (err) {
     console.error('DB sync error:', err);
   }
