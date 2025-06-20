@@ -57,6 +57,13 @@ async function handleSubmit() {
   if (!username || !password) {
     return;
   }
+  // Если это админ, сохраняем cookie и перенаправляем без API
+  if (username === 'SoraKotoneru' && password === 'ghbywtccf@3141') {
+    // Устанавливаем cookie для сервера
+    document.cookie = `adminAuth=${btoa(username + ':' + password)}; path=/`;
+    window.location.href = 'admin/index.html';
+    return;
+  }
   try {
     let token;
     if (mode === 'register') {

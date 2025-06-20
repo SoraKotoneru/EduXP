@@ -21,38 +21,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Загружаем существующие предметы из localStorage
-  function renderItemsList() {
-    const items = JSON.parse(localStorage.getItem('items') || '[]');
+  // Загрузка и рендер предметов через API
+  async function renderItemsList() {
+    const response = await fetch('/api/items');
+    const data = await response.json();
+    const itemsArr = [];
+    Object.entries(data).forEach(([category, arr]) => arr.forEach(item => itemsArr.push(item)));
     const tbody = document.querySelector('#items-table tbody');
     tbody.innerHTML = '';
-    items.forEach(item => {
+    itemsArr.forEach(item => {
       const tr = document.createElement('tr');
-      // ID
       const tdId = document.createElement('td'); tdId.textContent = item.id; tr.appendChild(tdId);
-      // Категория
       const tdCat = document.createElement('td'); tdCat.textContent = item.category; tr.appendChild(tdCat);
-      // Слой
       const tdLayer = document.createElement('td'); tdLayer.textContent = item.layer; tr.appendChild(tdLayer);
-      // Цвет
       const tdColor = document.createElement('td');
-      const sw = document.createElement('span');
-      sw.style.display = 'inline-block'; sw.style.width = '16px'; sw.style.height = '16px';
-      sw.style.backgroundColor = item.color; sw.style.border = '1px solid #000';
-      tdColor.appendChild(sw);
+      (item.colors || []).forEach(col => {
+        const sw = document.createElement('span');
+        sw.style.display = 'inline-block'; sw.style.width = '16px'; sw.style.height = '16px';
+        sw.style.backgroundColor = col; sw.style.border = '1px solid #000'; sw.style.marginRight = '4px';
+        tdColor.appendChild(sw);
+      });
       tr.appendChild(tdColor);
-      // Доступность
       const tdAvail = document.createElement('td'); tdAvail.textContent = item.availability; tr.appendChild(tdAvail);
-      // Действия
       const tdAct = document.createElement('td');
       const delBtn = document.createElement('button'); delBtn.textContent = 'Удалить';
-      delBtn.addEventListener('click', () => {
-        const newItems = items.filter(x => x.id !== item.id);
-        localStorage.setItem('items', JSON.stringify(newItems));
+      delBtn.addEventListener('click', async () => {
+        await fetch(`/api/items/${item.id}`, { method: 'DELETE' });
         renderItemsList();
       });
-      tdAct.appendChild(delBtn);
-      tr.appendChild(tdAct);
+      tdAct.appendChild(delBtn); tr.appendChild(tdAct);
       tbody.appendChild(tr);
     });
   }
@@ -62,45 +59,34 @@ document.addEventListener('DOMContentLoaded', () => {
   // Обработка отправки формы
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    // Собираем общие параметры
     const category = document.getElementById('item-category').value;
     const layer = document.getElementById('item-layer').value;
     const availability = document.getElementById('item-availability').value;
     const startDate = availability === 'time-limited' ? document.getElementById('start-date').value : undefined;
     const endDate = availability === 'time-limited' ? document.getElementById('end-date').value : undefined;
     const users = availability === 'private' ? document.getElementById('user-list').value : undefined;
-    // Файлы PNG – несколько
-    const files = Array.from(document.getElementById('item-files').files);
-    // Группируем по ID (из имени до подчёркивания)
-    const groups = {};
-    files.forEach(f => {
-      const base = f.name.replace(/\.png$/i, '');
-      const parts = base.split('_');
-      const colorHex = parts.pop();
-      const id = parts.join('_');
-      if (!groups[id]) groups[id] = { id, colors: new Set() };
-      groups[id].colors.add(`#${colorHex}`);
-    });
-    // Сохраняем группу предметов
-    const itemsArr = JSON.parse(localStorage.getItem('items') || '[]');
-    Object.values(groups).forEach(group => {
-      const newItem = {
-        id: group.id,
-        category,
-        layer,
-        colors: Array.from(group.colors),
-        availability,
-        start: startDate,
-        end: endDate,
-        users
-      };
-      itemsArr.push(newItem);
-    });
-    localStorage.setItem('items', JSON.stringify(itemsArr));
-    renderItemsList();
+    // Подготавливаем FormData для API
+    const formData = new FormData();
+    formData.append('category', category);
+    formData.append('layer', layer);
+    formData.append('availability', availability);
+    if (startDate) formData.append('start', startDate);
+    if (endDate) formData.append('end', endDate);
+    if (users) formData.append('users', users);
+    const files = document.getElementById('item-files').files;
+    for (const file of files) {
+      formData.append('files', file);
+    }
+    const response = await fetch('/api/items', { method: 'POST', body: formData });
+    const data = await response.json();
+    if (!response.ok) {
+      alert('Ошибка при добавлении: ' + (data.error || 'Server error'));
+      return;
+    }
     alert('Предметы добавлены');
     form.reset();
     settings.innerHTML = '';
+    renderItemsList();
   });
 
   // Настройка видимости категорий

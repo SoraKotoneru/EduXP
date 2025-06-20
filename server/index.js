@@ -9,6 +9,8 @@ const sequelize = require('./config/db');    // 5. Подключение к Б�
 // 6. Импортируем маршруты
 const authRouter   = require('./routes/auth');
 const avatarRouter = require('./routes/avatar');
+// Модель предметов
+const Item = require('./models/item');
 
 const app = express();
 
