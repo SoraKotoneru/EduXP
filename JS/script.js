@@ -95,7 +95,14 @@ async function handleSubmit() {
       return;
     }
     token = data.token;
+    // Сохраняем токен и userId для фильтрации приватных предметов
     localStorage.setItem('token', token);
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      localStorage.setItem('currentUser', String(payload.userId));
+    } catch {
+      console.warn('Не удалось разобрать userId из токена');
+    }
     window.location.href = 'game.html';
   } catch (e) {
     console.error(e);
