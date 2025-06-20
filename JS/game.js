@@ -287,7 +287,7 @@ function renderCategoryList() {
   categoryList.innerHTML = '';
   categoriesOrder.forEach(category => {
     const items = itemsList[category] || [];
-    if (visibilitySettings[category] && items.length > 0) {
+    if (items.length > 0 && (visibilitySettings[category] !== false)) {
       const firstItem = items[0];
       const li = document.createElement('li');
       li.className = 'category-item';
