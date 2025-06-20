@@ -21,7 +21,11 @@ const Item = sequelize.define('Item', {
   start: DataTypes.DATE,
   end: DataTypes.DATE,
   users: DataTypes.STRING, // comma-separated user list
-  colors: DataTypes.JSON // array of color hex strings
+  colors: DataTypes.JSON, // array of color hex strings
+  thumbnail: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
 });
 
 module.exports = Item; 

@@ -34,13 +34,21 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST /api/items - добавляет новый предмет и его файлы
-router.post('/', upload.array('files'), async (req, res) => {
+// POST /api/items - добавляет новый предмет, его файлы и миниатюру
+router.post('/', upload.fields([
+  { name: 'thumbnail', maxCount: 1 },
+  { name: 'files', maxCount: 50 }
+]), async (req, res) => {
   try {
     const { category, layer, availability, start, end, users } = req.body;
+    // Обрабатываем thumbnail
+    const thumbnailFile = req.files.thumbnail && req.files.thumbnail[0]
+      ? req.files.thumbnail[0].originalname
+      : null;
     // Группируем файлы по ID и цвету из имени
+    const colorFiles = req.files.files || [];
     const groups = {};
-    req.files.forEach(file => {
+    colorFiles.forEach(file => {
       const name = file.originalname.replace(/\.png$/i, '');
       const parts = name.split('_');
       const colorHex = parts.pop();
@@ -59,7 +67,8 @@ router.post('/', upload.array('files'), async (req, res) => {
         start: start || null,
         end: end || null,
         users: users || null,
-        colors: groups[id].colors
+        colors: groups[id].colors,
+        thumbnail: thumbnailFile
       };
       const item = await Item.create(itemData);
       created.push(item);

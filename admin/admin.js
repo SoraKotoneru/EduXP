@@ -77,6 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const file of files) {
       formData.append('files', file);
     }
+    // Добавляем миниатюру
+    const thumbnail = document.getElementById('item-thumbnail').files[0];
+    if (thumbnail) {
+      formData.append('thumbnail', thumbnail);
+    }
     const response = await fetch('/api/items', { method: 'POST', body: formData });
     const data = await response.json();
     if (!response.ok) {
@@ -112,13 +117,20 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   // Заполняем список зарегистрированных игроков
-  const usersData = JSON.parse(localStorage.getItem('users') || '{}');
-  const usersListEl = document.getElementById('users-list');
-  Object.keys(usersData).forEach(username => {
-    const li = document.createElement('li');
-    li.textContent = username;
-    usersListEl.appendChild(li);
-  });
+  // Загрузка и рендер списка зарегистрированных игроков через API
+  async function renderUsersList() {
+    const response = await fetch('/api/users');
+    const users = await response.json();
+    const usersListEl = document.getElementById('users-list');
+    usersListEl.innerHTML = '';
+    users.forEach(user => {
+      const li = document.createElement('li');
+      li.textContent = user.username;
+      usersListEl.appendChild(li);
+    });
+  }
+  // Инициализируем список игроков
+  renderUsersList();
 
   const storageKey = 'categoriesVisibility';
   let visibilitySettings = JSON.parse(localStorage.getItem(storageKey) || '{}');
