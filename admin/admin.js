@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     usersListEl.innerHTML = '';
     users.forEach(user => {
       const li = document.createElement('li');
-      li.textContent = user.username;
+      li.textContent = `${user.username} (ID: ${user.id})`;
       usersListEl.appendChild(li);
     });
   }
