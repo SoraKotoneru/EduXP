@@ -40,7 +40,7 @@ app.use('/api/items', itemsRouter);
 app.use('/api/unlockedItems', unlockedItemsRouter);
 
 // 11. Для любых других GET-запросов отдаём index.html (незаменимо для SPA)
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
