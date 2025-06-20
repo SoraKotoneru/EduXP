@@ -41,22 +41,48 @@ const layerOrder = {
 
 // Функция для выполнения GET-запроса
 async function fetchData(url) {
-  const response = await fetch(url);
+  const token = localStorage.getItem('token');
+  const headers = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const response = await fetch(url, { headers });
   if (!response.ok) throw new Error('Ошибка загрузки данных');
   return await response.json();
 }
 
 // Функция для выполнения POST-запроса
 async function postData(url, data) {
+  const token = localStorage.getItem('token');
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
   const response = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers,
     body: JSON.stringify(data)
   });
   if (!response.ok) throw new Error('Ошибка сохранения данных');
   return await response.json();
+}
+
+// Получение сохранённой конфигурации аватара
+async function fetchAvatarConfig() {
+  try {
+    return await fetchData('/api/avatar');
+  } catch (err) {
+    console.error('Не удалось загрузить конфиг аватара:', err);
+    return null;
+  }
+}
+
+// Сохранение конфигурации аватара
+async function saveAvatarConfig(config) {
+  try {
+    await postData('/api/avatar', { config });
+    notifications.innerText = 'Конфигурация сохранена!';
+    notifications.classList.remove('hidden');
+    setTimeout(() => notifications.classList.add('hidden'), 2000);
+  } catch (err) {
+    console.error('Ошибка сохранения конфига аватара:', err);
+  }
 }
 
 // Загружаем разблокированные временные предметы из localStorage
@@ -240,10 +266,13 @@ function renderAvatar() {
 
 // 4. Сохранение образа
 saveBtn.addEventListener('click', () => {
-  notifications.innerText = 'Образ сохранён!';
-  notifications.classList.remove('hidden');
-  setTimeout(() => notifications.classList.add('hidden'), 2000);
-  // TODO: сохранить config в localStorage или на сервер
+  // Сохраняем текущую конфигурацию аватара на сервере
+  const config = Array.from(avatarCanvas.querySelectorAll('img[data-layer]')).map(el => ({
+    category: el.dataset.category,
+    itemId: el.dataset.itemId,
+    color: el.dataset.color || null
+  }));
+  saveAvatarConfig(config);
 });
 
 // Функция генерации списка категорий с превью
@@ -284,11 +313,17 @@ function renderCategoryList() {
 // Инициализация страницы
 (async function init() {
   await loadItemsList();
-  console.log('Элемент categoryList:', categoryList); // Отладка структуры DOM
+  // Загружаем и применяем сохранённый конфиг аватара
+  const avatarConfig = await fetchAvatarConfig();
+  if (Array.isArray(avatarConfig)) {
+    renderAvatar();
+    avatarConfig.forEach(({category, itemId, color}) => applyToAvatar(category, itemId, color));
+  } else {
+    renderAvatar();
+  }
+  console.log('Элемент categoryList:', categoryList);
   // Генерируем категории
   renderCategoryList();
-  // Отрисовываем аватар
-  renderAvatar();
   // Подсветка и загрузка дефолтной категории "Кожа"
   document.querySelectorAll('.category-item').forEach(li => li.classList.remove('selected'));
   const defaultCat = categoryList.querySelector(`.category-item[data-category="body"]`);
@@ -329,6 +364,10 @@ function applyToAvatar(category, itemId, color) {
   if (color) {
     el.style.filter = `drop-shadow(0 0 0 ${color})`;
   }
+
+  // Сохраняем данные для постройки конфига
+  el.dataset.itemId = itemId;
+  el.dataset.color = color || '';
 
   // 6. Добавляем в canvas
   avatarCanvas.appendChild(el);

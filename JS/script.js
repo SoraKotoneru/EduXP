@@ -24,78 +24,81 @@ function clearErrors() {
   document.getElementById('password-error').classList.add('hidden');
 }
 
-// Проверка уникальности логина при регистрации
-function checkUniqueLogin() {
+// Проверка уникальности логина только по API при регистрации
+async function checkUniqueLogin() {
   clearErrors();
-  if (mode !== 'register') return;                 // только для режима регистрации
-
+  if (mode !== 'register') return;
   const login = document.getElementById('username').value.trim();
-  const users = JSON.parse(localStorage.getItem('users') || '{}');
-
-  if (login && users[login]) {
-    // если такой логин уже есть
-    document.getElementById('username').classList.add('input-error');
-    const err = document.getElementById('username-error');
-    err.textContent = 'Придумайте другой логин';
-    err.classList.remove('hidden');
+  if (!login) return;
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({username:login,password:'_'})
+    });
+    if (res.status === 409) {
+      document.getElementById('username').classList.add('input-error');
+      const err = document.getElementById('username-error');
+      err.textContent = 'Придумайте другой логин';
+      err.classList.remove('hidden');
+    }
+  } catch (e) {
+    console.error(e);
   }
 }
 
-// Обработка нажатия «Отправить»
-function handleSubmit() {
+// Обработка нажатия "Отправить"
+async function handleSubmit() {
   clearErrors();
-
   const loginEl = document.getElementById('username');
   const passEl  = document.getElementById('password');
-  const login   = loginEl.value.trim();
-  const pass    = passEl.value.trim();
-
-  if (!login || !pass) {
-    // можно добавить сообщения про обязательность полей
+  const username = loginEl.value.trim();
+  const password = passEl.value.trim();
+  if (!username || !password) {
     return;
   }
-
-  const users = JSON.parse(localStorage.getItem('users') || '{}');
-
-  if (mode === 'register') {
-    // Регистрация: логин должен быть уникальным
-    if (users[login]) {
-      // ошибка уже показывается в checkUniqueLogin
-      return;
+  try {
+    let token;
+    if (mode === 'register') {
+      const reg = await fetch('/api/auth/register', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password})
+      });
+      if (reg.status === 409) {
+        loginEl.classList.add('input-error'); passEl.classList.add('input-error');
+        const err1 = document.getElementById('username-error');
+        const err2 = document.getElementById('password-error');
+        err1.textContent = 'Логин занят'; err2.textContent = 'Логин занят';
+        err1.classList.remove('hidden'); err2.classList.remove('hidden');
+        return;
+      }
+      // После успешной регистрации сразу логинимся
     }
-    // сохраняем нового пользователя
-    users[login] = pass;
-    localStorage.setItem('users', JSON.stringify(users));
-
-    // авторизуем сразу же и переходим в игру
-    localStorage.setItem('currentUser', login);
-    window.location.href = 'game.html';
-    return;
-  }
-
-  if (mode === 'login') {
-    // Вход: проверяем наличие и совпадение пароля
-    if (!users[login] || users[login] !== pass) {
-      loginEl.classList.add('input-error');
-      passEl.classList.add('input-error');
+    // Входим или после регистрации
+    const res = await fetch('/api/auth/login', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password})
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      loginEl.classList.add('input-error'); passEl.classList.add('input-error');
       const err1 = document.getElementById('username-error');
       const err2 = document.getElementById('password-error');
-      err1.textContent = 'Неверный логин или пароль';
-      err2.textContent = 'Неверный логин или пароль';
-      err1.classList.remove('hidden');
-      err2.classList.remove('hidden');
+      err1.textContent = data.error || 'Неверный логин или пароль';
+      err2.textContent = data.error || 'Неверный логин или пароль';
+      err1.classList.remove('hidden'); err2.classList.remove('hidden');
       return;
     }
-    // успешный вход → редирект
-    localStorage.setItem('currentUser', login);
+    token = data.token;
+    localStorage.setItem('token', token);
     window.location.href = 'game.html';
+  } catch (e) {
+    console.error(e);
   }
 }
 
-// После определения функций добавляем слушатели на кнопки переключения режима
+// Назначаем события на кнопки
 document.addEventListener('DOMContentLoaded', () => {
-  const btnRegister = document.getElementById('btn-register');
-  const btnLogin = document.getElementById('btn-login');
-  if (btnRegister) btnRegister.addEventListener('click', () => showForm('register'));
-  if (btnLogin)    btnLogin.addEventListener('click',    () => showForm('login'));
+  document.getElementById('btn-register').addEventListener('click', ()=>showForm('register'));
+  document.getElementById('btn-login').addEventListener('click', ()=>showForm('login'));
+  document.getElementById('username').addEventListener('input', checkUniqueLogin);
+  document.getElementById('submit-btn').addEventListener('click', handleSubmit);
 });
