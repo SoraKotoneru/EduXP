@@ -288,14 +288,13 @@ function renderCategoryList() {
   categoriesOrder.forEach(category => {
     const items = itemsList[category] || [];
     if (items.length > 0 && (visibilitySettings[category] !== false)) {
-      const firstItem = items[0];
       const li = document.createElement('li');
       li.className = 'category-item';
       li.dataset.category = category;
-      // Превью: берем картинку первого элемента категории
+      // Превью: иконка категории
       const img = document.createElement('img');
       img.className = 'category-thumb';
-      img.src = `./assets/сlothes/${category}/${firstItem.id}.png`;
+      img.src = `./assets/icons/categories/${category}.png`;
       img.alt = category;
       li.appendChild(img);
       // Подпись категории
