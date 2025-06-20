@@ -3,8 +3,8 @@ const path = require('path');
 const router = express.Router();
 
 // Подгружаем статический список предметов из JSON-файла
-const itemsFile = path.join(__dirname, '..', 'data', 'clothes.json');
-const defaultItemsList = require('../data/clothes.json');
+// const itemsFile = path.join(__dirname, '..', 'data', 'clothes.json'); // не используется
+const defaultItemsList = require(path.join(__dirname, '..', '..', 'data', 'clothes.json'));
 
 // GET /api/items
 router.get('/', (req, res) => {
