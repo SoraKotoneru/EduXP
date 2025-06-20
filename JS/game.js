@@ -192,13 +192,10 @@ function loadItems(category) {
     div.dataset.category = category;
     div.dataset.itemId   = item.id;
 
-    // 4. Показываем картинку только если нет вариантов цвета
-    let imgEl = null;
-    if (!item.colors || item.colors.length === 0) {
-      imgEl = document.createElement('img');
-      imgEl.src = `./assets/сlothes/${category}/${item.id}.png`;
-      div.appendChild(imgEl);
-    }
+    // 4. Показываем изображение предмета
+    const imgEl = document.createElement('img');
+    imgEl.src = `./assets/сlothes/${category}/${item.id}.png`;
+    div.appendChild(imgEl);
 
     // 5. Блок для цветовых вариантов
     let colorsDiv = null;
