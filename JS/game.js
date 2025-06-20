@@ -139,6 +139,16 @@ let itemsList = {};
 function loadItemsList() {
   return fetchData('/api/items').then(data => {
     itemsList = data;
+    // Добавим дефолтные элементы body, если их нет в базе
+    if (!itemsList.body || itemsList.body.length === 0) {
+      itemsList.body = defaultItemsList.body.map(item => ({
+        id: item.id,
+        colors: item.colors,
+        availability: item.availability,
+        // дефолтная миниатюра равна базовому PNG
+        thumbnail: `${item.id}.png`
+      }));
+    }
     console.log('Загруженные данные:', itemsList); // Отладка данных
   }).catch(console.error);
 }

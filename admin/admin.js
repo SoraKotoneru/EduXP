@@ -31,9 +31,25 @@ document.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML = '';
     itemsArr.forEach(item => {
       const tr = document.createElement('tr');
+      // ID
       const tdId = document.createElement('td'); tdId.textContent = item.id; tr.appendChild(tdId);
+      // Категория
       const tdCat = document.createElement('td'); tdCat.textContent = item.category; tr.appendChild(tdCat);
+      // Слой
       const tdLayer = document.createElement('td'); tdLayer.textContent = item.layer; tr.appendChild(tdLayer);
+      // Миниатюра
+      const tdThumb = document.createElement('td');
+      if (item.thumbnail) {
+        const img = document.createElement('img');
+        img.src = `../assets/сlothes/${item.category}/${item.thumbnail}`;
+        img.alt = item.id;
+        img.style.width = '40px'; img.style.height = 'auto';
+        tdThumb.appendChild(img);
+      } else {
+        tdThumb.textContent = '-';
+      }
+      tr.appendChild(tdThumb);
+      // Цвета
       const tdColor = document.createElement('td');
       (item.colors || []).forEach(col => {
         const sw = document.createElement('span');
@@ -42,7 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
         tdColor.appendChild(sw);
       });
       tr.appendChild(tdColor);
+      // Доступность
       const tdAvail = document.createElement('td'); tdAvail.textContent = item.availability; tr.appendChild(tdAvail);
+      // Действия
       const tdAct = document.createElement('td');
       const delBtn = document.createElement('button'); delBtn.textContent = 'Удалить';
       delBtn.addEventListener('click', async () => {
