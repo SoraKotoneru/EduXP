@@ -41,7 +41,7 @@ app.use('/api/unlockedItems', unlockedItemsRouter);
 
 // 11. Для любых других GET-запросов отдаём index.html (незаменимо для SPA)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'EduXP', 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
 // 12. Стартуем сервер на порту из .env или 3000

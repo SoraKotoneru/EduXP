@@ -53,4 +53,13 @@ router.post('/login', async (req, res) => {
   res.json({ token });
 });
 
+// GET /api/auth/check/:username
+// Проверка, существует ли пользователь с таким именем
+router.get('/check/:username', async (req, res) => {
+  const { username } = req.params;
+  if (!username) return res.status(400).json({ error: 'Username required' });
+  const exists = await User.findOne({ where: { username } }) ? true : false;
+  res.json({ exists });
+});
+
 module.exports = router;

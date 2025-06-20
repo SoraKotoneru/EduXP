@@ -28,19 +28,19 @@ function clearErrors() {
 async function checkUniqueLogin() {
   clearErrors();
   if (mode !== 'register') return;
-  const login = document.getElementById('username').value.trim();
-  if (!login) return;
+  const username = document.getElementById('username').value.trim();
+  if (!username) return;
   try {
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({username:login,password:'_'})
-    });
-    if (res.status === 409) {
-      document.getElementById('username').classList.add('input-error');
-      const err = document.getElementById('username-error');
-      err.textContent = 'Придумайте другой логин';
-      err.classList.remove('hidden');
+    const res = await fetch(`/api/auth/check/${encodeURIComponent(username)}`);
+    if (res.ok) {
+      const { exists } = await res.json();
+      if (exists) {
+        const loginEl = document.getElementById('username');
+        loginEl.classList.add('input-error');
+        const err = document.getElementById('username-error');
+        err.textContent = 'Придумайте другой логин';
+        err.classList.remove('hidden');
+      }
     }
   } catch (e) {
     console.error(e);
