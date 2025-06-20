@@ -279,32 +279,25 @@ saveBtn.addEventListener('click', () => {
 function renderCategoryList() {
   // Читаем настройки видимости категорий из localStorage
   const visibilitySettings = JSON.parse(localStorage.getItem('categoriesVisibility') || '{}');
-  // Список категорий, которые пока пусты и не должны отображаться
-  const hideEmpty = ['hair_back','pants','top','accessory'];
-  categoryList.innerHTML = '';  // очищаем старые элементы
+  categoryList.innerHTML = '';
   categoriesOrder.forEach(category => {
-    // Пропускаем явно пустые категории и те без предметов
     const items = itemsList[category] || [];
-    if (visibilitySettings[category] && items.length > 0 && !hideEmpty.includes(category)) {
+    if (visibilitySettings[category] && items.length > 0) {
+      const firstItem = items[0];
       const li = document.createElement('li');
       li.className = 'category-item';
       li.dataset.category = category;
-      // Превью: иконка категории
+      // Превью: берем картинку первого элемента категории
       const img = document.createElement('img');
       img.className = 'category-thumb';
-      img.src = `./assets/icons/categories/${category}.png`;
+      img.src = `./assets/сlothes/${category}/${firstItem.id}.png`;
       img.alt = category;
-      // Удаляем категорию, если иконка не загрузилась
-      img.addEventListener('error', () => {
-        li.remove();
-      });
       li.appendChild(img);
-      // Добавляем подпись категории
+      // Подпись категории
       const label = document.createElement('span');
       label.className = 'category-label';
       label.textContent = category[0].toUpperCase() + category.slice(1);
       li.appendChild(label);
-      // Добавляем в список
       categoryList.appendChild(li);
     }
   });
