@@ -100,6 +100,8 @@ async function handleSubmit() {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       localStorage.setItem('currentUser', String(payload.userId));
+      // Сохраняем ник пользователя для отображения в игре
+      localStorage.setItem('currentUsername', username);
     } catch {
       console.warn('Не удалось разобрать userId из токена');
     }

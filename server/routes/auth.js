@@ -50,7 +50,8 @@ router.post('/login', async (req, res) => {
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   );
-  res.json({ token });
+  // Возвращаем токен и имя пользователя
+  res.json({ token, username: user.username });
 });
 
 // GET /api/auth/check/:username
