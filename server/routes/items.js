@@ -4,6 +4,7 @@ const path = require('path');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const Item = require('../models/item');
+const ItemUser = require('../models/itemUser');
 const router = express.Router();
 
 // Multer: сохраняем файлы в assets/сlothes/<category>
@@ -30,8 +31,13 @@ router.get('/', async (req, res) => {
     }
     // Загружаем все предметы и фильтруем по visible
     let items = await Item.findAll();
-    // Показываем предметы с visible !== false (true или null для старых записей)
     items = items.filter(item => item.visible !== false);
+    // Подготовим список доступных private-предметов для userId
+    let accessSet = new Set();
+    if (userId) {
+      const accesses = await ItemUser.findAll({ where: { userId } });
+      accessSet = new Set(accesses.map(a => a.itemId));
+    }
     // Группируем по категориям
     const grouped = items.reduce((acc, item) => {
       const cat = item.category;
@@ -39,15 +45,12 @@ router.get('/', async (req, res) => {
       acc[cat].push(item);
       return acc;
     }, {});
-    // Если есть userId, фильтруем private-предметы
-    if (userId) {
-      for (const cat of Object.keys(grouped)) {
-        grouped[cat] = grouped[cat].filter(item => {
-          if (item.availability !== 'private') return true;
-          const users = item.users ? item.users.split(',').map(u => u.trim()) : [];
-          return users.includes(String(userId));
-        });
-      }
+    // Фильтруем private-предметы через pivot table
+    for (const cat of Object.keys(grouped)) {
+      grouped[cat] = grouped[cat].filter(item => {
+        if (item.availability !== 'private') return true;
+        return accessSet.has(item.id);
+      });
     }
     res.json(grouped);
   } catch (err) {
@@ -83,7 +86,7 @@ router.post('/', upload.fields([
       if (!groups[id]) groups[id] = { id, colors: [] };
       groups[id].colors.push('#' + colorHex);
     });
-    // Создаём записи в БД
+    // Создаём или обновляем записи в БД и pivot table
     const created = [];
     for (const id in groups) {
       const itemData = {
@@ -97,8 +100,17 @@ router.post('/', upload.fields([
         colors: groups[id].colors,
         thumbnail: thumbnailFile
       };
-      const item = await Item.create(itemData);
+      await Item.upsert(itemData);
+      const item = await Item.findByPk(id);
       created.push(item);
+      // Если private - обновляем pivot таблицу
+      if (itemData.availability === 'private' && users) {
+        const userIds = users.split(',').map(x=>x.trim()).filter(x=>x);
+        await ItemUser.destroy({ where: { itemId: id } });
+        for (const uid of userIds) {
+          await ItemUser.create({ itemId: id, userId: parseInt(uid) });
+        }
+      }
     }
     res.status(201).json(created);
   } catch (err) {
@@ -169,18 +181,23 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// PATCH /api/items/:id - обновление полей visible и users
+// PATCH /api/items/:id - обновление полей visible и users, pivot table для users
 router.patch('/:id', async (req, res) => {
   try {
     const id = req.params.id;
     const { visible, users } = req.body;
-    const updateData = {};
-    if (typeof visible === 'boolean') updateData.visible = visible;
-    if (typeof users === 'string') updateData.users = users;
-    if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({ error: 'No valid fields to update' });
+    // Обновляем видимость
+    if (typeof visible === 'boolean') {
+      await Item.update({ visible }, { where: { id } });
     }
-    await Item.update(updateData, { where: { id } });
+    // Обновляем pivot таблицу для private
+    if (typeof users === 'string') {
+      const userIds = users.split(',').map(x=>x.trim()).filter(x=>x);
+      await ItemUser.destroy({ where: { itemId: id } });
+      for (const uid of userIds) {
+        await ItemUser.create({ itemId: id, userId: parseInt(uid) });
+      }
+    }
     res.json({ message: 'Item updated' });
   } catch (err) {
     console.error(err);

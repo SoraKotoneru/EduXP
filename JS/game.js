@@ -177,9 +177,9 @@ logoutBtn.addEventListener('click', () => {
     .catch(err => console.error('Ошибка автосохранения перед выходом:', err))
     .finally(() => {
       localStorage.removeItem('token');
-      localStorage.removeItem('currentUser');
+  localStorage.removeItem('currentUser');
       localStorage.removeItem('currentUsername');
-      window.location.href = 'index.html';
+  window.location.href = 'index.html';
     });
 });
 
@@ -310,7 +310,7 @@ function renderCategoryList() {
   await loadItemsList();
   renderCategoryList();
   // Рендер аватара (очистка canvas)
-  renderAvatar();
+    renderAvatar();
   let avatarConfig = await fetchAvatarConfig() || [];
   // Удаляем только те private-предметы, доступ к которым у пользователя отсутствует
   const filteredConfig = avatarConfig.filter(({category, itemId, availability}) => {
@@ -342,14 +342,14 @@ function renderCategoryList() {
     }
   } else {
     // Применяем дефолтную категорию и предмет
-    const defaultCat = categoryList.querySelector(`.category-item[data-category="body"]`);
+  const defaultCat = categoryList.querySelector(`.category-item[data-category="body"]`);
     if (defaultCat) {
       categoryList.querySelectorAll('.category-item').forEach(li => li.classList.remove('selected'));
       defaultCat.classList.add('selected');
-      loadItems('body');
-      const defaultItem = inventoryBar.querySelector('.inventory-item[data-item-id="skin_light"]');
-      if (defaultItem) defaultItem.classList.add('selected');
-      applyToAvatar('body', 'skin_light', null);
+  loadItems('body');
+  const defaultItem = inventoryBar.querySelector('.inventory-item[data-item-id="skin_light"]');
+  if (defaultItem) defaultItem.classList.add('selected');
+  applyToAvatar('body', 'skin_light', null);
       // Автосохранение дефолтного образа
       saveAvatarConfig(getAvatarConfig());
     }
