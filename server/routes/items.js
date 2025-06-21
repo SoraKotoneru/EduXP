@@ -53,7 +53,10 @@ router.post('/', upload.fields([
     colorFiles.forEach(file => {
       const name = file.originalname.replace(/\.png$/i, '');
       const parts = name.split('_');
+      // Пропускаем файлы без корректного формата id_hex6
+      if (parts.length < 2) return;
       const colorHex = parts.pop();
+      if (!/^[0-9A-Fa-f]{6}$/.test(colorHex)) return;
       const id = parts.join('_');
       if (!groups[id]) groups[id] = { id, colors: [] };
       groups[id].colors.push('#' + colorHex);
@@ -82,11 +85,56 @@ router.post('/', upload.fields([
   }
 });
 
+// DELETE /api/items/ - удаление предметов без ID (пустой id)
+router.delete('/', async (req, res) => {
+  try {
+    const deletedCount = await Item.destroy({ where: { id: '' } });
+    res.json({ message: `Deleted ${deletedCount} items without ID` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // DELETE /api/items/:id - удаление предмета
 router.delete('/:id', async (req, res) => {
   try {
     const id = req.params.id;
+    // Находим предмет для получения данных о категории, миниатюре и цветах
+    const item = await Item.findByPk(id);
+    if (!item) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+    const category = item.category;
+    const thumbnail = item.thumbnail;
+    const colors = item.colors || [];
+
+    // Удаляем запись из БД
     await Item.destroy({ where: { id } });
+
+    // Удаляем файлы из файловой системы
+    const dir = path.join(__dirname, '..', '..', 'assets', 'сlothes', category);
+    try {
+      // Удаление миниатюры
+      if (thumbnail) {
+        const thumbPath = path.join(dir, thumbnail);
+        if (fs.existsSync(thumbPath)) {
+          fs.unlinkSync(thumbPath);
+        }
+      }
+      // Удаление цветных файлов
+      for (const color of colors) {
+        const colorHex = color.replace(/^#/, '');
+        const fileName = `${id}_${colorHex}.png`;
+        const filePath = path.join(dir, fileName);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      }
+    } catch (fsErr) {
+      console.error('Ошибка при удалении файлов:', fsErr);
+    }
+
     res.json({ message: 'Deleted' });
   } catch (err) {
     console.error(err);

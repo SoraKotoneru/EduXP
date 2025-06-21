@@ -90,6 +90,15 @@ async function saveAvatarConfig(config) {
   }
 }
 
+// Функция для получения текущей конфигурации аватара из канваса
+function getAvatarConfig() {
+  return Array.from(avatarCanvas.querySelectorAll('img[data-layer]')).map(el => ({
+    category: el.dataset.category,
+    itemId: el.dataset.itemId,
+    color: el.dataset.color || null
+  }));
+}
+
 // Загружаем разблокированные временные предметы из localStorage
 let unlockedItems = [];
 fetchData('/api/unlockedItems').then(data => {
@@ -155,7 +164,9 @@ function loadItemsList() {
 
 // 1. Logout
 logoutBtn.addEventListener('click', () => {
+  localStorage.removeItem('token');
   localStorage.removeItem('currentUser');
+  localStorage.removeItem('currentUsername');
   window.location.href = 'index.html';
 });
 
@@ -190,7 +201,7 @@ function loadItems(category) {
       return unlockedItems.includes(item.id);
     }
     if (item.availability === 'private') {
-      const users = item.users?.split(',') || [];
+      const users = item.users ? item.users.split(',').map(u => u.trim()) : [];
       const currentUser = localStorage.getItem('currentUser');
       return users.includes(currentUser);
     }
@@ -237,6 +248,8 @@ function loadItems(category) {
           saveUnlockedItems();
         }
       }
+      // Автосохранение конфигурации после выбора предмета
+      saveAvatarConfig(getAvatarConfig());
     });
 
     // Добавляем предмет в панель
@@ -253,12 +266,7 @@ function renderAvatar() {
 // 4. Сохранение образа
 saveBtn.addEventListener('click', () => {
   // Сохраняем текущую конфигурацию аватара на сервере
-  const config = Array.from(avatarCanvas.querySelectorAll('img[data-layer]')).map(el => ({
-    category: el.dataset.category,
-    itemId: el.dataset.itemId,
-    color: el.dataset.color || null
-  }));
-  saveAvatarConfig(config);
+  saveAvatarConfig(getAvatarConfig());
 });
 
 // Функция генерации списка категорий с превью
@@ -289,27 +297,40 @@ function renderCategoryList() {
 
 // Инициализация страницы
 (async function init() {
+  // Загрузка списка предметов и списков категорий
   await loadItemsList();
-  // Загружаем и применяем сохранённый конфиг аватара
-  const avatarConfig = await fetchAvatarConfig();
-  if (Array.isArray(avatarConfig)) {
-    renderAvatar();
-    avatarConfig.forEach(({category, itemId, color}) => applyToAvatar(category, itemId, color));
-  } else {
-    renderAvatar();
-  }
-  console.log('Элемент categoryList:', categoryList);
-  // Генерируем категории
   renderCategoryList();
-  // Подсветка и загрузка дефолтной категории "Кожа"
-  document.querySelectorAll('.category-item').forEach(li => li.classList.remove('selected'));
-  const defaultCat = categoryList.querySelector(`.category-item[data-category="body"]`);
-  if (defaultCat) defaultCat.classList.add('selected');
-  // Загружаем предметы и выделяем дефолтный
-  loadItems('body');
-  const defaultItem = inventoryBar.querySelector('.inventory-item[data-item-id="skin_light"]');
-  if (defaultItem) defaultItem.classList.add('selected');
-  applyToAvatar('body', 'skin_light', null);
+  // Рендер аватара (очистка canvas)
+  renderAvatar();
+  // Получаем сохранённый конфиг аватара
+  const avatarConfig = await fetchAvatarConfig() || [];
+  if (avatarConfig.length > 0) {
+    // Применяем все сохранённые слои
+    avatarConfig.forEach(({category, itemId, color}) => applyToAvatar(category, itemId, color));
+    // Подсветка последней выбранной категории и предмета
+    const last = avatarConfig[avatarConfig.length - 1];
+    const catEl = categoryList.querySelector(`.category-item[data-category="${last.category}"]`);
+    if (catEl) {
+      categoryList.querySelectorAll('.category-item').forEach(li => li.classList.remove('selected'));
+      catEl.classList.add('selected');
+      loadItems(last.category);
+      const invItem = inventoryBar.querySelector(`.inventory-item[data-item-id="${last.itemId}"]`);
+      if (invItem) invItem.classList.add('selected');
+    }
+  } else {
+    // Применяем дефолтную категорию и предмет
+    const defaultCat = categoryList.querySelector(`.category-item[data-category="body"]`);
+    if (defaultCat) {
+      categoryList.querySelectorAll('.category-item').forEach(li => li.classList.remove('selected'));
+      defaultCat.classList.add('selected');
+      loadItems('body');
+      const defaultItem = inventoryBar.querySelector('.inventory-item[data-item-id="skin_light"]');
+      if (defaultItem) defaultItem.classList.add('selected');
+      applyToAvatar('body', 'skin_light', null);
+      // Автосохранение дефолтного образа
+      saveAvatarConfig(getAvatarConfig());
+    }
+  }
 })();
 
 // Накладываем выбранный предмет на канвас
@@ -367,8 +388,16 @@ function renderColorBar(category, itemId, colors) {
       sw.classList.add('selected');
       // применяем выбранную вариацию
       applyToAvatar(category, itemId, color);
+      // Автосохранение конфигурации после смены цвета
+      saveAvatarConfig(getAvatarConfig());
     });
     colorBar.appendChild(sw);
   });
+}
+
+// Отображаем имя пользователя
+const usernameDisplay = document.getElementById('username-display');
+if (usernameDisplay) {
+  usernameDisplay.textContent = localStorage.getItem('currentUsername') || '';
 }
 

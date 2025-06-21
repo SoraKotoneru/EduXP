@@ -23,24 +23,24 @@ router.use((req, res, next) => {
   }
 });
 
-// GET /api/avatar
-// Возвращает JSON-конфиг аватара пользователя
+// GET /api/avatar - возвращает массив элементов аватарки
 router.get('/', async (req, res) => {
   const avatar = await Avatar.findOne({ where: { userId: req.userId } });
-  res.json(avatar.config);
+  // Берём только сохранённую конфигурацию аватара (массив) или пустой массив
+  const avatarConfig = Array.isArray(avatar.config.avatarConfig) ? avatar.config.avatarConfig : [];
+  res.json(avatarConfig);
 });
 
-// POST /api/avatar
-// Обновляет конфигурацию аватара
+// POST /api/avatar - обновляет массив элементов аватарки
 router.post('/', async (req, res) => {
   const { config } = req.body;
   if (!config) {
     return res.status(400).json({ error: 'Config is required' });
   }
-  await Avatar.update(
-    { config },
-    { where: { userId: req.userId } }
-  );
+  // Находим текущий объект Avatar и обновляем его JSON-конфиг
+  const avatar = await Avatar.findOne({ where: { userId: req.userId } });
+  const newConfig = { ...avatar.config, avatarConfig: config };
+  await avatar.update({ config: newConfig });
   res.json({ message: 'Avatar saved' });
 });
 
