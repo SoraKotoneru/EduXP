@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// GET /api/items - возвращает предметы, private-фильтрация по JWT
+// GET /api/items - возвращает предметы, private-фильтрация по JWT и visible
 router.get('/', async (req, res) => {
   try {
     // Определяем userId из JWT, если авторизован
@@ -28,8 +28,9 @@ router.get('/', async (req, res) => {
       const token = authHeader.split(' ')[1];
       try { userId = jwt.verify(token, process.env.JWT_SECRET).userId; } catch {}
     }
-    // Загружаем все предметы
-    const items = await Item.findAll();
+    // Загружаем все предметы и фильтруем по visible
+    let items = await Item.findAll();
+    items = items.filter(item => item.visible);
     // Группируем по категориям
     const grouped = items.reduce((acc, item) => {
       const cat = item.category;
@@ -162,16 +163,16 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// PATCH /api/items/:id - обновление поля availability
+// PATCH /api/items/:id - обновление поля visible
 router.patch('/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    const { availability } = req.body;
-    if (!['public','time-limited','private'].includes(availability)) {
-      return res.status(400).json({ error: 'Invalid availability value' });
+    const { visible } = req.body;
+    if (typeof visible !== 'boolean') {
+      return res.status(400).json({ error: 'Invalid visible value' });
     }
-    await Item.update({ availability }, { where: { id } });
-    res.json({ message: 'Availability updated' });
+    await Item.update({ visible }, { where: { id } });
+    res.json({ message: 'Visibility updated' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

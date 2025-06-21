@@ -6,14 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Показываем дополнительные поля для настройки доступности
   availability.addEventListener('change', () => {
     settings.innerHTML = '';
-    if (availability.value === 'time-limited') {
-      settings.innerHTML = `
-        <label for="start-date">Начало (дд.мм.гггг):</label>
-        <input type="date" id="start-date">
-        <label for="end-date">Конец (дд.мм.гггг):</label>
-        <input type="date" id="end-date">
-      `;
-    } else if (availability.value === 'private') {
+    if (availability.value === 'private') {
       settings.innerHTML = `
         <label for="user-list">Пользователи (ID через запятую):</label>
         <input type="text" id="user-list" placeholder="user1,user2">
@@ -60,27 +53,27 @@ document.addEventListener('DOMContentLoaded', () => {
       tr.appendChild(tdColor);
       // Доступность (чекбокс time-limited)
       const tdAvail = document.createElement('td');
-      const chkTL = document.createElement('input');
-      chkTL.type = 'checkbox';
-      chkTL.checked = item.availability === 'time-limited';
+      const chkVis = document.createElement('input');
+      chkVis.type = 'checkbox';
+      chkVis.checked = item.visible;
       // Обработчик изменения доступности
-      chkTL.addEventListener('change', async () => {
-        const newAvail = chkTL.checked ? 'time-limited' : 'public';
+      chkVis.addEventListener('change', async () => {
+        const newVis = chkVis.checked;
         await fetch(`/api/items/${item.id}`, {
           method: 'PATCH',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ availability: newAvail })
+          body: JSON.stringify({ visible: newVis })
         });
         renderItemsList();
       });
-      const lblAvail = document.createElement('span');
-      lblAvail.textContent = chkTL.checked ? 'Time-limited' : 'Public';
+      const lblVis = document.createElement('span');
+      lblVis.textContent = chkVis.checked ? 'Visible' : 'Hidden';
       // Обновляем текст при смене
-      chkTL.addEventListener('change', () => {
-        lblAvail.textContent = chkTL.checked ? 'Time-limited' : 'Public';
+      chkVis.addEventListener('change', () => {
+        lblVis.textContent = chkVis.checked ? 'Visible' : 'Hidden';
       });
-      tdAvail.appendChild(chkTL);
-      tdAvail.appendChild(lblAvail);
+      tdAvail.appendChild(chkVis);
+      tdAvail.appendChild(lblVis);
       tr.appendChild(tdAvail);
       // Действия
       const tdAct = document.createElement('td');
@@ -102,16 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const category = document.getElementById('item-category').value;
     const layer = document.getElementById('item-layer').value;
     const availability = document.getElementById('item-availability').value;
-    const startDate = availability === 'time-limited' ? document.getElementById('start-date').value : undefined;
-    const endDate = availability === 'time-limited' ? document.getElementById('end-date').value : undefined;
     const users = availability === 'private' ? document.getElementById('user-list').value : undefined;
     // Подготавливаем FormData для API
     const formData = new FormData();
     formData.append('category', category);
     formData.append('layer', layer);
     formData.append('availability', availability);
-    if (startDate) formData.append('start', startDate);
-    if (endDate) formData.append('end', endDate);
     if (users) formData.append('users', users);
     const files = document.getElementById('item-files').files;
     for (const file of files) {

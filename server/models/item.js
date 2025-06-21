@@ -25,6 +25,11 @@ const Item = sequelize.define('Item', {
   thumbnail: {
     type: DataTypes.STRING,
     allowNull: true
+  },
+  visible: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
   }
 });
 
