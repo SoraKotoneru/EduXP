@@ -12,9 +12,15 @@ const router = express.Router();
 // POST /api/auth/register
 // Создаёт нового пользователя и пустой аватар
 router.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+  let { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({ error: 'Username and password required' });
+  }
+  // Обрезаем пробелы и валидируем формат ника
+  username = username.trim();
+  const usernameRegex = /^[A-Za-z\u0400-\u04FF0-9]{1,20}$/;
+  if (!usernameRegex.test(username)) {
+    return res.status(400).json({ error: 'Ник должен быть до 20 символов, без пробелов, только буквы и цифры' });
   }
   // Проверяем, не занят ли логин
   if (await User.findOne({ where: { username } })) {
@@ -44,14 +50,15 @@ router.post('/login', async (req, res) => {
   if (!ok) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
-  // Генерируем токен (содержит userId)
+  // Генерируем токен (содержит userId и флаг isAdmin)
+  const isAdmin = username === 'SoraKotoneru';
   const token = jwt.sign(
-    { userId: user.id },
+    { userId: user.id, isAdmin },
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   );
-  // Возвращаем токен и имя пользователя
-  res.json({ token, username: user.username });
+  // Возвращаем токен, имя пользователя и флаг isAdmin
+  res.json({ token, username: user.username, isAdmin });
 });
 
 // GET /api/auth/check/:username

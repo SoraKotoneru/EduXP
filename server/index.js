@@ -28,9 +28,8 @@ app.use(express.json());
   }
 })();
 
-// --- Basic Auth и cookie для панели администратора ---
+// --- Защита панели администратора: только с корректным cookie ---
 app.use('/admin', (req, res, next) => {
-  // Проверяем cookie adminAuth (Base64 логин:пароль)
   const cookieHeader = req.headers.cookie || '';
   const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
     const [key, value] = cookie.trim().split('=');
@@ -41,22 +40,8 @@ app.use('/admin', (req, res, next) => {
   if (cookies.adminAuth === expectedEncoded) {
     return next();
   }
-  // Дальше HTTP Basic Auth если нет валидного cookie
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    res.set('WWW-Authenticate', 'Basic realm="Admin Area"');
-    return res.status(401).send('Authentication required');
-  }
-  const [scheme, encoded] = authHeader.split(' ');
-  if (scheme !== 'Basic' || !encoded) {
-    return res.status(400).send('Bad request');
-  }
-  const [user, pass] = Buffer.from(encoded, 'base64').toString().split(':');
-  if (user === 'SoraKotoneru' && pass === 'ghbywtccf@3141') {
-    return next();
-  }
-  res.set('WWW-Authenticate', 'Basic realm="Admin Area"');
-  return res.status(401).send('Invalid credentials');
+  // Если нет валидного cookie, редирект на страницу входа
+  return res.redirect('/index.html');
 });
 
 // 9. Раздаём статические файлы вашего клиента

@@ -163,16 +163,19 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// PATCH /api/items/:id - обновление поля visible
+// PATCH /api/items/:id - обновление полей visible и users
 router.patch('/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    const { visible } = req.body;
-    if (typeof visible !== 'boolean') {
-      return res.status(400).json({ error: 'Invalid visible value' });
+    const { visible, users } = req.body;
+    const updateData = {};
+    if (typeof visible === 'boolean') updateData.visible = visible;
+    if (typeof users === 'string') updateData.users = users;
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ error: 'No valid fields to update' });
     }
-    await Item.update({ visible }, { where: { id } });
-    res.json({ message: 'Visibility updated' });
+    await Item.update(updateData, { where: { id } });
+    res.json({ message: 'Item updated' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

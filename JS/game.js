@@ -90,13 +90,21 @@ async function saveAvatarConfig(config) {
   }
 }
 
-// Функция для получения текущей конфигурации аватара из канваса
+// Функция для получения текущей конфигурации аватара из канваса (с availability)
 function getAvatarConfig() {
-  return Array.from(avatarCanvas.querySelectorAll('img[data-layer]')).map(el => ({
-    category: el.dataset.category,
-    itemId: el.dataset.itemId,
-    color: el.dataset.color || null
-  }));
+  return Array.from(avatarCanvas.querySelectorAll('img[data-layer]')).map(el => {
+    const category = el.dataset.category;
+    const itemId = el.dataset.itemId;
+    const color = el.dataset.color || null;
+    // Определяем availability по текущему списку itemsList
+    let availability = 'public';
+    const catItems = itemsList[category] || [];
+    const found = catItems.find(it => it.id === itemId);
+    if (found && found.availability) {
+      availability = found.availability;
+    }
+    return { category, itemId, color, availability };
+  });
 }
 
 // Загружаем разблокированные временные предметы из localStorage
@@ -266,17 +274,8 @@ function renderAvatar() {
 
 // 4. Сохранение образа
 saveBtn.addEventListener('click', () => {
-  // Сохраняем текущую конфигурацию аватара на сервере
-  let avatarConfig = getAvatarConfig();
-  // Удаляем недоступные предметы (отключённые админом)
-  const filteredConfig = avatarConfig.filter(({category, itemId}) =>
-    (itemsList[category] || []).some(it => it.id === itemId)
-  );
-  if (filteredConfig.length !== avatarConfig.length) {
-    avatarConfig = filteredConfig;
-    // Обновляем сохранённую конфигурацию без недоступных предметов
-    saveAvatarConfig(avatarConfig);
-  }
+  // Сохраняем текущий конфиг (с availability), без удаления time-limited скрытых
+  saveAvatarConfig(getAvatarConfig());
 });
 
 // Функция генерации списка категорий с превью
@@ -312,15 +311,20 @@ function renderCategoryList() {
   renderCategoryList();
   // Рендер аватара (очистка canvas)
   renderAvatar();
-  // Получаем сохранённый конфиг аватара
   let avatarConfig = await fetchAvatarConfig() || [];
-  // Удаляем недоступные предметы (отключённые админом)
-  const filteredConfig = avatarConfig.filter(({category, itemId}) =>
-    (itemsList[category] || []).some(it => it.id === itemId)
-  );
+  // Удаляем только те private-предметы, доступ к которым у пользователя отсутствует
+  const filteredConfig = avatarConfig.filter(({category, itemId, availability}) => {
+    if (availability === 'private') {
+      const users = (itemsList[category] || []).find(it => it.id === itemId)?.users?.split(',').map(u => u.trim()) || [];
+      const currentUser = localStorage.getItem('currentUser');
+      return users.includes(currentUser);
+    }
+    // public и time-limited оставляем
+    return true;
+  });
   if (filteredConfig.length !== avatarConfig.length) {
     avatarConfig = filteredConfig;
-    // Обновляем сохранённую конфигурацию без недоступных предметов
+    // Обновляем сохранённую конфигурацию без private-нарушений
     saveAvatarConfig(avatarConfig);
   }
   if (avatarConfig.length > 0) {

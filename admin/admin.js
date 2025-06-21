@@ -74,7 +74,29 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       tdAvail.appendChild(chkVis);
       tdAvail.appendChild(lblVis);
-      tr.appendChild(tdAvail);
+      // Пользователи: для private-вещей ввод списка ID
+      const tdUsers = document.createElement('td');
+      if (item.availability === 'private') {
+        const inputUsers = document.createElement('input');
+        inputUsers.value = item.users || '';
+        inputUsers.placeholder = 'ID через запятую';
+        const saveUsersBtn = document.createElement('button');
+        saveUsersBtn.textContent = 'Сохранить';
+        saveUsersBtn.addEventListener('click', async () => {
+          const newUsers = inputUsers.value.trim();
+          await fetch(`/api/items/${item.id}`, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ users: newUsers })
+          });
+          renderItemsList();
+        });
+        tdUsers.appendChild(inputUsers);
+        tdUsers.appendChild(saveUsersBtn);
+      } else {
+        tdUsers.textContent = '-';
+      }
+      tr.appendChild(tdUsers);
       // Действия
       const tdAct = document.createElement('td');
       const delBtn = document.createElement('button'); delBtn.textContent = 'Удалить';
