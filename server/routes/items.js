@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const jwt = require('jsonwebtoken');
 const Item = require('../models/item');
 const router = express.Router();
 
@@ -17,16 +18,35 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// GET /api/items - возвращает все предметы, сгруппированные по категории
+// GET /api/items - возвращает предметы, private-фильтрация по JWT
 router.get('/', async (req, res) => {
   try {
+    // Определяем userId из JWT, если авторизован
+    let userId = null;
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+      const token = authHeader.split(' ')[1];
+      try { userId = jwt.verify(token, process.env.JWT_SECRET).userId; } catch {}
+    }
+    // Загружаем все предметы
     const items = await Item.findAll();
+    // Группируем по категориям
     const grouped = items.reduce((acc, item) => {
       const cat = item.category;
       if (!acc[cat]) acc[cat] = [];
       acc[cat].push(item);
       return acc;
     }, {});
+    // Если есть userId, фильтруем private-предметы
+    if (userId) {
+      for (const cat of Object.keys(grouped)) {
+        grouped[cat] = grouped[cat].filter(item => {
+          if (item.availability !== 'private') return true;
+          const users = item.users ? item.users.split(',').map(u => u.trim()) : [];
+          return users.includes(String(userId));
+        });
+      }
+    }
     res.json(grouped);
   } catch (err) {
     console.error(err);
