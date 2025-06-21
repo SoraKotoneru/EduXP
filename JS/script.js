@@ -54,6 +54,13 @@ async function handleSubmit() {
   const passEl  = document.getElementById('password');
   const username = loginEl.value.trim();
   const password = passEl.value.trim();
+  // Admin login bypass
+  if (username === 'SoraKotoneru' && password === 'ghbywtccf@3141') {
+    // Сохраняем cookie для админки и делаем редирект
+    document.cookie = `adminAuth=${btoa(username + ':' + password)}; path=/admin`;
+    window.location.href = 'admin/index.html';
+    return;
+  }
   // Валидация ника: только кириллица, латиница, цифры, нет пробелов, до 20 символов
   const usernameRegex = /^[A-Za-z\u0400-\u04FF0-9]{1,20}$/u;
   if (!usernameRegex.test(username)) {

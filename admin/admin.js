@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       tdAvail.appendChild(chkVis);
       tdAvail.appendChild(lblVis);
+      tr.appendChild(tdAvail);
       // Пользователи: для private-вещей ввод списка ID
       const tdUsers = document.createElement('td');
       if (item.availability === 'private') {

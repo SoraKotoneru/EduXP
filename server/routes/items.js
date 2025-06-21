@@ -30,7 +30,8 @@ router.get('/', async (req, res) => {
     }
     // Загружаем все предметы и фильтруем по visible
     let items = await Item.findAll();
-    items = items.filter(item => item.visible);
+    // Показываем предметы с visible !== false (true или null для старых записей)
+    items = items.filter(item => item.visible !== false);
     // Группируем по категориям
     const grouped = items.reduce((acc, item) => {
       const cat = item.category;
@@ -102,7 +103,12 @@ router.post('/', upload.fields([
     res.status(201).json(created);
   } catch (err) {
     console.error('Ошибка при добавлении предмета:', err);
-    res.status(500).json({ error: err.message });
+    // Если это ошибка валидации Sequelize, возвращаем детали
+    if (err.name === 'SequelizeValidationError') {
+      const messages = err.errors.map(e => e.message);
+      return res.status(400).json({ error: 'Validation error', details: messages });
+    }
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
