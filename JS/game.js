@@ -162,12 +162,17 @@ function loadItemsList() {
   }).catch(console.error);
 }
 
-// 1. Logout
+// 1. Logout: сохраняем аватар перед выходом
 logoutBtn.addEventListener('click', () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('currentUser');
-  localStorage.removeItem('currentUsername');
-  window.location.href = 'index.html';
+  const config = getAvatarConfig();
+  saveAvatarConfig(config)
+    .catch(err => console.error('Ошибка автосохранения перед выходом:', err))
+    .finally(() => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('currentUsername');
+      window.location.href = 'index.html';
+    });
 });
 
 // 2. Выбор категории

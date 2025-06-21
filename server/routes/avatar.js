@@ -25,21 +25,26 @@ router.use((req, res, next) => {
 
 // GET /api/avatar - возвращает массив элементов аватарки
 router.get('/', async (req, res) => {
-  const avatar = await Avatar.findOne({ where: { userId: req.userId } });
+  // Находим или создаём запись аватара для пользователя
+  const [avatar] = await Avatar.findOrCreate({ where: { userId: req.userId } });
+  console.log(`[AVATAR_GET] userId=${req.userId} configRaw=`, avatar.config);
   // Берём только сохранённую конфигурацию аватара (массив) или пустой массив
   const avatarConfig = Array.isArray(avatar.config.avatarConfig) ? avatar.config.avatarConfig : [];
+  console.log(`[AVATAR_GET] returning avatarConfig=`, avatarConfig);
   res.json(avatarConfig);
 });
 
 // POST /api/avatar - обновляет массив элементов аватарки
 router.post('/', async (req, res) => {
+  console.log(`[AVATAR_POST] userId=${req.userId} received config=`, req.body.config);
   const { config } = req.body;
   if (!config) {
     return res.status(400).json({ error: 'Config is required' });
   }
-  // Находим текущий объект Avatar и обновляем его JSON-конфиг
-  const avatar = await Avatar.findOne({ where: { userId: req.userId } });
+  // Находим или создаём запись аватара для пользователя
+  const [avatar] = await Avatar.findOrCreate({ where: { userId: req.userId } });
   const newConfig = { ...avatar.config, avatarConfig: config };
+  console.log(`[AVATAR_POST] updating config for userId=${req.userId} newConfig=`, newConfig);
   await avatar.update({ config: newConfig });
   res.json({ message: 'Avatar saved' });
 });
