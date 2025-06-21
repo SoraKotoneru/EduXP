@@ -198,13 +198,9 @@ function loadItems(category) {
   const list = (itemsList[category] || []).filter(item => {
     // Для админа (cookie adminAuth) показываем все предметы
     if (document.cookie.includes('adminAuth=')) return true;
-    if (item.availability === 'public') return true;
-    if (item.availability === 'time-limited') {
-      const start = new Date(item.start);
-      const end = new Date(item.end);
-      if (now >= start && now <= end) return true;
-      return unlockedItems.includes(item.id);
-    }
+    // Публичные и time-limited доступы отображаются всем
+    if (item.availability === 'public' || item.availability === 'time-limited') return true;
+    // Только приватные требуют проверки пользователя
     if (item.availability === 'private') {
       const users = item.users ? item.users.split(',').map(u => u.trim()) : [];
       const currentUser = localStorage.getItem('currentUser');
@@ -271,7 +267,16 @@ function renderAvatar() {
 // 4. Сохранение образа
 saveBtn.addEventListener('click', () => {
   // Сохраняем текущую конфигурацию аватара на сервере
-  saveAvatarConfig(getAvatarConfig());
+  let avatarConfig = getAvatarConfig();
+  // Удаляем недоступные предметы (отключённые админом)
+  const filteredConfig = avatarConfig.filter(({category, itemId}) =>
+    (itemsList[category] || []).some(it => it.id === itemId)
+  );
+  if (filteredConfig.length !== avatarConfig.length) {
+    avatarConfig = filteredConfig;
+    // Обновляем сохранённую конфигурацию без недоступных предметов
+    saveAvatarConfig(avatarConfig);
+  }
 });
 
 // Функция генерации списка категорий с превью
@@ -308,7 +313,16 @@ function renderCategoryList() {
   // Рендер аватара (очистка canvas)
   renderAvatar();
   // Получаем сохранённый конфиг аватара
-  const avatarConfig = await fetchAvatarConfig() || [];
+  let avatarConfig = await fetchAvatarConfig() || [];
+  // Удаляем недоступные предметы (отключённые админом)
+  const filteredConfig = avatarConfig.filter(({category, itemId}) =>
+    (itemsList[category] || []).some(it => it.id === itemId)
+  );
+  if (filteredConfig.length !== avatarConfig.length) {
+    avatarConfig = filteredConfig;
+    // Обновляем сохранённую конфигурацию без недоступных предметов
+    saveAvatarConfig(avatarConfig);
+  }
   if (avatarConfig.length > 0) {
     // Применяем все сохранённые слои
     avatarConfig.forEach(({category, itemId, color}) => applyToAvatar(category, itemId, color));

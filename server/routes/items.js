@@ -162,4 +162,20 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// PATCH /api/items/:id - обновление поля availability
+router.patch('/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { availability } = req.body;
+    if (!['public','time-limited','private'].includes(availability)) {
+      return res.status(400).json({ error: 'Invalid availability value' });
+    }
+    await Item.update({ availability }, { where: { id } });
+    res.json({ message: 'Availability updated' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router; 

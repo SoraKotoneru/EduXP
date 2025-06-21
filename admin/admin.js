@@ -58,8 +58,30 @@ document.addEventListener('DOMContentLoaded', () => {
         tdColor.appendChild(sw);
       });
       tr.appendChild(tdColor);
-      // Доступность
-      const tdAvail = document.createElement('td'); tdAvail.textContent = item.availability; tr.appendChild(tdAvail);
+      // Доступность (чекбокс time-limited)
+      const tdAvail = document.createElement('td');
+      const chkTL = document.createElement('input');
+      chkTL.type = 'checkbox';
+      chkTL.checked = item.availability === 'time-limited';
+      // Обработчик изменения доступности
+      chkTL.addEventListener('change', async () => {
+        const newAvail = chkTL.checked ? 'time-limited' : 'public';
+        await fetch(`/api/items/${item.id}`, {
+          method: 'PATCH',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ availability: newAvail })
+        });
+        renderItemsList();
+      });
+      const lblAvail = document.createElement('span');
+      lblAvail.textContent = chkTL.checked ? 'Time-limited' : 'Public';
+      // Обновляем текст при смене
+      chkTL.addEventListener('change', () => {
+        lblAvail.textContent = chkTL.checked ? 'Time-limited' : 'Public';
+      });
+      tdAvail.appendChild(chkTL);
+      tdAvail.appendChild(lblAvail);
+      tr.appendChild(tdAvail);
       // Действия
       const tdAct = document.createElement('td');
       const delBtn = document.createElement('button'); delBtn.textContent = 'Удалить';
