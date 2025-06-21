@@ -24,4 +24,10 @@ timeout /t 3 /nobreak >nul
 echo Opening app in browser...
 start "" "http://localhost:3000/"
 
-echo Done. 
+echo Done.
+
+set DATESTAMP=%DATE:~6,4%-%DATE:~3,2%-%DATE:~0,2%_%TIME:~0,2%-%TIME:~3,2%
+if not exist backups mkdir backups
+copy server\db.sqlite backups\db_backup_%DATESTAMP%.sqlite
+REM Запуск сервера
+node server/index.js 

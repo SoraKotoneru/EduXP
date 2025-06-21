@@ -44,12 +44,17 @@ const layerOrder = {
   pet:            12
 };
 
+// Список public/temporal/time-limited предметов, которые пользователь сохранил в образе
+let savedConfig = [];
+let savedItems = [];
+let unlockedItems = [];
+
 // Функция для выполнения GET-запроса
 async function fetchData(url) {
   const token = localStorage.getItem('token');
   const headers = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  const response = await fetch(url, { headers });
+  const response = await fetch(url, { headers, cache: 'no-store' });
   if (!response.ok) throw new Error('Ошибка загрузки данных');
   return await response.json();
 }
@@ -62,6 +67,7 @@ async function postData(url, data) {
   const response = await fetch(url, {
     method: 'POST',
     headers,
+    cache: 'no-store',
     body: JSON.stringify(data)
   });
   if (!response.ok) throw new Error('Ошибка сохранения данных');
@@ -82,6 +88,9 @@ async function fetchAvatarConfig() {
 async function saveAvatarConfig(config) {
   try {
     await postData('/api/avatar', { config });
+    // Обновляем локальный сохранённый конфиг и список сохранённых itemId
+    savedConfig = config;
+    savedItems = config.map(c => c.itemId);
     notifications.innerText = 'Конфигурация сохранена!';
     notifications.classList.remove('hidden');
     setTimeout(() => notifications.classList.add('hidden'), 2000);
@@ -93,25 +102,14 @@ async function saveAvatarConfig(config) {
 // Функция для получения текущей конфигурации аватара из канваса (с availability)
 function getAvatarConfig() {
   return Array.from(avatarCanvas.querySelectorAll('img[data-layer]')).map(el => {
-    const category = el.dataset.category;
-    const itemId = el.dataset.itemId;
-    const color = el.dataset.color || null;
-    // Определяем availability по текущему списку itemsList
-    let availability = 'public';
-    const catItems = itemsList[category] || [];
-    const found = catItems.find(it => it.id === itemId);
-    if (found && found.availability) {
-      availability = found.availability;
-    }
-    return { category, itemId, color, availability };
+    return {
+      category: el.dataset.category,
+      itemId: el.dataset.itemId,
+      color: el.dataset.color || null,
+      availability: el.dataset.availability || 'public'
+    };
   });
 }
-
-// Загружаем разблокированные временные предметы из localStorage
-let unlockedItems = [];
-fetchData('/api/unlockedItems').then(data => {
-  unlockedItems = data;
-}).catch(console.error);
 
 // Статический список предметов по категориям (default)
 const defaultItemsList = {
@@ -202,16 +200,28 @@ categoryList.addEventListener('click', e => {
 function loadItems(category) {
   inventoryBar.innerHTML = '';           // очищаем панель
   const now = new Date();
-  // Фильтруем по availability + разблокированным
+  // Фильтруем с учётом видимости, private-доступа и temporal разблокировки
   const list = (itemsList[category] || []).filter(item => {
-    // Для админа (cookie adminAuth) показываем все предметы
+    const currentUser = localStorage.getItem('currentUser');
+    // показываем все сохранённые предметы
+    if (savedItems.includes(item.id)) return true;
+    // админ видит всё
     if (document.cookie.includes('adminAuth=')) return true;
-    // Публичные и time-limited доступы отображаются всем
-    if (item.availability === 'public' || item.availability === 'time-limited') return true;
-    // Только приватные требуют проверки пользователя
+    // скрытые предметы
+    if (item.visible === false) {
+      // private-доступ
+      if (item.availability === 'private') {
+        const users = item.users ? item.users.split(',').map(u => u.trim()) : [];
+        if (users.includes(currentUser)) return true;
+      }
+      // разблокированные temporal/time-limited
+      if ((item.availability === 'temporal' || item.availability === 'time-limited') && unlockedItems.includes(item.id)) return true;
+      return false;
+    }
+    // видимые предметы
+    if (item.availability === 'public' || item.availability === 'temporal' || item.availability === 'time-limited') return true;
     if (item.availability === 'private') {
       const users = item.users ? item.users.split(',').map(u => u.trim()) : [];
-      const currentUser = localStorage.getItem('currentUser');
       return users.includes(currentUser);
     }
     return false;
@@ -245,11 +255,11 @@ function loadItems(category) {
       // b) Отмечаем текущий предмет
       div.classList.add('selected');
       // в) Наносим на аватар выбранную вариацию
-      applyToAvatar(category, item.id, defaultColor);
+      applyToAvatar(category, item.id, defaultColor, item.availability);
       // г) Рендерим блок глобальных цветов
       renderColorBar(category, item.id, item.colors || []);
       // Сохраняем разблокированный временный предмет
-      if (item.availability === 'time-limited') {
+      if (item.availability === 'temporal') {
         const start = new Date(item.start);
         const end = new Date(item.end);
         if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
@@ -274,17 +284,17 @@ function renderAvatar() {
 
 // 4. Сохранение образа
 saveBtn.addEventListener('click', () => {
-  // Сохраняем текущий конфиг (с availability), без удаления time-limited скрытых
+  // Сохраняем текущий конфиг (с availability), без удаления temporal скрытых
   saveAvatarConfig(getAvatarConfig());
 });
 
 // Функция генерации списка категорий с превью
 function renderCategoryList() {
-  const visibilitySettings = JSON.parse(localStorage.getItem('categoriesVisibility') || '{}');
   categoryList.innerHTML = '';
   categoriesOrder.forEach(category => {
     const items = itemsList[category] || [];
-    if (category === 'body' || (items.length > 0 && (visibilitySettings[category] !== false))) {
+    // Показываем категорию, если есть сохранённые элементы, видимые или это тело по умолчанию
+    if (category === 'body' || items.length > 0 || savedConfig.some(c => c.category === category)) {
       const li = document.createElement('li');
       li.className = 'category-item';
       li.dataset.category = category;
@@ -304,60 +314,29 @@ function renderCategoryList() {
   });
 }
 
-// Инициализация страницы
+// Инициализация страницы - рендерим категории и применяем только сохранённые слои
 (async function init() {
-  // Загрузка списка предметов и списков категорий
+  // Загружаем сохранённый конфиг аватара и список разблокированных
+  let avatarConfig = [];
+  try {
+    unlockedItems = await fetchData('/api/unlockedItems');
+    avatarConfig = await fetchAvatarConfig() || [];
+  } catch (err) {
+    console.error('Ошибка при инициализации разблокировок и конфига:', err);
+  }
+  // Сохраняем локальные копии
+  savedConfig = avatarConfig;
+  savedItems = savedConfig.map(c => c.itemId);
+  // Загружаем данные и рендерим категории
   await loadItemsList();
   renderCategoryList();
-  // Рендер аватара (очистка canvas)
-    renderAvatar();
-  let avatarConfig = await fetchAvatarConfig() || [];
-  // Удаляем только те private-предметы, доступ к которым у пользователя отсутствует
-  const filteredConfig = avatarConfig.filter(({category, itemId, availability}) => {
-    if (availability === 'private') {
-      const users = (itemsList[category] || []).find(it => it.id === itemId)?.users?.split(',').map(u => u.trim()) || [];
-      const currentUser = localStorage.getItem('currentUser');
-      return users.includes(currentUser);
-    }
-    // public и time-limited оставляем
-    return true;
-  });
-  if (filteredConfig.length !== avatarConfig.length) {
-    avatarConfig = filteredConfig;
-    // Обновляем сохранённую конфигурацию без private-нарушений
-    saveAvatarConfig(avatarConfig);
-  }
-  if (avatarConfig.length > 0) {
-    // Применяем все сохранённые слои
-    avatarConfig.forEach(({category, itemId, color}) => applyToAvatar(category, itemId, color));
-    // Подсветка последней выбранной категории и предмета
-    const last = avatarConfig[avatarConfig.length - 1];
-    const catEl = categoryList.querySelector(`.category-item[data-category="${last.category}"]`);
-    if (catEl) {
-      categoryList.querySelectorAll('.category-item').forEach(li => li.classList.remove('selected'));
-      catEl.classList.add('selected');
-      loadItems(last.category);
-      const invItem = inventoryBar.querySelector(`.inventory-item[data-item-id="${last.itemId}"]`);
-      if (invItem) invItem.classList.add('selected');
-    }
-  } else {
-    // Применяем дефолтную категорию и предмет
-  const defaultCat = categoryList.querySelector(`.category-item[data-category="body"]`);
-    if (defaultCat) {
-      categoryList.querySelectorAll('.category-item').forEach(li => li.classList.remove('selected'));
-      defaultCat.classList.add('selected');
-  loadItems('body');
-  const defaultItem = inventoryBar.querySelector('.inventory-item[data-item-id="skin_light"]');
-  if (defaultItem) defaultItem.classList.add('selected');
-  applyToAvatar('body', 'skin_light', null);
-      // Автосохранение дефолтного образа
-      saveAvatarConfig(getAvatarConfig());
-    }
-  }
+  renderAvatar();
+  // Накладываем все сохранённые слои на холст
+  avatarConfig.forEach(({category, itemId, color, availability}) => applyToAvatar(category, itemId, color, availability));
 })();
 
 // Накладываем выбранный предмет на канвас
-function applyToAvatar(category, itemId, color) {
+function applyToAvatar(category, itemId, color, availability = 'public') {
   // Удаляем старый элемент этой категории
   const old = avatarCanvas.querySelector(`img[data-category=\"${category}\"]`);
   if (old) avatarCanvas.removeChild(old);
@@ -386,6 +365,7 @@ function applyToAvatar(category, itemId, color) {
   el.dataset.itemId = itemId;
   // Сохраняем выбранный цвет (hex) если есть
   el.dataset.color = color || '';
+  el.dataset.availability = availability;
 
   // 6. Добавляем в canvas
   avatarCanvas.appendChild(el);

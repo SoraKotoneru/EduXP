@@ -5,6 +5,7 @@ const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const Item = require('../models/item');
 const ItemUser = require('../models/itemUser');
+const Avatar = require('../models/avatar');
 const router = express.Router();
 
 // Multer: сохраняем файлы в assets/сlothes/<category>
@@ -19,39 +20,79 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// GET /api/items - возвращает предметы, private-фильтрация по JWT и visible
+// GET /api/items - возвращает предметы с учётом public, private и temporal доступа
 router.get('/', async (req, res) => {
   try {
-    // Определяем userId из JWT, если авторизован
+    // определяем userId из JWT
     let userId = null;
     const authHeader = req.headers.authorization;
     if (authHeader) {
       const token = authHeader.split(' ')[1];
       try { userId = jwt.verify(token, process.env.JWT_SECRET).userId; } catch {}
     }
-    // Загружаем все предметы и фильтруем по visible
+    // загружаем все предметы
     let items = await Item.findAll();
-    items = items.filter(item => item.visible !== false);
-    // Подготовим список доступных private-предметов для userId
+    // получаем private-доступ для пользователя
     let accessSet = new Set();
     if (userId) {
       const accesses = await ItemUser.findAll({ where: { userId } });
       accessSet = new Set(accesses.map(a => a.itemId));
     }
-    // Группируем по категориям
+    // получаем набор локально разблокированных временных предметов (persisted и сохраненных в конфигах)
+    let unlockedSet = new Set();
+    if (userId) {
+      const avatar = await Avatar.findOne({ where: { userId } });
+      if (avatar && avatar.config) {
+        // persisted unlocked items from POST /api/unlockedItems
+        const persisted = Array.isArray(avatar.config.unlockedItems) ? avatar.config.unlockedItems : [];
+        // все сохранённые itemId из avatarConfig (любой availability)
+        const saved = Array.isArray(avatar.config.avatarConfig)
+          ? avatar.config.avatarConfig.map(c => c.itemId)
+          : [];
+        // объединяем все
+        new Set([...persisted, ...saved]).forEach(id => unlockedSet.add(id));
+      }
+    }
+    // фильтруем предметы по доступности
+    items = items.filter(item => {
+      // если админ - вернуть всё
+      // adminAuth проверяется на фронтенде
+      // скрытые предметы можно показать, если они private и в unlockedSet
+      if (item.visible === false) {
+        return (item.availability === 'private' && accessSet.has(item.id))
+          || unlockedSet.has(item.id);
+      }
+      // public, temporal и time-limited доступны всем
+      if (item.availability === 'public' || item.availability === 'temporal' || item.availability === 'time-limited') return true;
+      // private - только имеющим доступ
+      if (item.availability === 'private') return accessSet.has(item.id);
+      return false;
+    });
+    // группируем по категориям
     const grouped = items.reduce((acc, item) => {
       const cat = item.category;
       if (!acc[cat]) acc[cat] = [];
       acc[cat].push(item);
       return acc;
     }, {});
-    // Фильтруем private-предметы через pivot table
-    for (const cat of Object.keys(grouped)) {
-      grouped[cat] = grouped[cat].filter(item => {
-        if (item.availability !== 'private') return true;
-        return accessSet.has(item.id);
-      });
-    }
+    res.json(grouped);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET /api/items/all - возвращает все предметы (для административной панели)
+router.get('/all', async (req, res) => {
+  try {
+    const items = await Item.findAll();
+    // группируем по категориям
+    const grouped = items.reduce((acc, item) => {
+      const cat = item.category;
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push(item);
+      return acc;
+    }, {});
     res.json(grouped);
   } catch (err) {
     console.error(err);
@@ -148,27 +189,22 @@ router.delete('/:id', async (req, res) => {
     const thumbnail = item.thumbnail;
     const colors = item.colors || [];
 
-    // Удаляем запись из БД
+    // Удаляем записи из pivot-таблицы (ItemUser) и сам предмет из БД
+    await ItemUser.destroy({ where: { itemId: id } });
     await Item.destroy({ where: { id } });
 
-    // Удаляем файлы из файловой системы
+    // Удаляем все файлы предмета из системы
     const dir = path.join(__dirname, '..', '..', 'assets', 'сlothes', category);
     try {
-      // Удаление миниатюры
-      if (thumbnail) {
-        const thumbPath = path.join(dir, thumbnail);
-        if (fs.existsSync(thumbPath)) {
-          fs.unlinkSync(thumbPath);
-        }
-      }
-      // Удаление цветных файлов
-      for (const color of colors) {
-        const colorHex = color.replace(/^#/, '');
-        const fileName = `${id}_${colorHex}.png`;
-        const filePath = path.join(dir, fileName);
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
+      if (fs.existsSync(dir)) {
+        const filesInDir = fs.readdirSync(dir);
+        filesInDir.forEach(file => {
+          // удаляем файл, если он thumbnail или имя начинается с id_ или совпадает с id.png
+          if (file === thumbnail || file.startsWith(`${id}_`) || file === `${id}.png`) {
+            const filePath = path.join(dir, file);
+            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+          }
+        });
       }
     } catch (fsErr) {
       console.error('Ошибка при удалении файлов:', fsErr);
@@ -190,9 +226,12 @@ router.patch('/:id', async (req, res) => {
     if (typeof visible === 'boolean') {
       await Item.update({ visible }, { where: { id } });
     }
-    // Обновляем pivot таблицу для private
+    // Обновляем список пользователей и pivot таблицу для private
     if (typeof users === 'string') {
-      const userIds = users.split(',').map(x=>x.trim()).filter(x=>x);
+      // Сохраняем строку users в таблице Item
+      await Item.update({ users }, { where: { id } });
+      // Обновляем записи в pivot таблице
+      const userIds = users.split(',').map(x => x.trim()).filter(x => x);
       await ItemUser.destroy({ where: { itemId: id } });
       for (const uid of userIds) {
         await ItemUser.create({ itemId: id, userId: parseInt(uid) });

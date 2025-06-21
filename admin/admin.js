@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Загрузка и рендер предметов через API
   async function renderItemsList() {
-    const response = await fetch('/api/items');
+    const response = await fetch('/api/items/all');
     const data = await response.json();
     const itemsArr = [];
     Object.entries(data).forEach(([category, arr]) => arr.forEach(item => itemsArr.push(item)));
