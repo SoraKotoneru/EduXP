@@ -147,8 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const files = document.getElementById('item-files').files;
     // Если пустой предмет разрешён и файлов нет — всё равно отправляем
     if (files.length > 0) {
-      for (const file of files) {
-        formData.append('files', file);
+    for (const file of files) {
+      formData.append('files', file);
       }
     }
     // Добавляем миниатюру

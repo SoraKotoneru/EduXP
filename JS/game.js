@@ -257,18 +257,18 @@ function loadItems(category) {
       div.appendChild(emptyIcon);
     } else {
       // Обычный предмет
-      const imgEl = document.createElement('img');
-      const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
-      let previewSrc;
-      if (item.thumbnail) {
-        previewSrc = `./assets/сlothes/${category}/${item.thumbnail}`;
-      } else if (defaultColor) {
-        previewSrc = `./assets/сlothes/${category}/${item.id}_${defaultColor.slice(1)}.png`;
-      } else {
-        previewSrc = `./assets/сlothes/${category}/${item.id}.png`;
-      }
-      imgEl.src = previewSrc;
-      div.appendChild(imgEl);
+    const imgEl = document.createElement('img');
+    const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
+    let previewSrc;
+    if (item.thumbnail) {
+      previewSrc = `./assets/сlothes/${category}/${item.thumbnail}`;
+    } else if (defaultColor) {
+      previewSrc = `./assets/сlothes/${category}/${item.id}_${defaultColor.slice(1)}.png`;
+    } else {
+      previewSrc = `./assets/сlothes/${category}/${item.id}.png`;
+    }
+    imgEl.src = previewSrc;
+    div.appendChild(imgEl);
     }
     // Обработчик клика по предмету: применяем предмет и показываем варианты цвета
     div.addEventListener('click', () => {
@@ -285,14 +285,14 @@ function loadItems(category) {
       } else {
         const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
         applyToAvatar(category, item.id, defaultColor, item.availability);
-        renderColorBar(category, item.id, item.colors || []);
+      renderColorBar(category, item.id, item.colors || []);
         if (item.availability === 'temporal') {
-          const start = new Date(item.start);
-          const end = new Date(item.end);
-          if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
-            unlockedItems.push(item.id);
-            saveUnlockedItems();
-          }
+        const start = new Date(item.start);
+        const end = new Date(item.end);
+        if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
+          unlockedItems.push(item.id);
+          saveUnlockedItems();
+        }
         }
         saveAvatarConfig(getAvatarConfig());
       }
