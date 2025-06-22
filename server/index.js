@@ -63,9 +63,11 @@ app.use('/api/avatar', avatarRouter);
 const itemsRouter = require('./routes/items');
 const unlockedItemsRouter = require('./routes/unlockedItems');
 const usersRouter = require('./routes/users');
+const bodyVariantsRouter = require('./routes/bodyVariants');
 app.use('/api/items', itemsRouter);
 app.use('/api/unlockedItems', unlockedItemsRouter);
 app.use('/api/users', usersRouter);
+app.use(bodyVariantsRouter);
 
 // 11. Для любых других GET-запросов отдаём index.html (незаменимо для SPA)
 app.get(/.*/, (req, res) => {
