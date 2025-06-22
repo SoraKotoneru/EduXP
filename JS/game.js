@@ -198,10 +198,10 @@ categoryList.addEventListener('click', e => {
 // Заглушка: подгрузка предметов
 // функция подгрузки списка предметов выбранной категории
 function loadItems(category) {
-  inventoryBar.innerHTML = '';           // очищаем панель
+  inventoryBar.innerHTML = '';
   const now = new Date();
   // Фильтруем с учётом видимости, private-доступа и temporal разблокировки
-  const list = (itemsList[category] || []).filter(item => {
+  let list = (itemsList[category] || []).filter(item => {
     const currentUser = localStorage.getItem('currentUser');
     // показываем все сохранённые предметы
     if (savedItems.includes(item.id)) return true;
@@ -226,52 +226,77 @@ function loadItems(category) {
     }
     return false;
   });
-
+  // Добавляем пустой предмет, если он есть в базе (id = category_empty)
+  const emptyItem = (itemsList[category] || []).find(item => item.id === category + '_empty');
+  if (emptyItem) {
+    list = [emptyItem, ...list.filter(item => item.id !== emptyItem.id)];
+  }
   list.forEach(item => {
-    // 3. Создаём контейнер <div> для одного предмета
     const div = document.createElement('div');
     div.className = 'inventory-item';
     div.dataset.category = category;
     div.dataset.itemId = item.id;
-
-    // 4. Показываем превью предмета (миниатюра или первая вариация или базовый файл)
-    const imgEl = document.createElement('img');
-    const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
-    let previewSrc;
-    if (item.thumbnail) {
-      previewSrc = `./assets/сlothes/${category}/${item.thumbnail}`;
-    } else if (defaultColor) {
-      previewSrc = `./assets/сlothes/${category}/${item.id}_${defaultColor.slice(1)}.png`;
+    // Если это пустой предмет — показываем иконку-заглушку
+    if (item.id === category + '_empty') {
+      const emptyIcon = document.createElement('div');
+      emptyIcon.style.width = '40px';
+      emptyIcon.style.height = '40px';
+      emptyIcon.style.border = '2px dashed #aaa';
+      emptyIcon.style.background = 'repeating-linear-gradient(45deg,#eee,#eee 6px,#ccc 6px,#ccc 12px)';
+      emptyIcon.style.position = 'relative';
+      // Зачёркнутая линия
+      const cross = document.createElement('div');
+      cross.style.position = 'absolute';
+      cross.style.left = '0';
+      cross.style.top = '50%';
+      cross.style.width = '100%';
+      cross.style.height = '2px';
+      cross.style.background = '#d33';
+      cross.style.transform = 'rotate(-20deg)';
+      emptyIcon.appendChild(cross);
+      div.appendChild(emptyIcon);
     } else {
-      previewSrc = `./assets/сlothes/${category}/${item.id}.png`;
+      // Обычный предмет
+      const imgEl = document.createElement('img');
+      const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
+      let previewSrc;
+      if (item.thumbnail) {
+        previewSrc = `./assets/сlothes/${category}/${item.thumbnail}`;
+      } else if (defaultColor) {
+        previewSrc = `./assets/сlothes/${category}/${item.id}_${defaultColor.slice(1)}.png`;
+      } else {
+        previewSrc = `./assets/сlothes/${category}/${item.id}.png`;
+      }
+      imgEl.src = previewSrc;
+      div.appendChild(imgEl);
     }
-    imgEl.src = previewSrc;
-    div.appendChild(imgEl);
-
     // Обработчик клика по предмету: применяем предмет и показываем варианты цвета
     div.addEventListener('click', () => {
-      // a) Снимаем выделение у всех предметов
       inventoryBar.querySelectorAll('.inventory-item').forEach(el => el.classList.remove('selected'));
-      // b) Отмечаем текущий предмет
       div.classList.add('selected');
-      // в) Наносим на аватар выбранную вариацию
-      applyToAvatar(category, item.id, defaultColor, item.availability);
-      // г) Рендерим блок глобальных цветов
-      renderColorBar(category, item.id, item.colors || []);
-      // Сохраняем разблокированный временный предмет
-      if (item.availability === 'temporal') {
-        const start = new Date(item.start);
-        const end = new Date(item.end);
-        if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
-          unlockedItems.push(item.id);
-          saveUnlockedItems();
+      if (item.id === category + '_empty') {
+        // Снимаем слой с аватара
+        const old = avatarCanvas.querySelector(`img[data-category=\"${category}\"]`);
+        if (old) avatarCanvas.removeChild(old);
+        // Автосохраняем
+        saveAvatarConfig(getAvatarConfig());
+        // Очищаем цветовую панель
+        document.getElementById('color-bar').innerHTML = '';
+      } else {
+        const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
+        applyToAvatar(category, item.id, defaultColor, item.availability);
+        renderColorBar(category, item.id, item.colors || []);
+        if (item.availability === 'temporal') {
+          const start = new Date(item.start);
+          const end = new Date(item.end);
+          if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
+            unlockedItems.push(item.id);
+            saveUnlockedItems();
+          }
         }
+        saveAvatarConfig(getAvatarConfig());
       }
-      // Автосохранение конфигурации после выбора предмета
-      saveAvatarConfig(getAvatarConfig());
     });
-
-    // Добавляем предмет в панель
     inventoryBar.appendChild(div);
   });
 }

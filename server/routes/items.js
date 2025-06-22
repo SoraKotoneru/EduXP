@@ -116,17 +116,23 @@ router.post('/', upload.fields([
     // Группируем файлы по ID и цвету из имени
     const colorFiles = req.files.files || [];
     const groups = {};
-    colorFiles.forEach(file => {
-      const name = file.originalname.replace(/\.png$/i, '');
-      const parts = name.split('_');
-      // Пропускаем файлы без корректного формата id_hex6
-      if (parts.length < 2) return;
-      const colorHex = parts.pop();
-      if (!/^[0-9A-Fa-f]{6}$/.test(colorHex)) return;
-      const id = parts.join('_');
-      if (!groups[id]) groups[id] = { id, colors: [] };
-      groups[id].colors.push('#' + colorHex);
-    });
+    if (colorFiles.length === 0) {
+      // Пустой предмет: создаём одну запись с id = category + '_empty' (или другой уникальный id)
+      const id = category + '_empty';
+      groups[id] = { id, colors: [] };
+    } else {
+      colorFiles.forEach(file => {
+        const name = file.originalname.replace(/\.png$/i, '');
+        const parts = name.split('_');
+        // Пропускаем файлы без корректного формата id_hex6
+        if (parts.length < 2) return;
+        const colorHex = parts.pop();
+        if (!/^[0-9A-Fa-f]{6}$/.test(colorHex)) return;
+        const id = parts.join('_');
+        if (!groups[id]) groups[id] = { id, colors: [] };
+        groups[id].colors.push('#' + colorHex);
+      });
+    }
     // Создаём или обновляем записи в БД и pivot table
     const created = [];
     for (const id in groups) {
@@ -139,7 +145,7 @@ router.post('/', upload.fields([
         end: end || null,
         users: users || null,
         colors: groups[id].colors,
-        thumbnail: thumbnailFile
+        thumbnail: colorFiles.length === 0 ? null : thumbnailFile
       };
       await Item.upsert(itemData);
       const item = await Item.findByPk(id);

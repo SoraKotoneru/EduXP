@@ -26,8 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const tr = document.createElement('tr');
       // ID
       const tdId = document.createElement('td'); tdId.textContent = item.id; tr.appendChild(tdId);
-      // Категория
-      const tdCat = document.createElement('td'); tdCat.textContent = item.category; tr.appendChild(tdCat);
+      // Категория (русское название)
+      const tdCat = document.createElement('td');
+      const catRu = categoryConfigs.find(c => c.value === item.category)?.label || item.category;
+      tdCat.textContent = catRu;
+      tr.appendChild(tdCat);
       // Слой
       const tdLayer = document.createElement('td'); tdLayer.textContent = item.layer; tr.appendChild(tdLayer);
       // Миниатюра
@@ -112,6 +115,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // Инициализируем список предметов
   renderItemsList();
 
+  // --- Логика для разрешения пустого предмета ---
+  const itemCategory = document.getElementById('item-category');
+  const itemFiles = document.getElementById('item-files');
+  function updateFilesRequired() {
+    const emptyAllowedKey = 'categoriesEmptyAllowed';
+    let emptyAllowedSettings = JSON.parse(localStorage.getItem(emptyAllowedKey) || '{}');
+    const cat = itemCategory.value;
+    if (emptyAllowedSettings[cat]) {
+      itemFiles.required = false;
+    } else {
+      itemFiles.required = true;
+    }
+  }
+  itemCategory.addEventListener('change', updateFilesRequired);
+  updateFilesRequired();
+
   // Обработка отправки формы
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -126,8 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
     formData.append('availability', availability);
     if (users) formData.append('users', users);
     const files = document.getElementById('item-files').files;
-    for (const file of files) {
-      formData.append('files', file);
+    // Если пустой предмет разрешён и файлов нет — всё равно отправляем
+    if (files.length > 0) {
+      for (const file of files) {
+        formData.append('files', file);
+      }
     }
     // Добавляем миниатюру
     const thumbnail = document.getElementById('item-thumbnail').files[0];
@@ -197,6 +219,14 @@ document.addEventListener('DOMContentLoaded', () => {
     categoryConfigs.forEach(({value}) => visibilitySettings[value] = true);
     localStorage.setItem(storageKey, JSON.stringify(visibilitySettings));
   }
+  const emptyAllowedKey = 'categoriesEmptyAllowed';
+  let emptyAllowedSettings = JSON.parse(localStorage.getItem(emptyAllowedKey) || '{}');
+  // Инициализация: если нет настроек, делаем все категории без пустого предмета
+  if (Object.keys(emptyAllowedSettings).length === 0) {
+    emptyAllowedSettings = {};
+    categoryConfigs.forEach(({value}) => emptyAllowedSettings[value] = false);
+    localStorage.setItem(emptyAllowedKey, JSON.stringify(emptyAllowedSettings));
+  }
   const settingsList = document.getElementById('category-settings-list');
   categoryConfigs.forEach(({value, label}) => {
     const row = document.createElement('div');
@@ -211,10 +241,26 @@ document.addEventListener('DOMContentLoaded', () => {
     lab.textContent = label;
     lab.prepend(checkbox);
     row.appendChild(lab);
+    // Чекбокс для пустого предмета
+    const emptyBox = document.createElement('input');
+    emptyBox.type = 'checkbox';
+    emptyBox.id = `empty-${value}`;
+    emptyBox.checked = emptyAllowedSettings[value];
+    emptyBox.style.marginLeft = '16px';
+    const emptyLab = document.createElement('label');
+    emptyLab.htmlFor = emptyBox.id;
+    emptyLab.textContent = 'Разрешить пустой предмет';
+    emptyLab.style.fontSize = '0.95em';
+    emptyLab.prepend(emptyBox);
+    row.appendChild(emptyLab);
     settingsList.appendChild(row);
     checkbox.addEventListener('change', () => {
       visibilitySettings[value] = checkbox.checked;
       localStorage.setItem(storageKey, JSON.stringify(visibilitySettings));
+    });
+    emptyBox.addEventListener('change', () => {
+      emptyAllowedSettings[value] = emptyBox.checked;
+      localStorage.setItem(emptyAllowedKey, JSON.stringify(emptyAllowedSettings));
     });
   });
 });
