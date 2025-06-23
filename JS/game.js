@@ -22,7 +22,7 @@ catDownBtn.addEventListener('click', () => {
   categoryList.scrollBy({ top: 100, behavior: 'smooth' });
 });
 
-// порядок слоёв (0 – самый задний, 12 – самый передний)
+// порядок слоёв (0 – самый задний, 14 – самый передний)
 const layerOrder = {
   background:     0,
   hair_back:      1,
@@ -33,15 +33,16 @@ const layerOrder = {
   face_accessory: 4,
   hair_strands:   5,
   bangs:          6,
-  headwear:       7,
-  shoes:          8,
-  pants:          9,
-  top:            10,
-  dress:          9,  // платье занимает сразу брюки и рубашку
-  jumpsuit:       9,  // тоже
-  coat:           11,
-  accessory:      11, // аксессуары после пальто
-  pet:            12
+  ears:           7,
+  headwear:       8,
+  shoes:          9,
+  pants:          10,
+  top:            11,
+  dress:          10,  // платье занимает сразу брюки и рубашку
+  jumpsuit:       10,  // тоже
+  coat:           12,
+  accessory:      13, // аксессуары после пальто
+  pet:            14
 };
 
 // Список public/temporal/time-limited предметов, которые пользователь сохранил в образе
@@ -148,7 +149,9 @@ const defaultItemsList = {
 };
 
 // Динамический список предметов из localStorage
-const categoriesOrder = ['background','body','hair_back','hair_strands','bangs','headwear','tail','eyes','mouth','face_accessory','shoes','pants','top','dress','jumpsuit','coat','accessory','pet'];
+const categoriesOrder = [
+  'background','body','hair_back','hair_strands','bangs','headwear','tail','eyes','mouth','face_accessory','shoes','pants','top','dress','jumpsuit','coat','accessory','pet'
+];
 let itemsList = {};
 
 function loadItemsList() {
@@ -285,16 +288,39 @@ function loadItems(category) {
       } else {
         const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
         applyToAvatar(category, item.id, defaultColor, item.availability);
-      renderColorBar(category, item.id, item.colors || []);
+        renderColorBar(category, item.id, item.colors || []);
         if (item.availability === 'temporal') {
-        const start = new Date(item.start);
-        const end = new Date(item.end);
-        if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
-          unlockedItems.push(item.id);
-          saveUnlockedItems();
-        }
+          const start = new Date(item.start);
+          const end = new Date(item.end);
+          if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
+            unlockedItems.push(item.id);
+            saveUnlockedItems();
+          }
         }
         saveAvatarConfig(getAvatarConfig());
+        if (category === 'tail') {
+          // ищем ушки-пару
+          const tailBase = item.id.replace(/_tail(_|$)/, '_ears$1');
+          const earsList = itemsList.ears || [];
+          // ищем ушки с тем же base-name и цветом
+          let earsItem = null;
+          if (item.colors && item.colors.length > 0) {
+            // ищем по цвету
+            earsItem = earsList.find(e => e.id === tailBase && JSON.stringify(e.colors) === JSON.stringify(item.colors));
+            // если не нашли по цвету, ищем просто по id
+            if (!earsItem) earsItem = earsList.find(e => e.id === tailBase);
+          } else {
+            earsItem = earsList.find(e => e.id === tailBase);
+          }
+          if (earsItem) {
+            const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
+            applyToAvatar('ears', earsItem.id, defaultColor, earsItem.availability);
+          } else {
+            // если ушек нет — удаляем старые ушки
+            const oldEars = avatarCanvas.querySelector('img[data-category="ears"]');
+            if (oldEars) avatarCanvas.removeChild(oldEars);
+          }
+        }
       }
     });
     inventoryBar.appendChild(div);
@@ -317,6 +343,8 @@ saveBtn.addEventListener('click', () => {
 function renderCategoryList() {
   categoryList.innerHTML = '';
   categoriesOrder.forEach(category => {
+    // Категорию 'ears' не показываем детям
+    if (category === 'ears') return;
     const items = itemsList[category] || [];
     // Показываем категорию, если есть сохранённые элементы, видимые или это тело по умолчанию
     if (category === 'body' || items.length > 0 || savedConfig.some(c => c.category === category)) {
