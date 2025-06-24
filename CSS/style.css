@@ -101,6 +101,11 @@ body {
   background: var(--bg-light); /* бледно-фиолетовый фон */
   overflow-x: auto;
   border-top: 1px solid #ddd;
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE 10+ */
+}
+#inventory-bar::-webkit-scrollbar {
+  display: none;                /* Chrome, Safari, Opera */
 }
 
 /* Каждый предмет */

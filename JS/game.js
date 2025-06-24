@@ -458,3 +458,15 @@ if (usernameDisplay) {
   usernameDisplay.textContent = localStorage.getItem('currentUsername') || '';
 }
 
+const invPrevBtn = document.getElementById('inv-prev');
+const invNextBtn = document.getElementById('inv-next');
+
+if (invPrevBtn && invNextBtn && inventoryBar) {
+  invPrevBtn.addEventListener('click', () => {
+    inventoryBar.scrollBy({ left: -120, behavior: 'smooth' });
+  });
+  invNextBtn.addEventListener('click', () => {
+    inventoryBar.scrollBy({ left: 120, behavior: 'smooth' });
+  });
+}
+
