@@ -288,13 +288,13 @@ function loadItems(category) {
       } else {
         const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
         applyToAvatar(category, item.id, defaultColor, item.availability);
-        renderColorBar(category, item.id, item.colors || []);
+      renderColorBar(category, item.id, item.colors || []);
         if (item.availability === 'temporal') {
-          const start = new Date(item.start);
-          const end = new Date(item.end);
-          if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
-            unlockedItems.push(item.id);
-            saveUnlockedItems();
+        const start = new Date(item.start);
+        const end = new Date(item.end);
+        if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
+          unlockedItems.push(item.id);
+          saveUnlockedItems();
           }
         }
         saveAvatarConfig(getAvatarConfig());
