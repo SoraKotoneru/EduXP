@@ -235,11 +235,6 @@ function loadItems(category) {
     if (b.thumbnail === 'no_m.png') return 1;
     return 0;
   });
-  // Добавляем пустой предмет, если он есть в базе (id = category_empty)
-  const emptyItem = (itemsList[category] || []).find(item => item.id === category + '_empty');
-  if (emptyItem) {
-    list = [emptyItem, ...list.filter(item => item.id !== emptyItem.id)];
-  }
   list.forEach(item => {
     const div = document.createElement('div');
     div.className = 'inventory-item';
