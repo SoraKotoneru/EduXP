@@ -172,6 +172,8 @@ body {
 }
 #category-list li {
   flex: 0 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 #category-list li {
   padding: 10px 14px;
@@ -574,4 +576,13 @@ body {
 /* Цвет фона выделенной категории */
 #sidebar .category-item.selected {
   background: #ffffff;
+}
+
+#category-list button,
+#category-list .category-button {
+  width: 100%;
+  box-sizing: border-box;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
