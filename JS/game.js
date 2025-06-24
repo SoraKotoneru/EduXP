@@ -229,6 +229,12 @@ function loadItems(category) {
     }
     return false;
   });
+  // Сортировка: предмет с миниатюрой no_m.png должен быть первым
+  list = list.slice().sort((a, b) => {
+    if (a.thumbnail === 'no_m.png') return -1;
+    if (b.thumbnail === 'no_m.png') return 1;
+    return 0;
+  });
   // Добавляем пустой предмет, если он есть в базе (id = category_empty)
   const emptyItem = (itemsList[category] || []).find(item => item.id === category + '_empty');
   if (emptyItem) {
