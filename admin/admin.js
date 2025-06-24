@@ -176,7 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Загрузка и рендер списка зарегистрированных игроков через API
   async function renderUsersList() {
     const response = await fetch('/api/users');
-    const users = await response.json();
+    let users = await response.json();
+    // Сортируем пользователей по ID
+    users = users.sort((a, b) => a.id - b.id);
     const usersListEl = document.getElementById('users-list');
     usersListEl.innerHTML = '';
     users.forEach(user => {
