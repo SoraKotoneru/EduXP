@@ -198,9 +198,29 @@ categoryList.addEventListener('click', e => {
   }
 });
 
+function preloadCategoryImages(category) {
+  const list = itemsList[category] || [];
+  list.forEach(item => {
+    if (item.thumbnail) {
+      const img = new Image();
+      img.src = `./assets/сlothes/${category}/${item.thumbnail}`;
+    }
+    if (item.colors && item.colors.length > 0) {
+      item.colors.forEach(color => {
+        const img = new Image();
+        img.src = `./assets/сlothes/${category}/${item.id}_${color.slice(1)}.png`;
+      });
+    } else {
+      const img = new Image();
+      img.src = `./assets/сlothes/${category}/${item.id}.png`;
+    }
+  });
+}
+
 // Заглушка: подгрузка предметов
 // функция подгрузки списка предметов выбранной категории
 function loadItems(category) {
+  preloadCategoryImages(category);
   inventoryBar.innerHTML = '';
   const now = new Date();
   // Фильтруем с учётом видимости, private-доступа и temporal разблокировки
