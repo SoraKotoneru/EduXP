@@ -277,6 +277,8 @@ html {
   padding: 16px;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* Панель выбора цвета (цветовая палитра) */
@@ -318,14 +320,18 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--bg-light);
-  padding: 8px;
-  border-radius: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
 }
 #inventory-bar {
   display: flex;
   overflow-x: auto;
   gap: 12px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  flex: 1 1 auto;
 }
 #color-bar-wrapper {
   display: flex;
