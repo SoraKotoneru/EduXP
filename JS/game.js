@@ -222,33 +222,8 @@ function preloadCategoryImages(category) {
 function loadItems(category) {
   preloadCategoryImages(category);
   inventoryBar.innerHTML = '';
-  const now = new Date();
-  // Фильтруем с учётом видимости, private-доступа и temporal разблокировки
-  let list = (itemsList[category] || []).filter(item => {
-    const currentUser = localStorage.getItem('currentUser');
-    // показываем все сохранённые предметы
-    if (savedItems.includes(item.id)) return true;
-    // админ видит всё
-    if (document.cookie.includes('adminAuth=')) return true;
-    // скрытые предметы
-    if (item.visible === false) {
-      // private-доступ
-      if (item.availability === 'private') {
-        const users = item.users ? item.users.split(',').map(u => u.trim()) : [];
-        if (users.includes(currentUser)) return true;
-      }
-      // разблокированные temporal/time-limited
-      if ((item.availability === 'temporal' || item.availability === 'time-limited') && unlockedItems.includes(item.id)) return true;
-      return false;
-    }
-    // видимые предметы
-    if (item.availability === 'public' || item.availability === 'temporal' || item.availability === 'time-limited') return true;
-    if (item.availability === 'private') {
-      const users = item.users ? item.users.split(',').map(u => u.trim()) : [];
-      return users.includes(currentUser);
-    }
-    return false;
-  });
+  // Показываем ВСЕ предметы без фильтра
+  let list = itemsList[category] || [];
   // Сортировка: предмет с миниатюрой no_m.png должен быть первым
   list = list.slice().sort((a, b) => {
     if (a.thumbnail === 'no_m.png') return -1;
@@ -260,7 +235,6 @@ function loadItems(category) {
     div.className = 'inventory-item';
     div.dataset.category = category;
     div.dataset.itemId = item.id;
-    // Если это пустой предмет — показываем иконку-заглушку
     if (item.id === category + '_empty') {
       const emptyIcon = document.createElement('div');
       emptyIcon.style.width = '40px';
@@ -268,7 +242,6 @@ function loadItems(category) {
       emptyIcon.style.border = '2px dashed #aaa';
       emptyIcon.style.background = 'repeating-linear-gradient(45deg,#eee,#eee 6px,#ccc 6px,#ccc 12px)';
       emptyIcon.style.position = 'relative';
-      // Зачёркнутая линия
       const cross = document.createElement('div');
       cross.style.position = 'absolute';
       cross.style.left = '0';
@@ -280,68 +253,32 @@ function loadItems(category) {
       emptyIcon.appendChild(cross);
       div.appendChild(emptyIcon);
     } else {
-      // Обычный предмет
-    const imgEl = document.createElement('img');
-    const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
-    let previewSrc;
-    if (item.thumbnail) {
-      previewSrc = `./assets/сlothes/${category}/${item.thumbnail}`;
-    } else if (defaultColor) {
-      previewSrc = `./assets/сlothes/${category}/${item.id}_${defaultColor.slice(1)}.png`;
-    } else {
-      previewSrc = `./assets/сlothes/${category}/${item.id}.png`;
+      const imgEl = document.createElement('img');
+      const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
+      let previewSrc;
+      if (item.thumbnail) {
+        previewSrc = `./assets/сlothes/${category}/${item.thumbnail}`;
+      } else if (defaultColor) {
+        previewSrc = `./assets/сlothes/${category}/${item.id}_${defaultColor.slice(1)}.png`;
+      } else {
+        previewSrc = `./assets/сlothes/${category}/${item.id}.png`;
+      }
+      imgEl.src = previewSrc;
+      div.appendChild(imgEl);
     }
-    imgEl.src = previewSrc;
-    div.appendChild(imgEl);
-    }
-    // Обработчик клика по предмету: применяем предмет и показываем варианты цвета
     div.addEventListener('click', () => {
       inventoryBar.querySelectorAll('.inventory-item').forEach(el => el.classList.remove('selected'));
       div.classList.add('selected');
       if (item.id === category + '_empty') {
-        // Снимаем слой с аватара
-        const old = avatarCanvas.querySelector(`img[data-category=\"${category}\"]`);
+        const old = avatarCanvas.querySelector(`img[data-category="${category}"]`);
         if (old) avatarCanvas.removeChild(old);
-        // Автосохраняем
         saveAvatarConfig(getAvatarConfig());
-        // Очищаем цветовую панель
         document.getElementById('color-bar').innerHTML = '';
       } else {
         const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
         applyToAvatar(category, item.id, defaultColor, item.availability);
-      renderColorBar(category, item.id, item.colors || []);
-        if (item.availability === 'temporal') {
-        const start = new Date(item.start);
-        const end = new Date(item.end);
-        if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
-          unlockedItems.push(item.id);
-          saveUnlockedItems();
-          }
-        }
+        renderColorBar(category, item.id, item.colors || []);
         saveAvatarConfig(getAvatarConfig());
-        if (category === 'tail') {
-          // ищем ушки-пару
-          const tailBase = item.id.replace(/_tail(_|$)/, '_ears$1');
-          const earsList = itemsList.ears || [];
-          // ищем ушки с тем же base-name и цветом
-          let earsItem = null;
-          if (item.colors && item.colors.length > 0) {
-            // ищем по цвету
-            earsItem = earsList.find(e => e.id === tailBase && JSON.stringify(e.colors) === JSON.stringify(item.colors));
-            // если не нашли по цвету, ищем просто по id
-            if (!earsItem) earsItem = earsList.find(e => e.id === tailBase);
-          } else {
-            earsItem = earsList.find(e => e.id === tailBase);
-          }
-          if (earsItem) {
-            const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
-            applyToAvatar('ears', earsItem.id, defaultColor, earsItem.availability);
-          } else {
-            // если ушек нет — удаляем старые ушки
-            const oldEars = avatarCanvas.querySelector('img[data-category="ears"]');
-            if (oldEars) avatarCanvas.removeChild(oldEars);
-          }
-        }
       }
     });
     inventoryBar.appendChild(div);
@@ -364,27 +301,21 @@ saveBtn.addEventListener('click', () => {
 function renderCategoryList() {
   categoryList.innerHTML = '';
   categoriesOrder.forEach(category => {
-    // Категорию 'ears' не показываем детям
     if (category === 'ears') return;
-    const items = itemsList[category] || [];
-    // Показываем категорию, если есть сохранённые элементы, видимые или это тело по умолчанию
-    if (category === 'body' || items.length > 0 || savedConfig.some(c => c.category === category)) {
-      const li = document.createElement('li');
-      li.className = 'category-item';
-      li.dataset.category = category;
-      // Превью: статическая иконка категории
-      const img = document.createElement('img');
-      img.className = 'category-thumb';
-      img.src = `./assets/icons/categories/${category}.png`;
-      img.alt = category;
-      li.appendChild(img);
-      // Подпись категории
-      const label = document.createElement('span');
-      label.className = 'category-label';
-      label.textContent = category[0].toUpperCase() + category.slice(1);
-      li.appendChild(label);
-      categoryList.appendChild(li);
-    }
+    // Показываем ВСЕ категории без фильтра
+    const li = document.createElement('li');
+    li.className = 'category-item';
+    li.dataset.category = category;
+    const img = document.createElement('img');
+    img.className = 'category-thumb';
+    img.src = `./assets/icons/categories/${category}.png`;
+    img.alt = category;
+    li.appendChild(img);
+    const label = document.createElement('span');
+    label.className = 'category-label';
+    label.textContent = category[0].toUpperCase() + category.slice(1);
+    li.appendChild(label);
+    categoryList.appendChild(li);
   });
 }
 
