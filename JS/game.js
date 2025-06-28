@@ -279,24 +279,6 @@ function loadItems(category) {
         applyToAvatar(category, item.id, defaultColor, item.availability);
         renderColorBar(category, item.id, item.colors || []);
         saveAvatarConfig(getAvatarConfig());
-        if (category === 'tail') {
-          const tailBase = item.id.replace(/_tail(_|$)/, '_ears$1');
-          const earsList = itemsList.ears || [];
-          let earsItem = null;
-          if (item.colors && item.colors.length > 0) {
-            earsItem = earsList.find(e => e.id === tailBase && JSON.stringify(e.colors) === JSON.stringify(item.colors));
-            if (!earsItem) earsItem = earsList.find(e => e.id === tailBase);
-          } else {
-            earsItem = earsList.find(e => e.id === tailBase);
-          }
-          if (earsItem) {
-            const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
-            applyToAvatar('ears', earsItem.id, defaultColor, earsItem.availability);
-          } else {
-            const oldEars = avatarCanvas.querySelector('img[data-category="ears"]');
-            if (oldEars) avatarCanvas.removeChild(oldEars);
-          }
-        }
       }
     });
     inventoryBar.appendChild(div);
@@ -399,20 +381,22 @@ function saveUnlockedItems() {
   postData('/api/unlockedItems', unlockedItems).catch(console.error);
 }
 
-// Функция рендера блока глобальных цветов
+// Добавляю функцию рендера блока глобальных цветов
 function renderColorBar(category, itemId, colors) {
   const colorBar = document.getElementById('color-bar');
   colorBar.innerHTML = '';
-  // Показываем ВСЕ цвета, если они есть
-  (colors || []).forEach(color => {
+  colors.forEach(color => {
     const sw = document.createElement('span');
     sw.className = 'color-swatch';
     sw.style.backgroundColor = color;
     sw.dataset.color = color;
     sw.addEventListener('click', () => {
+      // снимаем выделение
       colorBar.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('selected'));
       sw.classList.add('selected');
+      // применяем выбранную вариацию
       applyToAvatar(category, itemId, color);
+      // Автосохранение конфигурации после смены цвета
       saveAvatarConfig(getAvatarConfig());
     });
     colorBar.appendChild(sw);
