@@ -378,17 +378,6 @@ function loadItems(category) {
     });
     inventoryBar.appendChild(div);
   });
-  // Дублируем элементы для бесшовного бесконечного скролла
-  const items = Array.from(inventoryBar.children);
-  items.forEach(el => inventoryBar.appendChild(el.cloneNode(true)));
-  // Устанавливаем первоначальную позицию в центр
-  inventoryBar.scrollLeft = inventoryBar.scrollWidth / 2;
-  // Бесшовное переключение границ при scroll
-  inventoryBar.addEventListener('scroll', () => {
-    const half = inventoryBar.scrollWidth / 2;
-    if (inventoryBar.scrollLeft <= 0) inventoryBar.scrollLeft += half;
-    else if (inventoryBar.scrollLeft >= half) inventoryBar.scrollLeft -= half;
-  });
 }
 
 // 3. Отрисовка аватара (пустой)
