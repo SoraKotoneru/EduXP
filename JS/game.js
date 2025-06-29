@@ -377,6 +377,12 @@ function loadItems(category) {
     });
     inventoryBar.appendChild(div);
   });
+
+  // Сброс состояния карусели после загрузки новых предметов
+  inventoryBar.style.transition = 'none';
+  inventoryBar.style.transform = 'none';
+  isAnimating = false;
+  actionQueue.length = 0;
 }
 
 // 3. Отрисовка аватара (пустой)
