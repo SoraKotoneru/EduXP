@@ -460,7 +460,7 @@ function renderCategoryList() {
     categoryList.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
     defaultLi.classList.add('selected');
     // Загружаем предметы категории body
-    loadItems('body');
+  loadItems('body');
     // Если есть сохранённый элемент body, выберем его, иначе первый
     const savedBody = avatarConfig.find(c => c.category === 'body');
     let targetItem = null;
@@ -536,10 +536,9 @@ function renderColorBar(category, itemId, colors) {
     colorBar.appendChild(sw);
   });
   // Показать или скрыть кнопки прокрутки цвета при переполнении
-  const wrapper = document.getElementById('color-bar-wrapper');
   const prevBtn = document.getElementById('color-prev');
   const nextBtn = document.getElementById('color-next');
-  if (colorBar.scrollWidth > wrapper.clientWidth) {
+  if (colorBar.scrollWidth > colorBar.clientWidth) {
     prevBtn.style.display = '';
     nextBtn.style.display = '';
   } else {
