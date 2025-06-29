@@ -546,7 +546,7 @@ function moveNext() {
     inventoryBar.removeEventListener('transitionend', handler);
     isAnimating = false;
     processQueue();
-  });
+  }, { once: true });
 }
 
 // Функция для перехода назад
@@ -566,7 +566,7 @@ function movePrev() {
     inventoryBar.removeEventListener('transitionend', handler);
     isAnimating = false;
     processQueue();
-  });
+  }, { once: true });
 }
 
 // Обработчики click и wheel через очередь
