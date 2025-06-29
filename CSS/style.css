@@ -632,12 +632,17 @@ body {
 .header-left {
   display: flex;
   align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
   gap: 12px;
 }
 
 .header-user {
   font-size: 1.25rem;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Center header content and fix responsiveness */
@@ -651,5 +656,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: nowrap;
   padding: 0 24px;
 }
