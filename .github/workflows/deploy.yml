@@ -2,8 +2,6 @@ name: Deploy to Timeweb Cloud
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
   deploy:
