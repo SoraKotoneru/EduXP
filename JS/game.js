@@ -514,8 +514,10 @@ const invNextBtn = document.getElementById('inv-next');
 
 // Экономный transform-основанный метод циклической прокрутки карусели
 let isAnimating = false;
-let wheelTimeout = false;
+let pendingAction = null;
 const gap = parseFloat(getComputedStyle(inventoryBar).columnGap) || 0;
+
+// Функция для перехода вперед
 function moveNext() {
   if (isAnimating) return;
   isAnimating = true;
@@ -529,8 +531,16 @@ function moveNext() {
     inventoryBar.appendChild(first);
     inventoryBar.removeEventListener('transitionend', handler);
     isAnimating = false;
+    // После анимации обрабатываем отложенное действие
+    if (pendingAction) {
+      const action = pendingAction;
+      pendingAction = null;
+      if (action === 'next') moveNext(); else movePrev();
+    }
   });
 }
+
+// Функция для перехода назад
 function movePrev() {
   if (isAnimating) return;
   isAnimating = true;
@@ -547,16 +557,28 @@ function movePrev() {
     inventoryBar.style.transition = 'none';
     inventoryBar.removeEventListener('transitionend', handler);
     isAnimating = false;
+    // После анимации обрабатываем отложенное действие
+    if (pendingAction) {
+      const action = pendingAction;
+      pendingAction = null;
+      if (action === 'next') moveNext(); else movePrev();
+    }
   });
 }
+
+// Обработчики клика
 invPrevBtn.addEventListener('click', movePrev);
 invNextBtn.addEventListener('click', moveNext);
-// Throttled wheel scroll
+
+// Прокрутка колесиком мыши
 inventoryBar.addEventListener('wheel', (e) => {
   e.preventDefault();
-  if (isAnimating || wheelTimeout) return;
-  if (e.deltaY > 0) moveNext(); else if (e.deltaY < 0) movePrev();
-  wheelTimeout = true;
-  setTimeout(() => { wheelTimeout = false; }, 300);
+  const action = e.deltaY > 0 ? 'next' : 'prev';
+  if (isAnimating) {
+    // сохраним только последнее колёсико
+    pendingAction = action;
+  } else {
+    if (action === 'next') moveNext(); else movePrev();
+  }
 });
 
