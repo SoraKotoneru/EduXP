@@ -483,10 +483,12 @@ const invNextBtn = document.getElementById('inv-next');
 
 if (invPrevBtn && invNextBtn && inventoryBar) {
   invPrevBtn.addEventListener('click', () => {
-    inventoryBar.scrollBy({ left: -120, behavior: 'smooth' });
+    const scrollWidth = inventoryBar.clientWidth;
+    inventoryBar.scrollBy({ left: -scrollWidth, behavior: 'smooth' });
   });
   invNextBtn.addEventListener('click', () => {
-    inventoryBar.scrollBy({ left: 120, behavior: 'smooth' });
+    const scrollWidth = inventoryBar.clientWidth;
+    inventoryBar.scrollBy({ left: scrollWidth, behavior: 'smooth' });
   });
 }
 
