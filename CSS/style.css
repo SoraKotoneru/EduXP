@@ -32,7 +32,7 @@ body {
 }
 #header {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   padding: 10px;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -304,7 +304,6 @@ html {
 .header-controls {
   display: flex;
   gap: 8px;
-  margin-left: auto;
 }
 
 /* Навигационные стрелки */
@@ -618,7 +617,7 @@ body {
 .header-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .header-user {
