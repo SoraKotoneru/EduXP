@@ -415,6 +415,7 @@ saveBtn.addEventListener('click', () => {
 // Функция генерации списка категорий с превью
 function renderCategoryList() {
   categoryList.innerHTML = '';
+  const fragment = document.createDocumentFragment();
   categoriesOrder.forEach(category => {
     // Категорию 'ears' не показываем детям
     if (category === 'ears') return;
@@ -435,9 +436,10 @@ function renderCategoryList() {
       label.className = 'category-label';
       label.textContent = category[0].toUpperCase() + category.slice(1);
       li.appendChild(label);
-      categoryList.appendChild(li);
+      fragment.appendChild(li);
     }
   });
+  categoryList.appendChild(fragment);
 }
 
 // Инициализация страницы - рендерим категории и применяем только сохранённые слои
@@ -525,6 +527,7 @@ function saveUnlockedItems() {
 function renderColorBar(category, itemId, colors) {
   const colorBar = document.getElementById('color-bar');
   colorBar.innerHTML = '';
+  const fragment = document.createDocumentFragment();
   colors.forEach(color => {
     const sw = document.createElement('span');
     sw.className = 'color-swatch';
@@ -539,8 +542,9 @@ function renderColorBar(category, itemId, colors) {
       // Автосохранение конфигурации после смены цвета
       saveAvatarConfig(getAvatarConfig());
     });
-    colorBar.appendChild(sw);
+    fragment.appendChild(sw);
   });
+  colorBar.appendChild(fragment);
   // Выделяем текущий цвет (или первый, если нет текущего)
   const currentImg = avatarCanvas.querySelector(`img[data-category="${category}"]`);
   const currentColor = currentImg ? currentImg.dataset.color : null;
