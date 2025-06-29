@@ -24,11 +24,11 @@ jobs:
       - name: Deploy via SSH
         run: |
           BRANCH=${GITHUB_REF#refs/heads/}
+          echo "Deploying branch: $BRANCH"
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
             cd /root/EduXP
-            git fetch --all
-            git checkout $BRANCH
-            git pull origin $BRANCH
+            git fetch origin
+            git checkout -B "$BRANCH" "origin/$BRANCH"
             cd server
             npm install
             pm2 restart eduxp
