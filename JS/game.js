@@ -252,6 +252,13 @@ function preloadCategoryImages(category) {
 function loadItems(category) {
   preloadCategoryImages(category);
   inventoryBar.innerHTML = '';
+  // Очищаем цветовую панель и скрываем стрелки цвета при смене категории
+  const colorBarEl = document.getElementById('color-bar');
+  if (colorBarEl) colorBarEl.innerHTML = '';
+  const prevColorBtn = document.getElementById('color-prev');
+  const nextColorBtn = document.getElementById('color-next');
+  if (prevColorBtn) prevColorBtn.style.display = 'none';
+  if (nextColorBtn) nextColorBtn.style.display = 'none';
   // Заполняем список предметов
   const now = new Date();
   // Фильтруем с учётом видимости, private-доступа и temporal разблокировки
