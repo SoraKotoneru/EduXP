@@ -662,3 +662,58 @@ categoryList.addEventListener('wheel', (e) => {
   scheduleCat(action);
 });
 
+// Добавляем циклическую прокрутку для блока цветов
+const colorPrevBtn = document.getElementById('color-prev');
+const colorNextBtn = document.getElementById('color-next');
+const colorBar = document.getElementById('color-bar');
+let colorAnimating = false;
+const colorQueue = [];
+function scheduleColor(action) {
+  colorQueue.push(action);
+  if (!colorAnimating) processColorQueue();
+}
+function processColorQueue() {
+  if (colorQueue.length === 0) return;
+  const action = colorQueue.shift();
+  if (action === 'next') moveColorNext(); else moveColorPrev();
+}
+const colorGap = parseFloat(getComputedStyle(colorBar).gap) || 0;
+function moveColorNext() {
+  colorAnimating = true;
+  const first = colorBar.firstElementChild;
+  const shift = first.getBoundingClientRect().width + colorGap;
+  colorBar.style.transition = 'transform 0.25s ease-out';
+  colorBar.style.transform = `translateX(-${shift}px)`;
+  colorBar.addEventListener('transitionend', function handler() {
+    colorBar.style.transition = 'none';
+    colorBar.style.transform = 'none';
+    colorBar.appendChild(first);
+    colorAnimating = false;
+    processColorQueue();
+  }, { once: true });
+}
+function moveColorPrev() {
+  colorAnimating = true;
+  const last = colorBar.lastElementChild;
+  const shift = last.getBoundingClientRect().width + colorGap;
+  colorBar.insertBefore(last, colorBar.firstElementChild);
+  colorBar.style.transition = 'none';
+  colorBar.style.transform = `translateX(-${shift}px)`;
+  // Принудительный reflow
+  void colorBar.offsetWidth;
+  colorBar.style.transition = 'transform 0.25s ease-out';
+  colorBar.style.transform = 'translateX(0)';
+  colorBar.addEventListener('transitionend', function handler() {
+    colorBar.style.transition = 'none';
+    colorAnimating = false;
+    processColorQueue();
+  }, { once: true });
+}
+colorPrevBtn.addEventListener('click', () => scheduleColor('prev'));
+colorNextBtn.addEventListener('click', () => scheduleColor('next'));
+colorBar.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const action = e.deltaY > 0 ? 'next' : 'prev';
+  scheduleColor(action);
+});
+
