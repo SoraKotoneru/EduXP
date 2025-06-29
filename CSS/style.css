@@ -53,8 +53,6 @@ body {
   justify-content: space-between;  /* стрелки сверху и снизу */
   align-items: center;
   max-height: calc(100vh - 48px);
-  max-width: 100%;
-  width: 100%;
 }
 #main-canvas {
   flex: 1;
