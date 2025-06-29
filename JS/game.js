@@ -576,10 +576,39 @@ function renderColorBar(category, itemId, colors) {
   }
 }
 
+// Функция адаптации размера шрифта и кнопок в шапке
+function adjustHeaderUsername() {
+  const userEl = document.getElementById('username-display');
+  const leftEl = document.querySelector('.header-left');
+  const controlsEl = document.querySelector('.header-controls');
+  if (!userEl || !leftEl || !controlsEl) return;
+  // Сброс стилей
+  userEl.style.fontSize = '';
+  controlsEl.querySelectorAll('button').forEach(btn => btn.style.fontSize = '');
+  // Доступная ширина
+  const maxWidth = leftEl.clientWidth - 10;
+  let fs = parseFloat(getComputedStyle(userEl).fontSize);
+  // Сжимаем шрифт до минимума 10px
+  while (userEl.scrollWidth > maxWidth && fs > 10) {
+    fs -= 1;
+    userEl.style.fontSize = fs + 'px';
+  }
+  // Если всё ещё не влезает, уменьшаем кнопки
+  if (userEl.scrollWidth > maxWidth) {
+    let btnFs = parseFloat(getComputedStyle(controlsEl.querySelector('button')).fontSize);
+    while (userEl.scrollWidth > maxWidth && btnFs > 10) {
+      btnFs -= 1;
+      controlsEl.querySelectorAll('button').forEach(btn => btn.style.fontSize = btnFs + 'px');
+    }
+  }
+}
+
 // Отображаем имя пользователя
 const usernameDisplay = document.getElementById('username-display');
 if (usernameDisplay) {
   usernameDisplay.textContent = localStorage.getItem('currentUsername') || '';
+  adjustHeaderUsername();
+  window.addEventListener('resize', adjustHeaderUsername);
 }
 
 const invPrevBtn = document.getElementById('inv-prev');
