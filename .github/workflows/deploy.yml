@@ -23,10 +23,13 @@ jobs:
 
       - name: Deploy via SSH
         run: |
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            cd /root/EduXP &&
-            git pull &&
-            cd server &&
-            npm install &&
+          BRANCH=${GITHUB_REF#refs/heads/}
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+            cd /root/EduXP
+            git fetch --all
+            git checkout $BRANCH
+            git pull origin $BRANCH
+            cd server
+            npm install
             pm2 restart eduxp
-          " 
+          EOF 
