@@ -524,56 +524,44 @@ if (usernameDisplay) {
 const invPrevBtn = document.getElementById('inv-prev');
 const invNextBtn = document.getElementById('inv-next');
 
-if (invPrevBtn && invNextBtn && inventoryBar) {
-  // Плавная бесшовная прокрутка инвентаря при удержании кнопок
-  let invScrollAnim, invScrolling = false;
-  invPrevBtn.addEventListener('mousedown', () => {
-    invScrolling = true;
-    (function step() {
-      if (!invScrolling) return;
-      inventoryBar.scrollBy({ left: -5 });
-      invScrollAnim = requestAnimationFrame(step);
-    })();
+// Экономный трансформ-основанный метод циклической прокрутки карусели
+const style = getComputedStyle(inventoryBar);
+const gap = parseFloat(style.columnGap) || 0;
+function moveNext() {
+  const first = inventoryBar.firstElementChild;
+  const shift = first.getBoundingClientRect().width + gap;
+  inventoryBar.style.transition = 'transform 0.3s ease';
+  inventoryBar.style.transform = `translateX(-${shift}px)`;
+  inventoryBar.addEventListener('transitionend', function handler() {
+    inventoryBar.style.transition = 'none';
+    inventoryBar.style.transform = 'none';
+    inventoryBar.appendChild(first);
+    inventoryBar.removeEventListener('transitionend', handler);
   });
-  ['mouseup', 'mouseleave'].forEach(evt =>
-    invPrevBtn.addEventListener(evt, () => {
-      invScrolling = false;
-      cancelAnimationFrame(invScrollAnim);
-    })
-  );
-  invNextBtn.addEventListener('mousedown', () => {
-    invScrolling = true;
-    (function step() {
-      if (!invScrolling) return;
-      inventoryBar.scrollBy({ left: 5 });
-      invScrollAnim = requestAnimationFrame(step);
-    })();
-  });
-  ['mouseup', 'mouseleave'].forEach(evt =>
-    invNextBtn.addEventListener(evt, () => {
-      invScrolling = false;
-      cancelAnimationFrame(invScrollAnim);
-    })
-  );
 }
+function movePrev() {
+  const last = inventoryBar.lastElementChild;
+  const shift = last.getBoundingClientRect().width + gap;
+  inventoryBar.insertBefore(last, inventoryBar.firstElementChild);
+  inventoryBar.style.transition = 'none';
+  inventoryBar.style.transform = `translateX(-${shift}px)`;
+  requestAnimationFrame(() => {
+    inventoryBar.style.transition = 'transform 0.3s ease';
+    inventoryBar.style.transform = 'translateX(0)';
+  });
+  inventoryBar.addEventListener('transitionend', function handler() {
+    inventoryBar.style.transition = 'none';
+    inventoryBar.removeEventListener('transitionend', handler);
+  });
+}
+invNextBtn.addEventListener('click', moveNext);
+invPrevBtn.addEventListener('click', movePrev);
 
 // Прокрутка колесиком мыши для списка категорий
 if (categoryList) {
   categoryList.addEventListener('wheel', (e) => {
     e.preventDefault();
     categoryList.scrollBy({ top: e.deltaY, behavior: 'smooth' });
-  });
-}
-// Прокрутка колесиком мыши для инвентаря
-const inventoryBarEl = document.getElementById('inventory-bar');
-if (inventoryBarEl) {
-  inventoryBarEl.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    const maxScrollLeft = inventoryBarEl.scrollWidth - inventoryBarEl.clientWidth;
-    let newLeft = inventoryBarEl.scrollLeft + e.deltaY;
-    if (newLeft < 0) newLeft = maxScrollLeft + newLeft;
-    else if (newLeft > maxScrollLeft) newLeft = newLeft - maxScrollLeft;
-    inventoryBarEl.scrollTo({ left: newLeft, behavior: 'smooth' });
   });
 }
 
