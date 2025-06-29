@@ -514,9 +514,7 @@ const invPrevBtn = document.getElementById('inv-prev');
 const invNextBtn = document.getElementById('inv-next');
 
 // Экономный трансформ-основанный метод циклической прокрутки карусели
-// Флаг для предотвращения наложения анимаций и очередь wheel-событий
 inventoryBar.isAnimating = false;
-const wheelQueue = [];
 const style = getComputedStyle(inventoryBar);
 const gap = parseFloat(style.columnGap) || 0;
 function moveNext() {
@@ -532,12 +530,6 @@ function moveNext() {
     inventoryBar.appendChild(first);
     inventoryBar.removeEventListener('transitionend', handler);
     inventoryBar.isAnimating = false;
-    // Обработка очереди wheel-событий
-    if (wheelQueue.length) {
-      const nextAction = wheelQueue.shift();
-      if (nextAction === 'next') moveNext();
-      else movePrev();
-    }
   });
 }
 function movePrev() {
@@ -556,25 +548,16 @@ function movePrev() {
     inventoryBar.style.transition = 'none';
     inventoryBar.removeEventListener('transitionend', handler);
     inventoryBar.isAnimating = false;
-    // Обработка очереди wheel-событий
-    if (wheelQueue.length) {
-      const nextAction = wheelQueue.shift();
-      if (nextAction === 'next') moveNext();
-      else movePrev();
-    }
   });
 }
 invNextBtn.addEventListener('click', moveNext);
 invPrevBtn.addEventListener('click', movePrev);
 
-// Прокрутка колесиком мыши для карусели инвентаря с очередью
+// Прокрутка колесиком мыши для карусели инвентаря (игнорируем во время анимации)
 inventoryBar.addEventListener('wheel', (e) => {
   e.preventDefault();
-  const action = e.deltaY > 0 ? 'next' : 'prev';
-  if (inventoryBar.isAnimating) {
-    wheelQueue.push(action);
-  } else {
-    if (action === 'next') moveNext(); else movePrev();
-  }
+  if (inventoryBar.isAnimating) return;
+  if (e.deltaY > 0) moveNext();
+  else if (e.deltaY < 0) movePrev();
 });
 
