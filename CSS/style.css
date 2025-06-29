@@ -32,7 +32,7 @@ body {
 }
 #header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 10px;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -304,6 +304,7 @@ html {
 .header-controls {
   display: flex;
   gap: 8px;
+  margin-left: auto;
 }
 
 /* Навигационные стрелки */
@@ -605,4 +606,16 @@ body {
   text-overflow: ellipsis;
   max-width: 100%;
   width: 100%;
+}
+
+/* Добавляем стили для логотипа и имени пользователя */
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.header-user {
+  margin-left: 1rem;
+  font-size: 1.25rem;
+  font-weight: 500;
 }
