@@ -55,8 +55,7 @@ body {
   justify-content: space-between;  /* стрелки сверху и снизу */
   align-items: center;
   max-height: calc(100vh - 48px);
-  max-width: 100%;
-  width: 100%;
+  position: relative;
 }
 #main-canvas {
   flex: 1;
@@ -182,6 +181,8 @@ body {
   max-width: 100%;
   width: 100%;
   box-sizing: border-box;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 #category-list li {
   flex: 0 0 auto;

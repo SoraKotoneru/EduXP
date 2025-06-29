@@ -608,3 +608,57 @@ inventoryBar.addEventListener('wheel', (e) => {
   schedule(action);
 });
 
+// Добавляем циклическую прокрутку для категорий
+const catPrevBtn = document.getElementById('cat-up');
+const catNextBtn = document.getElementById('cat-down');
+let catAnimating = false;
+const catQueue = [];
+function scheduleCat(action) {
+  catQueue.push(action);
+  if (!catAnimating) processCatCat();
+}
+function processCatCat() {
+  if (catQueue.length === 0) return;
+  const action = catQueue.shift();
+  if (action === 'next') moveCatNext(); else moveCatPrev();
+}
+const catGap = parseFloat(getComputedStyle(categoryList).gap) || 0;
+function moveCatNext() {
+  catAnimating = true;
+  const first = categoryList.firstElementChild;
+  const shift = first.getBoundingClientRect().height + catGap;
+  categoryList.style.transition = 'transform 0.25s ease-out';
+  categoryList.style.transform = `translateY(-${shift}px)`;
+  categoryList.addEventListener('transitionend', function handler() {
+    categoryList.style.transition = 'none';
+    categoryList.style.transform = 'none';
+    categoryList.appendChild(first);
+    catAnimating = false;
+    processCatCat();
+  }, { once: true });
+}
+function moveCatPrev() {
+  catAnimating = true;
+  const last = categoryList.lastElementChild;
+  const shift = last.getBoundingClientRect().height + catGap;
+  categoryList.insertBefore(last, categoryList.firstElementChild);
+  categoryList.style.transition = 'none';
+  categoryList.style.transform = `translateY(-${shift}px)`;
+  // Принудительный reflow
+  void categoryList.offsetHeight;
+  categoryList.style.transition = 'transform 0.25s ease-out';
+  categoryList.style.transform = 'translateY(0)';
+  categoryList.addEventListener('transitionend', function handler() {
+    categoryList.style.transition = 'none';
+    catAnimating = false;
+    processCatCat();
+  }, { once: true });
+}
+catPrevBtn.addEventListener('click', () => scheduleCat('prev'));
+catNextBtn.addEventListener('click', () => scheduleCat('next'));
+categoryList.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const action = e.deltaY > 0 ? 'next' : 'prev';
+  scheduleCat(action);
+});
+
