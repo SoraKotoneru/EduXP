@@ -102,6 +102,7 @@ body {
   min-width: 0;
   box-sizing: border-box;
   flex: 1 1 auto;
+  padding: 0 2.5em;
 }
 #inventory-bar::-webkit-scrollbar {
   display: none;                /* Chrome, Safari, Opera */
@@ -329,6 +330,7 @@ html {
   width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+  position: relative;
 }
 #color-bar-wrapper {
   display: flex;
@@ -338,6 +340,21 @@ html {
   background: var(--bg-light);
   padding: 8px;
   border-radius: 12px;
+}
+
+/* Добавляю абсолютное позиционирование кнопок прокрутки */
+#inventory-wrapper .nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--panel-bg);
+  z-index: 2;
+}
+#inv-prev {
+  left: 8px;
+}
+#inv-next {
+  right: 8px;
 }
 
 /* Категории: квадратные кнопки с миниатюрными иконками */
