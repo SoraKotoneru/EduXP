@@ -383,6 +383,15 @@ function loadItems(category) {
   inventoryBar.style.transform = 'none';
   isAnimating = false;
   actionQueue.length = 0;
+  // Показать или скрыть кнопки прокрутки только при переполнении
+  const wrapper = document.getElementById('inventory-wrapper');
+  if (inventoryBar.scrollWidth > wrapper.clientWidth) {
+    invPrevBtn.style.display = '';
+    invNextBtn.style.display = '';
+  } else {
+    invPrevBtn.style.display = 'none';
+    invNextBtn.style.display = 'none';
+  }
 }
 
 // 3. Отрисовка аватара (пустой)
