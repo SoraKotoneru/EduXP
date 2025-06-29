@@ -327,16 +327,17 @@ html {
   gap: 8px;
   width: 100%;
   box-sizing: border-box;
-  overflow-x: auto;
+  overflow: hidden;
 }
 #inventory-bar {
   display: flex;
-  overflow-x: auto;
+  overflow-x: auto; /* прокрутка внутри окна предметов */
   gap: 12px;
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
   flex: 1 1 auto;
+  padding: 0 32px; /* отступы, чтобы элементы не прятались под кнопками */
 }
 #color-bar-wrapper {
   display: flex;
