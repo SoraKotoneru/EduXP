@@ -198,7 +198,6 @@ function loadItemsList() {
         thumbnail: `${item.id}.png`
       }));
     }
-    console.log('Загруженные данные:', itemsList); // Отладка данных
   }).catch(console.error);
 }
 
