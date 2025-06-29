@@ -300,14 +300,14 @@ html {
 .header-controls {
   display: flex;
   gap: 8px;
-  flex-shrink: 1;      /* позволяем контейнеру сжиматься */
-  min-width: 0;        /* необходим для flex-shrink */
+  flex: 1 0 auto;      /* заполняем всё свободное пространство */
+  min-width: 0;        /* необходим для корректной работы flex */
   overflow-x: auto;    /* горизонтальная прокрутка, если кнопок много */
   scrollbar-width: none; /* скрыть полосу прокрутки в Firefox */
   -ms-overflow-style: none; /* IE/Edge */
 }
 .header-controls::-webkit-scrollbar {
-  display: none;       /* скрыть scrollbar в WebKit */
+  display: none;       /* скрыть полосу прокрутки в WebKit */
 }
 
 /* Навигационные стрелки */
