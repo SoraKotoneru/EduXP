@@ -105,6 +105,7 @@ body {
   border-top: 1px solid #ddd;
   scrollbar-width: none;        /* Firefox */
   -ms-overflow-style: none;     /* IE 10+ */
+  will-change: transform;
 }
 #inventory-bar::-webkit-scrollbar {
   display: none;                /* Chrome, Safari, Opera */
@@ -131,6 +132,7 @@ body {
   object-fit: contain;
   border: 2px solid transparent;
   border-radius: 8px;
+  will-change: transform;
 }
 
 /* Выбранный предмет */
@@ -339,6 +341,7 @@ html {
   min-width: 0;
   box-sizing: border-box;
   flex: 1 1 auto;
+  will-change: transform;
 }
 #color-bar-wrapper {
   display: flex;

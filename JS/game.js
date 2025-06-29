@@ -530,7 +530,7 @@ const gap = parseFloat(style.columnGap) || 0;
 function moveNext() {
   const first = inventoryBar.firstElementChild;
   const shift = first.getBoundingClientRect().width + gap;
-  inventoryBar.style.transition = 'transform 0.3s ease';
+  inventoryBar.style.transition = 'transform 0.15s ease-out';
   inventoryBar.style.transform = `translateX(-${shift}px)`;
   inventoryBar.addEventListener('transitionend', function handler() {
     inventoryBar.style.transition = 'none';
@@ -546,7 +546,7 @@ function movePrev() {
   inventoryBar.style.transition = 'none';
   inventoryBar.style.transform = `translateX(-${shift}px)`;
   requestAnimationFrame(() => {
-    inventoryBar.style.transition = 'transform 0.3s ease';
+    inventoryBar.style.transition = 'transform 0.15s ease-out';
     inventoryBar.style.transform = 'translateX(0)';
   });
   inventoryBar.addEventListener('transitionend', function handler() {
