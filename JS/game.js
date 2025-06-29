@@ -453,6 +453,25 @@ function renderCategoryList() {
   renderAvatar();
   // Накладываем все сохранённые слои на холст
   avatarConfig.forEach(({category, itemId, color, availability}) => applyToAvatar(category, itemId, color, availability));
+  // По умолчанию показываем категорию 'body' и открываем соответствующий предмет
+  const defaultLi = categoryList.querySelector('li[data-category="body"]');
+  if (defaultLi) {
+    // Подсветим категорию
+    categoryList.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
+    defaultLi.classList.add('selected');
+    // Загружаем предметы категории body
+    loadItems('body');
+    // Если есть сохранённый элемент body, выберем его, иначе первый
+    const savedBody = avatarConfig.find(c => c.category === 'body');
+    let targetItem = null;
+    if (savedBody) {
+      targetItem = inventoryBar.querySelector(`.inventory-item[data-item-id="${savedBody.itemId}"]`);
+    }
+    if (!targetItem) {
+      targetItem = inventoryBar.querySelector('.inventory-item');
+    }
+    if (targetItem) targetItem.click();
+  }
 })();
 
 // Накладываем выбранный предмет на канвас
