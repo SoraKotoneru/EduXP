@@ -512,14 +512,22 @@ if (usernameDisplay) {
 const invPrevBtn = document.getElementById('inv-prev');
 const invNextBtn = document.getElementById('inv-next');
 
-// Экономный transform-основанный метод циклической прокрутки карусели
+// Экономный transform-основанный метод циклической прокрутки карусели с очередью действий
 let isAnimating = false;
-let pendingAction = null;
+const actionQueue = [];
+function schedule(action) {
+  actionQueue.push(action);
+  if (!isAnimating) processQueue();
+}
+function processQueue() {
+  if (actionQueue.length === 0) return;
+  const action = actionQueue.shift();
+  if (action === 'next') moveNext(); else movePrev();
+}
 const gap = parseFloat(getComputedStyle(inventoryBar).columnGap) || 0;
 
 // Функция для перехода вперед
 function moveNext() {
-  if (isAnimating) return;
   isAnimating = true;
   const first = inventoryBar.firstElementChild;
   const shift = first.getBoundingClientRect().width + gap;
@@ -531,18 +539,12 @@ function moveNext() {
     inventoryBar.appendChild(first);
     inventoryBar.removeEventListener('transitionend', handler);
     isAnimating = false;
-    // После анимации обрабатываем отложенное действие
-    if (pendingAction) {
-      const action = pendingAction;
-      pendingAction = null;
-      if (action === 'next') moveNext(); else movePrev();
-    }
+    processQueue();
   });
 }
 
 // Функция для перехода назад
 function movePrev() {
-  if (isAnimating) return;
   isAnimating = true;
   const last = inventoryBar.lastElementChild;
   const shift = last.getBoundingClientRect().width + gap;
@@ -557,28 +559,16 @@ function movePrev() {
     inventoryBar.style.transition = 'none';
     inventoryBar.removeEventListener('transitionend', handler);
     isAnimating = false;
-    // После анимации обрабатываем отложенное действие
-    if (pendingAction) {
-      const action = pendingAction;
-      pendingAction = null;
-      if (action === 'next') moveNext(); else movePrev();
-    }
+    processQueue();
   });
 }
 
-// Обработчики клика
-invPrevBtn.addEventListener('click', movePrev);
-invNextBtn.addEventListener('click', moveNext);
-
-// Прокрутка колесиком мыши
+// Обработчики click и wheel через очередь
+invPrevBtn.addEventListener('click', () => schedule('prev'));
+invNextBtn.addEventListener('click', () => schedule('next'));
 inventoryBar.addEventListener('wheel', (e) => {
   e.preventDefault();
   const action = e.deltaY > 0 ? 'next' : 'prev';
-  if (isAnimating) {
-    // сохраним только последнее колёсико
-    pendingAction = action;
-  } else {
-    if (action === 'next') moveNext(); else movePrev();
-  }
+  schedule(action);
 });
 
