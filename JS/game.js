@@ -557,11 +557,10 @@ function movePrev() {
 invNextBtn.addEventListener('click', moveNext);
 invPrevBtn.addEventListener('click', movePrev);
 
-// Прокрутка колесиком мыши для списка категорий
-if (categoryList) {
-  categoryList.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    categoryList.scrollBy({ top: e.deltaY, behavior: 'smooth' });
-  });
-}
+// Прокрутка колесиком мыши для карусели инвентаря
+inventoryBar.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  if (e.deltaY > 0) moveNext();
+  else if (e.deltaY < 0) movePrev();
+});
 
