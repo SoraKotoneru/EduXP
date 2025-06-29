@@ -98,14 +98,12 @@ body {
 /* Панель предметов под канвасом */
 #inventory-bar {
   display: flex;
+  overflow: hidden;
   gap: 12px;
-  padding: 8px;
-  background: var(--bg-light); /* бледно-фиолетовый фон */
-  overflow-x: auto;
-  border-top: 1px solid #ddd;
-  scrollbar-width: none;        /* Firefox */
-  -ms-overflow-style: none;     /* IE 10+ */
-  will-change: transform;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  flex: 1 1 auto;
 }
 #inventory-bar::-webkit-scrollbar {
   display: none;                /* Chrome, Safari, Opera */
@@ -331,17 +329,7 @@ html {
   gap: 8px;
   width: 100%;
   box-sizing: border-box;
-  overflow-x: auto;
-}
-#inventory-bar {
-  display: flex;
-  overflow-x: auto;
-  gap: 12px;
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  flex: 1 1 auto;
-  will-change: transform;
+  overflow-x: hidden;
 }
 #color-bar-wrapper {
   display: flex;
