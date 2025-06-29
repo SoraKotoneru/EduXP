@@ -512,50 +512,48 @@ if (usernameDisplay) {
 const invPrevBtn = document.getElementById('inv-prev');
 const invNextBtn = document.getElementById('inv-next');
 
-// Экономный трансформ-основанный метод циклической прокрутки карусели
-inventoryBar.isAnimating = false;
+// Экономный transform-основанный метод циклической прокрутки карусели
+let isAnimating = false;
 const style = getComputedStyle(inventoryBar);
 const gap = parseFloat(style.columnGap) || 0;
 function moveNext() {
-  if (inventoryBar.isAnimating) return;
-  inventoryBar.isAnimating = true;
+  if (isAnimating) return;
+  isAnimating = true;
   const first = inventoryBar.firstElementChild;
   const shift = first.getBoundingClientRect().width + gap;
-  inventoryBar.style.transition = 'transform 0.15s ease-out';
+  inventoryBar.style.transition = 'transform 0.25s ease-out';
   inventoryBar.style.transform = `translateX(-${shift}px)`;
   inventoryBar.addEventListener('transitionend', function handler() {
     inventoryBar.style.transition = 'none';
     inventoryBar.style.transform = 'none';
     inventoryBar.appendChild(first);
     inventoryBar.removeEventListener('transitionend', handler);
-    inventoryBar.isAnimating = false;
+    isAnimating = false;
   });
 }
 function movePrev() {
-  if (inventoryBar.isAnimating) return;
-  inventoryBar.isAnimating = true;
+  if (isAnimating) return;
+  isAnimating = true;
   const last = inventoryBar.lastElementChild;
   const shift = last.getBoundingClientRect().width + gap;
   inventoryBar.insertBefore(last, inventoryBar.firstElementChild);
   inventoryBar.style.transition = 'none';
   inventoryBar.style.transform = `translateX(-${shift}px)`;
   requestAnimationFrame(() => {
-    inventoryBar.style.transition = 'transform 0.15s ease-out';
+    inventoryBar.style.transition = 'transform 0.25s ease-out';
     inventoryBar.style.transform = 'translateX(0)';
   });
   inventoryBar.addEventListener('transitionend', function handler() {
     inventoryBar.style.transition = 'none';
     inventoryBar.removeEventListener('transitionend', handler);
-    inventoryBar.isAnimating = false;
+    isAnimating = false;
   });
 }
 invNextBtn.addEventListener('click', moveNext);
 invPrevBtn.addEventListener('click', movePrev);
-
-// Прокрутка колесиком мыши для карусели инвентаря (игнорируем во время анимации)
 inventoryBar.addEventListener('wheel', (e) => {
   e.preventDefault();
-  if (inventoryBar.isAnimating) return;
+  if (isAnimating) return;
   if (e.deltaY > 0) moveNext();
   else if (e.deltaY < 0) movePrev();
 });
