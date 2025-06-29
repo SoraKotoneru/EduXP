@@ -103,6 +103,7 @@ body {
   box-sizing: border-box;
   flex: 1 1 auto;
   padding: 0 2.5em;
+  background: var(--bg-light);
 }
 #inventory-bar::-webkit-scrollbar {
   display: none;                /* Chrome, Safari, Opera */
