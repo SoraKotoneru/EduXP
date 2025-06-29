@@ -235,6 +235,10 @@ function preloadCategoryImages(category) {
 function loadItems(category) {
   preloadCategoryImages(category);
   inventoryBar.innerHTML = '';
+  // Очищаем старые обработчики scroll
+  inventoryBar.replaceWith(inventoryBar.cloneNode(false));
+  const inventoryBarEl = document.getElementById('inventory-bar');
+  // Заполняем список предметов
   const now = new Date();
   // Фильтруем с учётом видимости, private-доступа и temporal разблокировки
   let list = (itemsList[category] || []).filter(item => {
@@ -358,6 +362,17 @@ function loadItems(category) {
       }
     });
     inventoryBar.appendChild(div);
+  });
+  // Дублируем элементы для бесшовного бесконечного скролла
+  const items = Array.from(inventoryBar.children);
+  items.forEach(el => inventoryBar.appendChild(el.cloneNode(true)));
+  // Устанавливаем первоначальную позицию в центр
+  inventoryBar.scrollLeft = inventoryBar.scrollWidth / 2;
+  // Бесшовное переключение границ при scroll
+  inventoryBar.addEventListener('scroll', () => {
+    const half = inventoryBar.scrollWidth / 2;
+    if (inventoryBar.scrollLeft <= 0) inventoryBar.scrollLeft += half;
+    else if (inventoryBar.scrollLeft >= half) inventoryBar.scrollLeft -= half;
   });
 }
 
