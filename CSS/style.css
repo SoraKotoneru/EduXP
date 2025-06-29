@@ -32,7 +32,7 @@ body {
 }
 #header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 10px;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -300,14 +300,14 @@ html {
 .header-controls {
   display: flex;
   gap: 8px;
-  flex: 1 0 auto;      /* заполняем всё свободное пространство */
-  min-width: 0;        /* необходим для корректной работы flex */
-  overflow-x: auto;    /* горизонтальная прокрутка, если кнопок много */
-  scrollbar-width: none; /* скрыть полосу прокрутки в Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  flex: 0 0 auto;
+  margin-left: auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .header-controls::-webkit-scrollbar {
-  display: none;       /* скрыть полосу прокрутки в WebKit */
+  display: none;
 }
 
 /* Навигационные стрелки */
@@ -636,4 +636,10 @@ body {
   text-overflow: ellipsis;
   max-width: 100%;
   width: 100%;
+}
+
+/* Выравнивание имени пользователя */
+.header-user {
+  margin-left: 16px;
+  white-space: nowrap;
 }
