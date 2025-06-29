@@ -22,6 +22,19 @@ catDownBtn.addEventListener('click', () => {
   categoryList.scrollBy({ top: 100, behavior: 'smooth' });
 });
 
+// Непрерывная прокрутка списка категорий при удержании кнопок
+let catScrollInterval;
+catUpBtn.addEventListener('mousedown', () => {
+  catScrollInterval = setInterval(() => categoryList.scrollBy({ top: -20 }), 50);
+});
+catUpBtn.addEventListener('mouseup', () => clearInterval(catScrollInterval));
+catUpBtn.addEventListener('mouseleave', () => clearInterval(catScrollInterval));
+catDownBtn.addEventListener('mousedown', () => {
+  catScrollInterval = setInterval(() => categoryList.scrollBy({ top: 20 }), 50);
+});
+catDownBtn.addEventListener('mouseup', () => clearInterval(catScrollInterval));
+catDownBtn.addEventListener('mouseleave', () => clearInterval(catScrollInterval));
+
 // порядок слоёв (0 – самый задний, 14 – самый передний)
 const layerOrder = {
   background:     0,
@@ -488,5 +501,17 @@ if (invPrevBtn && invNextBtn && inventoryBar) {
   invNextBtn.addEventListener('click', () => {
     inventoryBar.scrollBy({ left: 120, behavior: 'smooth' });
   });
+  // Непрерывная прокрутка инвентаря при удержании кнопок
+  let invScrollInterval;
+  invPrevBtn.addEventListener('mousedown', () => {
+    invScrollInterval = setInterval(() => inventoryBar.scrollBy({ left: -20 }), 50);
+  });
+  invPrevBtn.addEventListener('mouseup', () => clearInterval(invScrollInterval));
+  invPrevBtn.addEventListener('mouseleave', () => clearInterval(invScrollInterval));
+  invNextBtn.addEventListener('mousedown', () => {
+    invScrollInterval = setInterval(() => inventoryBar.scrollBy({ left: 20 }), 50);
+  });
+  invNextBtn.addEventListener('mouseup', () => clearInterval(invScrollInterval));
+  invNextBtn.addEventListener('mouseleave', () => clearInterval(invScrollInterval));
 }
 
