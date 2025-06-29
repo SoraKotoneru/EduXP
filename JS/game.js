@@ -525,33 +525,45 @@ const invPrevBtn = document.getElementById('inv-prev');
 const invNextBtn = document.getElementById('inv-next');
 
 // Экономный трансформ-основанный метод циклической прокрутки карусели
+// Флаг для предотвращения наложения анимаций
+inventoryBar.isAnimating = false;
 const style = getComputedStyle(inventoryBar);
 const gap = parseFloat(style.columnGap) || 0;
 function moveNext() {
+  if (inventoryBar.isAnimating) return;
+  inventoryBar.isAnimating = true;
   const first = inventoryBar.firstElementChild;
   const shift = first.getBoundingClientRect().width + gap;
+  // Анимируем сдвиг влево
   inventoryBar.style.transition = 'transform 0.15s ease-out';
   inventoryBar.style.transform = `translateX(-${shift}px)`;
   inventoryBar.addEventListener('transitionend', function handler() {
+    // Сброс transform и DOM-модификация
     inventoryBar.style.transition = 'none';
     inventoryBar.style.transform = 'none';
     inventoryBar.appendChild(first);
     inventoryBar.removeEventListener('transitionend', handler);
+    inventoryBar.isAnimating = false;
   });
 }
 function movePrev() {
+  if (inventoryBar.isAnimating) return;
+  inventoryBar.isAnimating = true;
   const last = inventoryBar.lastElementChild;
   const shift = last.getBoundingClientRect().width + gap;
+  // Перемещаем последний элемент вперёд и подготавливаем начальный transform
   inventoryBar.insertBefore(last, inventoryBar.firstElementChild);
   inventoryBar.style.transition = 'none';
   inventoryBar.style.transform = `translateX(-${shift}px)`;
   requestAnimationFrame(() => {
+    // Анимируем возвращение к нулю
     inventoryBar.style.transition = 'transform 0.15s ease-out';
     inventoryBar.style.transform = 'translateX(0)';
   });
   inventoryBar.addEventListener('transitionend', function handler() {
     inventoryBar.style.transition = 'none';
     inventoryBar.removeEventListener('transitionend', handler);
+    inventoryBar.isAnimating = false;
   });
 }
 invNextBtn.addEventListener('click', moveNext);
