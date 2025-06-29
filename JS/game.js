@@ -495,22 +495,31 @@ const invPrevBtn = document.getElementById('inv-prev');
 const invNextBtn = document.getElementById('inv-next');
 
 if (invPrevBtn && invNextBtn && inventoryBar) {
-  // Клик: циклическая прокрутка инвентаря
+  // Клик: плавная бесшовная циклическая прокрутка инвентаря
   invPrevBtn.addEventListener('click', () => {
-    const maxScrollLeft = inventoryBar.scrollWidth - inventoryBar.clientWidth;
-    if (inventoryBar.scrollLeft <= 0) {
-      inventoryBar.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
-    } else {
-      inventoryBar.scrollBy({ left: -120, behavior: 'smooth' });
-    }
+    const firstItem = inventoryBar.querySelector('.inventory-item');
+    if (!firstItem) return;
+    const itemWidth = firstItem.getBoundingClientRect().width;
+    // Перемещаем последний элемент в начало
+    const last = inventoryBar.lastElementChild;
+    inventoryBar.insertBefore(last, inventoryBar.firstElementChild);
+    // Корректируем позицию скролла без анимации
+    inventoryBar.scrollLeft += itemWidth;
+    // Плавно сдвигаем обратно на ширину одного элемента
+    inventoryBar.scrollBy({ left: -itemWidth, behavior: 'smooth' });
   });
   invNextBtn.addEventListener('click', () => {
-    const maxScrollLeft = inventoryBar.scrollWidth - inventoryBar.clientWidth;
-    if (inventoryBar.scrollLeft >= maxScrollLeft) {
-      inventoryBar.scrollTo({ left: 0, behavior: 'smooth' });
-    } else {
-      inventoryBar.scrollBy({ left: 120, behavior: 'smooth' });
-    }
+    const firstItem = inventoryBar.querySelector('.inventory-item');
+    if (!firstItem) return;
+    const itemWidth = firstItem.getBoundingClientRect().width;
+    // Плавно сдвигаем на ширину одного элемента
+    inventoryBar.scrollBy({ left: itemWidth, behavior: 'smooth' });
+    // После завершения анимации (примерно 300мс) перемещаем первый элемент в конец и корректируем скролл
+    setTimeout(() => {
+      const first = inventoryBar.firstElementChild;
+      inventoryBar.appendChild(first);
+      inventoryBar.scrollLeft -= itemWidth;
+    }, 300);
   });
   // Непрерывная прокрутка инвентаря при удержании кнопок
   let invScrollInterval;
