@@ -39,9 +39,16 @@ body {
   color: #fff;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-#container {
+#game-container {
   flex: 1;
   display: flex;
+  justify-content: center;
+  align-items: stretch;
+  padding: 24px;
+  gap: 16px;
+  background: var(--bg-light);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 #sidebar {
   background: #806d89; /* цвет блока категорий */
@@ -259,17 +266,6 @@ html {
   overflow: hidden;
 }
 
-/* контейнер игры: боковая панель + основная зона */
-#game-container {
-  display: flex;
-  justify-content: center;
-  align-items: stretch;  /* Растягиваем sidebar по высоте main-area */
-  padding: 24px;
-  gap: 16px;
-  background: var(--bg-light);
-  overflow: hidden; /* Запрещаем прокрутку контейнера */
-}
-
 /* Основная зона с аватаром и панелью предметов */
 #main-area {
   display: flex;
@@ -443,8 +439,16 @@ body {
 }
 
 #game-container {
-  background: var(--bg-light);
+  /* Flex container with inner scrolling */
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
   padding: 24px;
+  gap: 16px;
+  background: var(--bg-light);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #sidebar {
