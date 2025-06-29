@@ -338,9 +338,15 @@ function loadItems(category) {
         // Очищаем цветовую панель
         document.getElementById('color-bar').innerHTML = '';
       } else {
-        const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
-        applyToAvatar(category, item.id, defaultColor, item.availability);
-      renderColorBar(category, item.id, item.colors || []);
+        // Определяем цвет: сохраняем предыдущий или используем первый доступный
+        let chosenColor = null;
+        if (item.colors && item.colors.length > 0) {
+          const oldImg = avatarCanvas.querySelector(`img[data-category="${category}"]`);
+          const prevColor = oldImg ? oldImg.dataset.color : null;
+          chosenColor = prevColor && item.colors.includes(prevColor) ? prevColor : item.colors[0];
+        }
+        applyToAvatar(category, item.id, chosenColor, item.availability);
+        renderColorBar(category, item.id, item.colors || []);
         if (item.availability === 'temporal') {
         const start = new Date(item.start);
         const end = new Date(item.end);
