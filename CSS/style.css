@@ -322,22 +322,22 @@ html {
 
 /* Обертки для инвентаря и палитры */
 #inventory-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
 }
 #inventory-bar {
   display: flex;
-  overflow-x: auto; /* прокрутка внутри окна предметов */
+  overflow-x: auto;
   gap: 12px;
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
   flex: 1 1 auto;
-  padding: 0 32px; /* отступы, чтобы элементы не прятались под кнопками */
+  padding: 0 48px;
 }
 #color-bar-wrapper {
   display: flex;
@@ -348,6 +348,24 @@ html {
   padding: 8px;
   border-radius: 12px;
 }
+
+/* Навигационные стрелки инвентаря */
+#inv-prev, #inv-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#inv-prev { left: 8px; }
+#inv-next { right: 8px; }
 
 /* Категории: квадратные кнопки с миниатюрными иконками */
 .category-item {
