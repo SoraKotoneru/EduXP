@@ -98,9 +98,7 @@ body {
 /* Панель предметов под канвасом */
 #inventory-bar {
   display: flex;
-  overflow: hidden;
   gap: 12px;
-  width: 100%;
   min-width: 0;
   box-sizing: border-box;
   flex: 1 1 auto;
