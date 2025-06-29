@@ -514,8 +514,7 @@ const invNextBtn = document.getElementById('inv-next');
 
 // Экономный transform-основанный метод циклической прокрутки карусели
 let isAnimating = false;
-const style = getComputedStyle(inventoryBar);
-const gap = parseFloat(style.columnGap) || 0;
+const gap = parseFloat(getComputedStyle(inventoryBar).columnGap) || 0;
 function moveNext() {
   if (isAnimating) return;
   isAnimating = true;
@@ -549,8 +548,9 @@ function movePrev() {
     isAnimating = false;
   });
 }
-invNextBtn.addEventListener('click', moveNext);
 invPrevBtn.addEventListener('click', movePrev);
+invNextBtn.addEventListener('click', moveNext);
+// Прокрутка колесиком мыши
 inventoryBar.addEventListener('wheel', (e) => {
   e.preventDefault();
   if (isAnimating) return;
