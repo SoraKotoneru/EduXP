@@ -535,6 +535,17 @@ function renderColorBar(category, itemId, colors) {
     });
     colorBar.appendChild(sw);
   });
+  // Показать или скрыть кнопки прокрутки цвета при переполнении
+  const wrapper = document.getElementById('color-bar-wrapper');
+  const prevBtn = document.getElementById('color-prev');
+  const nextBtn = document.getElementById('color-next');
+  if (colorBar.scrollWidth > wrapper.clientWidth) {
+    prevBtn.style.display = '';
+    nextBtn.style.display = '';
+  } else {
+    prevBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+  }
 }
 
 // Отображаем имя пользователя
