@@ -535,6 +535,18 @@ function renderColorBar(category, itemId, colors) {
     });
     colorBar.appendChild(sw);
   });
+  // Выделяем текущий цвет (или первый, если нет текущего)
+  const currentImg = avatarCanvas.querySelector(`img[data-category="${category}"]`);
+  const currentColor = currentImg ? currentImg.dataset.color : null;
+  const swatches = colorBar.querySelectorAll('.color-swatch');
+  // Снимаем выделение со всех
+  swatches.forEach(s => s.classList.remove('selected'));
+  if (currentColor) {
+    const sel = colorBar.querySelector(`.color-swatch[data-color="${currentColor}"]`);
+    if (sel) sel.classList.add('selected');
+  } else if (swatches.length > 0) {
+    swatches[0].classList.add('selected');
+  }
   // Показать или скрыть кнопки прокрутки цвета при переполнении
   const prevBtn = document.getElementById('color-prev');
   const nextBtn = document.getElementById('color-next');
