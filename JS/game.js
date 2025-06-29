@@ -554,16 +554,18 @@ function movePrev() {
   isAnimating = true;
   const last = inventoryBar.lastElementChild;
   const shift = last.getBoundingClientRect().width + gap;
+  // Перемещаем последний элемент вперёд без анимации
   inventoryBar.insertBefore(last, inventoryBar.firstElementChild);
   inventoryBar.style.transition = 'none';
   inventoryBar.style.transform = `translateX(-${shift}px)`;
-  requestAnimationFrame(() => {
-    inventoryBar.style.transition = 'transform 0.25s ease-out';
-    inventoryBar.style.transform = 'translateX(0)';
-  });
+  // Принудительный reflow для корректного применения начального transform
+  void inventoryBar.offsetWidth;
+  // Включаем анимацию и возвращаемся в нулевую позицию
+  inventoryBar.style.transition = 'transform 0.25s ease-out';
+  inventoryBar.style.transform = 'translateX(0)';
+  // Обработчик завершения анимации
   inventoryBar.addEventListener('transitionend', function handler() {
     inventoryBar.style.transition = 'none';
-    inventoryBar.removeEventListener('transitionend', handler);
     isAnimating = false;
     processQueue();
   }, { once: true });
