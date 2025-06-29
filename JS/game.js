@@ -495,21 +495,46 @@ const invPrevBtn = document.getElementById('inv-prev');
 const invNextBtn = document.getElementById('inv-next');
 
 if (invPrevBtn && invNextBtn && inventoryBar) {
+  // Клик: циклическая прокрутка инвентаря
   invPrevBtn.addEventListener('click', () => {
-    inventoryBar.scrollBy({ left: -120, behavior: 'smooth' });
+    const maxScrollLeft = inventoryBar.scrollWidth - inventoryBar.clientWidth;
+    if (inventoryBar.scrollLeft <= 0) {
+      inventoryBar.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
+    } else {
+      inventoryBar.scrollBy({ left: -120, behavior: 'smooth' });
+    }
   });
   invNextBtn.addEventListener('click', () => {
-    inventoryBar.scrollBy({ left: 120, behavior: 'smooth' });
+    const maxScrollLeft = inventoryBar.scrollWidth - inventoryBar.clientWidth;
+    if (inventoryBar.scrollLeft >= maxScrollLeft) {
+      inventoryBar.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      inventoryBar.scrollBy({ left: 120, behavior: 'smooth' });
+    }
   });
   // Непрерывная прокрутка инвентаря при удержании кнопок
   let invScrollInterval;
   invPrevBtn.addEventListener('mousedown', () => {
-    invScrollInterval = setInterval(() => inventoryBar.scrollBy({ left: -20 }), 50);
+    const maxScrollLeft = inventoryBar.scrollWidth - inventoryBar.clientWidth;
+    invScrollInterval = setInterval(() => {
+      if (inventoryBar.scrollLeft <= 0) {
+        inventoryBar.scrollTo({ left: maxScrollLeft });
+      } else {
+        inventoryBar.scrollBy({ left: -20 });
+      }
+    }, 50);
   });
   invPrevBtn.addEventListener('mouseup', () => clearInterval(invScrollInterval));
   invPrevBtn.addEventListener('mouseleave', () => clearInterval(invScrollInterval));
   invNextBtn.addEventListener('mousedown', () => {
-    invScrollInterval = setInterval(() => inventoryBar.scrollBy({ left: 20 }), 50);
+    const maxScrollLeft = inventoryBar.scrollWidth - inventoryBar.clientWidth;
+    invScrollInterval = setInterval(() => {
+      if (inventoryBar.scrollLeft >= maxScrollLeft) {
+        inventoryBar.scrollTo({ left: 0 });
+      } else {
+        inventoryBar.scrollBy({ left: 20 });
+      }
+    }, 50);
   });
   invNextBtn.addEventListener('mouseup', () => clearInterval(invScrollInterval));
   invNextBtn.addEventListener('mouseleave', () => clearInterval(invScrollInterval));
@@ -527,7 +552,11 @@ const inventoryBarEl = document.getElementById('inventory-bar');
 if (inventoryBarEl) {
   inventoryBarEl.addEventListener('wheel', (e) => {
     e.preventDefault();
-    inventoryBarEl.scrollBy({ left: e.deltaY, behavior: 'smooth' });
+    const maxScrollLeft = inventoryBarEl.scrollWidth - inventoryBarEl.clientWidth;
+    let newLeft = inventoryBarEl.scrollLeft + e.deltaY;
+    if (newLeft < 0) newLeft = maxScrollLeft + newLeft;
+    else if (newLeft > maxScrollLeft) newLeft = newLeft - maxScrollLeft;
+    inventoryBarEl.scrollTo({ left: newLeft, behavior: 'smooth' });
   });
 }
 
