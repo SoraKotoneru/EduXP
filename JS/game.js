@@ -235,9 +235,6 @@ function preloadCategoryImages(category) {
 function loadItems(category) {
   preloadCategoryImages(category);
   inventoryBar.innerHTML = '';
-  // Очищаем старые обработчики scroll
-  inventoryBar.replaceWith(inventoryBar.cloneNode(false));
-  const inventoryBarEl = document.getElementById('inventory-bar');
   // Заполняем список предметов
   const now = new Date();
   // Фильтруем с учётом видимости, private-доступа и temporal разблокировки
