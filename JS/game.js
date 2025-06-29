@@ -515,3 +515,19 @@ if (invPrevBtn && invNextBtn && inventoryBar) {
   invNextBtn.addEventListener('mouseleave', () => clearInterval(invScrollInterval));
 }
 
+// Прокрутка колесиком мыши для списка категорий
+if (categoryList) {
+  categoryList.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    categoryList.scrollBy({ top: e.deltaY, behavior: 'smooth' });
+  });
+}
+// Прокрутка колесиком мыши для инвентаря
+const inventoryBarEl = document.getElementById('inventory-bar');
+if (inventoryBarEl) {
+  inventoryBarEl.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    inventoryBarEl.scrollBy({ left: e.deltaY, behavior: 'smooth' });
+  });
+}
+
