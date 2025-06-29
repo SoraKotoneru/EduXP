@@ -613,6 +613,8 @@ function movePrev() {
 invPrevBtn.addEventListener('click', () => schedule('prev'));
 invNextBtn.addEventListener('click', () => schedule('next'));
 inventoryBar.addEventListener('wheel', (e) => {
+  // Включаем прокрутку только при переполнении
+  if (inventoryBar.scrollWidth <= inventoryBar.clientWidth) return;
   e.preventDefault();
   const action = e.deltaY > 0 ? 'next' : 'prev';
   schedule(action);
@@ -667,6 +669,8 @@ function moveCatPrev() {
 catPrevBtn.addEventListener('click', () => scheduleCat('prev'));
 catNextBtn.addEventListener('click', () => scheduleCat('next'));
 categoryList.addEventListener('wheel', (e) => {
+  // Включаем прокрутку только при переполнении
+  if (categoryList.scrollWidth <= categoryList.clientWidth) return;
   e.preventDefault();
   const action = e.deltaY > 0 ? 'next' : 'prev';
   scheduleCat(action);
@@ -722,6 +726,8 @@ function moveColorPrev() {
 colorPrevBtn.addEventListener('click', () => scheduleColor('prev'));
 colorNextBtn.addEventListener('click', () => scheduleColor('next'));
 colorBar.addEventListener('wheel', (e) => {
+  // Включаем прокрутку только при переполнении
+  if (colorBar.scrollWidth <= colorBar.clientWidth) return;
   e.preventDefault();
   const action = e.deltaY > 0 ? 'next' : 'prev';
   scheduleColor(action);
