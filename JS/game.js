@@ -525,8 +525,9 @@ const invPrevBtn = document.getElementById('inv-prev');
 const invNextBtn = document.getElementById('inv-next');
 
 // Экономный трансформ-основанный метод циклической прокрутки карусели
-// Флаг для предотвращения наложения анимаций
+// Флаг для предотвращения наложения анимаций и очередь wheel-событий
 inventoryBar.isAnimating = false;
+const wheelQueue = [];
 const style = getComputedStyle(inventoryBar);
 const gap = parseFloat(style.columnGap) || 0;
 function moveNext() {
@@ -534,16 +535,20 @@ function moveNext() {
   inventoryBar.isAnimating = true;
   const first = inventoryBar.firstElementChild;
   const shift = first.getBoundingClientRect().width + gap;
-  // Анимируем сдвиг влево
   inventoryBar.style.transition = 'transform 0.15s ease-out';
   inventoryBar.style.transform = `translateX(-${shift}px)`;
   inventoryBar.addEventListener('transitionend', function handler() {
-    // Сброс transform и DOM-модификация
     inventoryBar.style.transition = 'none';
     inventoryBar.style.transform = 'none';
     inventoryBar.appendChild(first);
     inventoryBar.removeEventListener('transitionend', handler);
     inventoryBar.isAnimating = false;
+    // Обработка очереди wheel-событий
+    if (wheelQueue.length) {
+      const nextAction = wheelQueue.shift();
+      if (nextAction === 'next') moveNext();
+      else movePrev();
+    }
   });
 }
 function movePrev() {
@@ -551,12 +556,10 @@ function movePrev() {
   inventoryBar.isAnimating = true;
   const last = inventoryBar.lastElementChild;
   const shift = last.getBoundingClientRect().width + gap;
-  // Перемещаем последний элемент вперёд и подготавливаем начальный transform
   inventoryBar.insertBefore(last, inventoryBar.firstElementChild);
   inventoryBar.style.transition = 'none';
   inventoryBar.style.transform = `translateX(-${shift}px)`;
   requestAnimationFrame(() => {
-    // Анимируем возвращение к нулю
     inventoryBar.style.transition = 'transform 0.15s ease-out';
     inventoryBar.style.transform = 'translateX(0)';
   });
@@ -564,15 +567,25 @@ function movePrev() {
     inventoryBar.style.transition = 'none';
     inventoryBar.removeEventListener('transitionend', handler);
     inventoryBar.isAnimating = false;
+    // Обработка очереди wheel-событий
+    if (wheelQueue.length) {
+      const nextAction = wheelQueue.shift();
+      if (nextAction === 'next') moveNext();
+      else movePrev();
+    }
   });
 }
 invNextBtn.addEventListener('click', moveNext);
 invPrevBtn.addEventListener('click', movePrev);
 
-// Прокрутка колесиком мыши для карусели инвентаря
+// Прокрутка колесиком мыши для карусели инвентаря с очередью
 inventoryBar.addEventListener('wheel', (e) => {
   e.preventDefault();
-  if (e.deltaY > 0) moveNext();
-  else if (e.deltaY < 0) movePrev();
+  const action = e.deltaY > 0 ? 'next' : 'prev';
+  if (inventoryBar.isAnimating) {
+    wheelQueue.push(action);
+  } else {
+    if (action === 'next') moveNext(); else movePrev();
+  }
 });
 
