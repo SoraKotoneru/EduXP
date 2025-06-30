@@ -173,6 +173,7 @@ body {
 /* Список категорий */
 #category-list {
   display: flex;
+  justify-content: center;
   flex-direction: column;
   gap: 8px;
   padding: 0;
@@ -233,6 +234,8 @@ button:disabled {
     display: flex;
     overflow-x: auto;
     gap: 4px;
+    justify-content: center;
+    align-items: center;
   }
   #category-list li {
     flex: 1 0 auto;

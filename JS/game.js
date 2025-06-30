@@ -353,7 +353,7 @@ function loadItems(category) {
           chosenColor = prevColor && item.colors.includes(prevColor) ? prevColor : item.colors[0];
         }
         applyToAvatar(category, item.id, chosenColor, item.availability);
-        renderColorBar(category, item.id, item.colors || []);
+      renderColorBar(category, item.id, item.colors || []);
         if (item.availability === 'temporal') {
         const start = new Date(item.start);
         const end = new Date(item.end);
