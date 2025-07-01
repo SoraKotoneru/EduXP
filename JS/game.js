@@ -693,7 +693,7 @@ catPrevBtn.addEventListener('click', () => scheduleCat('prev'));
 catNextBtn.addEventListener('click', () => scheduleCat('next'));
 categoryList.addEventListener('wheel', (e) => {
   // Включаем прокрутку только при переполнении
-  if (categoryList.scrollWidth <= categoryList.clientWidth) return;
+  if (categoryList.scrollHeight <= categoryList.clientHeight) return;
   e.preventDefault();
   const action = e.deltaY > 0 ? 'next' : 'prev';
   scheduleCat(action);
