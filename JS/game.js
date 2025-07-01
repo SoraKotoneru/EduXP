@@ -287,6 +287,8 @@ function loadItems(category) {
     }
     return false;
   });
+  // Показываем только предметы с миниатюрами (и кнопку очистки)
+  list = list.filter(item => item.thumbnail || item.id === `${category}_empty`);
   // Сортировка: предмет с миниатюрой no_m.png должен быть первым
   list = list.slice().sort((a, b) => {
     if (a.thumbnail === 'no_m.png') return -1;
@@ -353,6 +355,18 @@ function loadItems(category) {
           chosenColor = prevColor && item.colors.includes(prevColor) ? prevColor : item.colors[0];
         }
         applyToAvatar(category, item.id, chosenColor, item.availability);
+        // Авто-отображение скрытых предметов без миниатюр с тем же префиксом id
+        const baseName = item.id.split('_')[0];
+        Object.keys(itemsList).forEach(catKey => {
+          if (catKey === category) return;
+          (itemsList[catKey] || []).forEach(it => {
+            if (!it.thumbnail && it.id.split('_')[0] === baseName) {
+              // применяем скрытый предмет как отдельный слой
+              const color = it.colors && it.colors.length > 0 ? it.colors[0] : null;
+              applyToAvatar(catKey, it.id, color, it.availability);
+            }
+          });
+        });
         // Логика взаимного исключения категорий: платье и комбинезон не совмещаются с рубашкой и брюками, топ и брюки снимаются при надевании платья/комбинезона и наоборот
         const exclusives = {
           dress: ['jumpsuit','top','pants'],
