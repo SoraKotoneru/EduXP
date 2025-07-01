@@ -346,19 +346,15 @@ function loadItems(category) {
         // Снимаем слой с аватара
         const old = avatarCanvas.querySelector(`img[data-category=\"${category}\"]`);
         if (old) avatarCanvas.removeChild(old);
-        // Удаляем все автоприменённые предметы данной категории
-        avatarCanvas.querySelectorAll(
-          `img[data-auto-owner=\"${category}\"], img[data-category=\"${category}\"][data-auto-applied]`
-        ).forEach(el => el.remove());
+        // Удаляем все скрытые автоприменённые предметы данной категории
+        avatarCanvas.querySelectorAll(`img[data-auto-owner="${category}"]`).forEach(el => el.remove());
         // Автосохраняем
         saveAvatarConfig(getAvatarConfig());
         // Очищаем цветовую панель
         document.getElementById('color-bar').innerHTML = '';
       } else {
-        // Удаляем скрытые автоприменённые предметы при замене основного предмета
-        avatarCanvas.querySelectorAll(
-          `img[data-auto-owner=\"${category}\"], img[data-category=\"${category}\"][data-auto-applied]`
-        ).forEach(el => el.remove());
+        // Удаляем скрытые автоприменённые предметы данного раздела перед заменой основного предмета
+        avatarCanvas.querySelectorAll(`img[data-auto-owner="${category}"]`).forEach(el => el.remove());
         // Определяем цвет: сохраняем предыдущий или используем первый доступный
         let chosenColor = null;
         if (item.colors && item.colors.length > 0) {
