@@ -336,98 +336,49 @@ function loadItems(category) {
     }
     // Обработчик клика по предмету: применяем предмет и показываем варианты цвета
     div.addEventListener('click', () => {
-      // Блокируем обычное переключение, если есть скрытый autoApplied предмет (разрешаем очистку)
-      if (item.id !== `${category}_empty` && avatarCanvas.querySelector(`img[data-auto-owner=\"${category}\"]`)) {
-        return;  // скрытые предметы данного раздела не дают переключаться
+      // Блокируем ручную смену, если категория заблокирована (для скрытых парных предметов)
+      if (item.id !== `${category}_empty` && lockedCategories[category]) return;
+      // Если был ранее применён парный предмет, снимаем его и разблокируем категорию
+      if (pairedMap[category]) {
+        const { linkedCategory } = pairedMap[category];
+        const pairedEl = avatarCanvas.querySelector(`img[data-category="${linkedCategory}"]`);
+        if (pairedEl) avatarCanvas.removeChild(pairedEl);
+        lockedCategories[linkedCategory] = false;
+        delete pairedMap[category];
       }
+      // Снимаем выделение и выделяем текущий
       inventoryBar.querySelectorAll('.inventory-item').forEach(el => el.classList.remove('selected'));
       div.classList.add('selected');
-      if (item.id === category + '_empty') {
-        // Снимаем слой с аватара
-        const old = avatarCanvas.querySelector(`img[data-category=\"${category}\"]`);
+      // Обработка снятия основного предмета
+      if (item.id === `${category}_empty`) {
+        const old = avatarCanvas.querySelector(`img[data-category="${category}"]`);
         if (old) avatarCanvas.removeChild(old);
-        // Удаляем все скрытые автоприменённые предметы данной категории
-        avatarCanvas.querySelectorAll(`img[data-auto-owner="${category}"]`).forEach(el => el.remove());
-        // Автосохраняем
         saveAvatarConfig(getAvatarConfig());
-        // Очищаем цветовую панель
         document.getElementById('color-bar').innerHTML = '';
-      } else {
-        // Удаляем скрытые автоприменённые предметы данного раздела перед заменой основного предмета
-        avatarCanvas.querySelectorAll(`img[data-auto-owner="${category}"]`).forEach(el => el.remove());
-        // Определяем цвет: сохраняем предыдущий или используем первый доступный
-        let chosenColor = null;
-        if (item.colors && item.colors.length > 0) {
-          const oldImg = avatarCanvas.querySelector(`img[data-category=\"${category}\"]`);
-          const prevColor = oldImg ? oldImg.dataset.color : null;
-          chosenColor = prevColor && item.colors.includes(prevColor) ? prevColor : item.colors[0];
-        }
-        applyToAvatar(category, item.id, chosenColor, item.availability);
-        // Авто-отображение скрытых предметов без миниатюр с тем же префиксом id
-        const baseName = item.id.split('_')[0];
+        return;
+      }
+      // Замена/надевание основного предмета
+      let chosenColor = null;
+      if (item.colors && item.colors.length > 0) {
+        const oldImg = avatarCanvas.querySelector(`img[data-category="${category}"]`);
+        const prevColor = oldImg ? oldImg.dataset.color : null;
+        chosenColor = prevColor && item.colors.includes(prevColor) ? prevColor : item.colors[0];
+      }
+      applyToAvatar(category, item.id, chosenColor, item.availability);
+      // Автоматическое надевание связанного предмета, если задан pairedItem
+      if (item.pairedItem) {
+        let linkedCategory = null;
         Object.keys(itemsList).forEach(catKey => {
-          if (catKey === category) return;
-          (itemsList[catKey] || []).forEach(it => {
-            if (!it.thumbnail && it.id.split('_')[0] === baseName) {
-              // применяем скрытый предмет как отдельный слой
-              const color = it.colors && it.colors.length > 0 ? it.colors[0] : null;
-              applyToAvatar(catKey, it.id, color, it.availability);
-              // помечаем как autoOwner категории
-              const autoEl = avatarCanvas.querySelector(`img[data-category=\"${catKey}\"][data-item-id=\"${it.id}\"]`);
-              if (autoEl) {
-                autoEl.dataset.autoOwner = category;
-                autoEl.dataset.autoApplied = 'true';
-              }
-            }
-          });
+          if ((itemsList[catKey] || []).some(it => it.id === item.pairedItem)) linkedCategory = catKey;
         });
-        // Логика взаимного исключения категорий: платье и комбинезон не совмещаются с рубашкой и брюками, топ и брюки снимаются при надевании платья/комбинезона и наоборот
-        const exclusives = {
-          dress: ['jumpsuit','top','pants'],
-          jumpsuit: ['dress','top','pants'],
-          top: ['dress','jumpsuit'],
-          pants: ['dress','jumpsuit']
-        };
-        if (exclusives[category]) {
-          exclusives[category].forEach(exCat => {
-            const elToRemove = avatarCanvas.querySelector(`img[data-category=\"${exCat}\"]`);
-            if (elToRemove) avatarCanvas.removeChild(elToRemove);
-          });
-        }
-        renderColorBar(category, item.id, item.colors || []);
-        if (item.availability === 'temporal') {
-        const start = new Date(item.start);
-        const end = new Date(item.end);
-        if (now >= start && now <= end && !unlockedItems.includes(item.id)) {
-          unlockedItems.push(item.id);
-          saveUnlockedItems();
-          }
-        }
-        saveAvatarConfig(getAvatarConfig());
-        if (category === 'tail') {
-          // ищем ушки-пару
-          const tailBase = item.id.replace(/_tail(_|$)/, '_ears$1');
-          const earsList = itemsList.ears || [];
-          // ищем ушки с тем же base-name и цветом
-          let earsItem = null;
-          if (item.colors && item.colors.length > 0) {
-            // ищем по цвету
-            earsItem = earsList.find(e => e.id === tailBase && JSON.stringify(e.colors) === JSON.stringify(item.colors));
-            // если не нашли по цвету, ищем просто по id
-            if (!earsItem) earsItem = earsList.find(e => e.id === tailBase);
-          } else {
-            earsItem = earsList.find(e => e.id === tailBase);
-          }
-          if (earsItem) {
-            const defaultColor = item.colors && item.colors.length > 0 ? item.colors[0] : null;
-            applyToAvatar('ears', earsItem.id, defaultColor, earsItem.availability);
-          } else {
-            // если ушек нет — удаляем старые ушки
-            const oldEars = avatarCanvas.querySelector('img[data-category="ears"]');
-            if (oldEars) avatarCanvas.removeChild(oldEars);
-          }
+        if (linkedCategory) {
+          applyToAvatar(linkedCategory, item.pairedItem, null, 'public');
+          lockedCategories[linkedCategory] = true;
+          pairedMap[category] = { linkedCategory };
         }
       }
+      renderColorBar(category, item.id, item.colors || []);
+      saveAvatarConfig(getAvatarConfig());
     });
     inventoryBar.appendChild(div);
   });
