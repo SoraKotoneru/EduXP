@@ -125,7 +125,7 @@ body {
 
 /* Иконка предмета */
 .inventory-item img {
-  width: 8vw;
+  width: 8vmin;  /* адаптивно под высоту монитора */
   max-width: 60px;
   height: auto;
   object-fit: contain;
@@ -248,7 +248,7 @@ button:disabled {
     gap: 6px;
   }
   .inventory-item img {
-    width: 12vw;
+    width: 12vmin;  /* адаптивно под высоту экрана */
     max-width: 50px;
   }
   /* Уменьшаем аватар */
