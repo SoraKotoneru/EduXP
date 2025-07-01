@@ -586,13 +586,15 @@ body {
 /* Стрелки категорий: видимые */
 #sidebar .nav-button {
   color: #fff;
-  background: none;
+  background: inherit;  /* фон sidebar под стрелками */
   width: 6vh;
   height: 6vh;
   font-size: 3vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;  /* для установки z-index */
+  z-index: 2;  /* стрелки поверх категорий */
 }
 #sidebar .nav-button:hover {
   color: var(--accent);
