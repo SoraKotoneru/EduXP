@@ -336,8 +336,8 @@ function loadItems(category) {
     }
     // Обработчик клика по предмету: применяем предмет и показываем варианты цвета
     div.addEventListener('click', () => {
-      // Блокируем ручное переключение, если для этой категории есть скрытый autoApplied предмет
-      if (avatarCanvas.querySelector(`img[data-category="${category}"][data-autoApplied]`)) {
+      // Блокируем ручное переключение, если для этой категории есть скрытый auto-applied предмет
+      if (avatarCanvas.querySelector(`img[data-category="${category}"][data-auto-applied]`)) {
         return;
       }
       inventoryBar.querySelectorAll('.inventory-item').forEach(el => el.classList.remove('selected'));
@@ -375,7 +375,7 @@ function loadItems(category) {
               // применяем скрытый предмет как отдельный слой
               const color = it.colors && it.colors.length > 0 ? it.colors[0] : null;
               applyToAvatar(catKey, it.id, color, it.availability);
-              // помечаем как autoApplied
+              // помечаем как auto-applied
               const autoEl = avatarCanvas.querySelector(`img[data-category="${catKey}"][data-item-id="${it.id}"]`);
               if (autoEl) autoEl.dataset.autoApplied = 'true';
             }
