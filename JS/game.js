@@ -353,7 +353,20 @@ function loadItems(category) {
           chosenColor = prevColor && item.colors.includes(prevColor) ? prevColor : item.colors[0];
         }
         applyToAvatar(category, item.id, chosenColor, item.availability);
-      renderColorBar(category, item.id, item.colors || []);
+        // Логика взаимного исключения категорий: платье и комбинезон не совмещаются с рубашкой и брюками, топ и брюки снимаются при надевании платья/комбинезона и наоборот
+        const exclusives = {
+          dress: ['jumpsuit','top','pants'],
+          jumpsuit: ['dress','top','pants'],
+          top: ['dress','jumpsuit'],
+          pants: ['dress','jumpsuit']
+        };
+        if (exclusives[category]) {
+          exclusives[category].forEach(exCat => {
+            const elToRemove = avatarCanvas.querySelector(`img[data-category=\"${exCat}\"]`);
+            if (elToRemove) avatarCanvas.removeChild(elToRemove);
+          });
+        }
+        renderColorBar(category, item.id, item.colors || []);
         if (item.availability === 'temporal') {
         const start = new Date(item.start);
         const end = new Date(item.end);
