@@ -2,9 +2,9 @@ name: Deploy to Timeweb Cloud
 
 on:
   push:
-    branches:
-      - main
-      - predzagr
+    # запускать на любой пуш в любую ветку, чтобы feature-ветки тоже деплоились
+    #branches:
+    #- main
 
 jobs:
   deploy:
