@@ -538,9 +538,14 @@ function renderCategoryList() {
     if (!savedConfig.some(c => c.category === cat)) {
       const catItems = itemsList[cat] || [];
       if (catItems.length > 0) {
-        const def = catItems[0];
-        const col = def.colors && def.colors.length > 0 ? def.colors[0] : null;
-        applyToAvatar(cat, def.id, col, def.availability);
+        // случайный выбор предмета
+        const randItem = catItems[Math.floor(Math.random() * catItems.length)];
+        // случайный выбор цвета, если доступны варианты
+        let randColor = null;
+        if (randItem.colors && randItem.colors.length > 0) {
+          randColor = randItem.colors[Math.floor(Math.random() * randItem.colors.length)];
+        }
+        applyToAvatar(cat, randItem.id, randColor, randItem.availability);
       }
     }
   });
