@@ -269,6 +269,8 @@ html {
 /* контейнер игры: боковая панель + основная зона */
 #game-container {
   display: flex;
+  flex: 1;
+  min-height: 0;
   justify-content: center;
   align-items: stretch;  /* Растягиваем sidebar по высоте main-area */
   padding: 24px;
