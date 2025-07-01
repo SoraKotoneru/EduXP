@@ -336,8 +336,8 @@ function loadItems(category) {
     }
     // Обработчик клика по предмету: применяем предмет и показываем варианты цвета
     div.addEventListener('click', () => {
-      // Блокируем ручное переключение, если для этой категории есть скрытый auto-applied предмет
-      if (avatarCanvas.querySelector(`img[data-category="${category}"][data-auto-applied]`)) {
+      // Блокируем ручное переключение, если для этой категории есть скрытый autoOwner предмет
+      if (avatarCanvas.querySelector(`img[data-auto-owner=\"${category}\"]`)) {
         return;
       }
       inventoryBar.querySelectorAll('.inventory-item').forEach(el => el.classList.remove('selected'));
@@ -346,13 +346,8 @@ function loadItems(category) {
         // Снимаем слой с аватара
         const old = avatarCanvas.querySelector(`img[data-category=\"${category}\"]`);
         if (old) avatarCanvas.removeChild(old);
-        // Удаляем парные скрытые предметы с тем же префиксом id
-        const baseName = item.id.split('_')[0];
-        avatarCanvas.querySelectorAll('img[data-category]').forEach(el => {
-          if (el.dataset.category !== category && el.dataset.itemId.split('_')[0] === baseName) {
-            avatarCanvas.removeChild(el);
-          }
-        });
+        // Удаляем связанные авто-применённые скрытые предметы
+        avatarCanvas.querySelectorAll(`img[data-auto-owner=\"${category}\"]`).forEach(el => el.remove());
         // Автосохраняем
         saveAvatarConfig(getAvatarConfig());
         // Очищаем цветовую панель
@@ -361,7 +356,7 @@ function loadItems(category) {
         // Определяем цвет: сохраняем предыдущий или используем первый доступный
         let chosenColor = null;
         if (item.colors && item.colors.length > 0) {
-          const oldImg = avatarCanvas.querySelector(`img[data-category="${category}"]`);
+          const oldImg = avatarCanvas.querySelector(`img[data-category=\"${category}\"]`);
           const prevColor = oldImg ? oldImg.dataset.color : null;
           chosenColor = prevColor && item.colors.includes(prevColor) ? prevColor : item.colors[0];
         }
@@ -375,9 +370,12 @@ function loadItems(category) {
               // применяем скрытый предмет как отдельный слой
               const color = it.colors && it.colors.length > 0 ? it.colors[0] : null;
               applyToAvatar(catKey, it.id, color, it.availability);
-              // помечаем как auto-applied
-              const autoEl = avatarCanvas.querySelector(`img[data-category="${catKey}"][data-item-id="${it.id}"]`);
-              if (autoEl) autoEl.dataset.autoApplied = 'true';
+              // помечаем как autoOwner категории
+              const autoEl = avatarCanvas.querySelector(`img[data-category=\"${catKey}\"][data-item-id=\"${it.id}\"]`);
+              if (autoEl) {
+                autoEl.dataset.autoOwner = category;
+                autoEl.dataset.autoApplied = 'true';
+              }
             }
           });
         });
