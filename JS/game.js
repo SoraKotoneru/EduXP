@@ -336,25 +336,23 @@ function loadItems(category) {
     }
     // Обработчик клика по предмету: применяем предмет и показываем варианты цвета
     div.addEventListener('click', () => {
-      // Блокируем ручное переключение в категории, если есть автоприменённый скрытый предмет этой же категории
-      if (avatarCanvas.querySelector(`img[data-category=\"${category}\"][data-auto-owner]`)) {
-        return;
+      // Блокируем ручное переключение, если для этой категории есть скрытые autoApplied предметы
+      if (avatarCanvas.querySelector(`img[data-category=\"${category}\"][data-auto-applied]`)) {
+        return;  // скрытые предметы данного раздела не дают переключаться
       }
       inventoryBar.querySelectorAll('.inventory-item').forEach(el => el.classList.remove('selected'));
       div.classList.add('selected');
       if (item.id === category + '_empty') {
-        // Снимаем слой основного предмета
+        // Снимаем слой с аватара
         const old = avatarCanvas.querySelector(`img[data-category=\"${category}\"]`);
         if (old) avatarCanvas.removeChild(old);
-        // Удаляем все скрытые предметы, автоприменённые этим основным предметом
+        // Удаляем связанные авто-применённые скрытые предметы
         avatarCanvas.querySelectorAll(`img[data-auto-owner=\"${category}\"]`).forEach(el => el.remove());
         // Автосохраняем
         saveAvatarConfig(getAvatarConfig());
         // Очищаем цветовую панель
         document.getElementById('color-bar').innerHTML = '';
       } else {
-        // Удаляем прежние скрытые предметы перед автоприменением новых
-        avatarCanvas.querySelectorAll(`img[data-auto-owner=\"${category}\"]`).forEach(el => el.remove());
         // Определяем цвет: сохраняем предыдущий или используем первый доступный
         let chosenColor = null;
         if (item.colors && item.colors.length > 0) {
@@ -372,10 +370,11 @@ function loadItems(category) {
               // применяем скрытый предмет как отдельный слой
               const color = it.colors && it.colors.length > 0 ? it.colors[0] : null;
               applyToAvatar(catKey, it.id, color, it.availability);
-              // помечаем скрытый предмет как автоприменённый для этой категории
+              // помечаем как autoOwner категории
               const autoEl = avatarCanvas.querySelector(`img[data-category=\"${catKey}\"][data-item-id=\"${it.id}\"]`);
               if (autoEl) {
                 autoEl.dataset.autoOwner = category;
+                autoEl.dataset.autoApplied = 'true';
               }
             }
           });
