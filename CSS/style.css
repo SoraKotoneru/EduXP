@@ -117,7 +117,7 @@ body {
   cursor: pointer;
   padding: 6px;
   transition: transform 0.1s;
-  flex-shrink: 0;
+  flex-shrink: 1;  /* теперь миниатюры могут сжиматься, чтобы избежать прокрутки */
 }
 .inventory-item:hover {
   transform: translateY(-2px);
