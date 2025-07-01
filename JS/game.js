@@ -468,8 +468,13 @@ function renderCategoryList() {
     // Категорию 'ears' не показываем детям
     if (category === 'ears') return;
     const items = itemsList[category] || [];
-    // Показываем категорию, если есть сохранённые элементы, видимые или это тело по умолчанию
-    if (category === 'body' || items.length > 0 || savedConfig.some(c => c.category === category)) {
+    // Показываем категорию, если это тело, или необходимый дефолт, или есть элементы, или сохранённый конфиг
+    if (
+      category === 'body' ||
+      ['eyes','mouth','bangs'].includes(category) ||  // показываем эти категории при первом входе
+      items.length > 0 ||
+      savedConfig.some(c => c.category === category)
+    ) {
       const li = document.createElement('li');
       li.className = 'category-item';
       li.dataset.category = category;
