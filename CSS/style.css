@@ -337,7 +337,7 @@ html {
   gap: 8px;
   width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow: hidden;  /* скрываем вертикальную и горизонтальную прокрутку */
   position: relative;
 }
 #color-bar-wrapper {
