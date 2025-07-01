@@ -12,6 +12,10 @@ const avatarCanvas  = document.getElementById('avatar-canvas');
 const saveBtn       = document.getElementById('save-btn');
 const notifications = document.getElementById('notifications');
 
+// Храны для парных предметов: какие категории заблокированы, и сопоставление основного->связанная категория
+const lockedCategories = {};
+const pairedMap = {};
+
 // FIRST_EDIT: кнопки прокрутки категорий
 const catUpBtn = document.getElementById('cat-up');
 const catDownBtn = document.getElementById('cat-down');
