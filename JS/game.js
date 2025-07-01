@@ -355,6 +355,10 @@ function loadItems(category) {
         // Очищаем цветовую панель
         document.getElementById('color-bar').innerHTML = '';
       } else {
+        // Удаляем скрытые автоприменённые предметы при замене основного предмета
+        avatarCanvas.querySelectorAll(
+          `img[data-auto-owner=\"${category}\"], img[data-category=\"${category}\"][data-auto-applied]`
+        ).forEach(el => el.remove());
         // Определяем цвет: сохраняем предыдущий или используем первый доступный
         let chosenColor = null;
         if (item.colors && item.colors.length > 0) {
