@@ -342,6 +342,13 @@ function loadItems(category) {
         // Снимаем слой с аватара
         const old = avatarCanvas.querySelector(`img[data-category=\"${category}\"]`);
         if (old) avatarCanvas.removeChild(old);
+        // Удаляем парные скрытые предметы с тем же префиксом id
+        const baseName = item.id.split('_')[0];
+        avatarCanvas.querySelectorAll('img[data-category]').forEach(el => {
+          if (el.dataset.category !== category && el.dataset.itemId.split('_')[0] === baseName) {
+            avatarCanvas.removeChild(el);
+          }
+        });
         // Автосохраняем
         saveAvatarConfig(getAvatarConfig());
         // Очищаем цветовую панель
