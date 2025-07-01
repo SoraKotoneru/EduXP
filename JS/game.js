@@ -181,9 +181,7 @@ const defaultItemsList = {
 
 // Динамический список предметов из localStorage
 const categoriesOrder = [
-  'background','body','hair_back','hair_strands','bangs','headwear','tail','eyes','mouth','face_accessory','shoes','pants','top','dress',
-  'pajama',  /* новая категория пижама */
-  'jumpsuit','coat','accessory','pet'
+  'background','body','hair_back','hair_strands','bangs','headwear','tail','eyes','mouth','face_accessory','shoes','pants','top','dress','jumpsuit','coat','accessory','pet'
 ];
 let itemsList = {};
 
