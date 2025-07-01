@@ -336,8 +336,8 @@ function loadItems(category) {
     }
     // Обработчик клика по предмету: применяем предмет и показываем варианты цвета
     div.addEventListener('click', () => {
-      // Блокируем ручное переключение, если для этой категории есть скрытые autoApplied предметы
-      if (avatarCanvas.querySelector(`img[data-category=\"${category}\"][data-auto-applied]`)) {
+      // Блокируем обычное переключение, если есть скрытый autoApplied предмет (разрешаем очистку)
+      if (item.id !== `${category}_empty` && avatarCanvas.querySelector(`img[data-auto-owner=\"${category}\"]`)) {
         return;  // скрытые предметы данного раздела не дают переключаться
       }
       inventoryBar.querySelectorAll('.inventory-item').forEach(el => el.classList.remove('selected'));
