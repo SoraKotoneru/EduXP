@@ -336,6 +336,10 @@ function loadItems(category) {
     }
     // Обработчик клика по предмету: применяем предмет и показываем варианты цвета
     div.addEventListener('click', () => {
+      // Блокируем ручное переключение, если для этой категории есть скрытый autoApplied предмет
+      if (avatarCanvas.querySelector(`img[data-category="${category}"][data-autoApplied]`)) {
+        return;
+      }
       inventoryBar.querySelectorAll('.inventory-item').forEach(el => el.classList.remove('selected'));
       div.classList.add('selected');
       if (item.id === category + '_empty') {
