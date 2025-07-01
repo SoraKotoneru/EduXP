@@ -375,6 +375,9 @@ function loadItems(category) {
               // применяем скрытый предмет как отдельный слой
               const color = it.colors && it.colors.length > 0 ? it.colors[0] : null;
               applyToAvatar(catKey, it.id, color, it.availability);
+              // помечаем как autoApplied
+              const autoEl = avatarCanvas.querySelector(`img[data-category="${catKey}"][data-item-id="${it.id}"]`);
+              if (autoEl) autoEl.dataset.autoApplied = 'true';
             }
           });
         });
