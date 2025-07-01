@@ -533,6 +533,17 @@ function renderCategoryList() {
     }
     if (targetItem) targetItem.click();
   }
+  // При первом входе накладываем дефолтные слои для глаз, рта и челки, если они не сохранены
+  ['eyes','mouth','bangs'].forEach(cat => {
+    if (!savedConfig.some(c => c.category === cat)) {
+      const catItems = itemsList[cat] || [];
+      if (catItems.length > 0) {
+        const def = catItems[0];
+        const col = def.colors && def.colors.length > 0 ? def.colors[0] : null;
+        applyToAvatar(cat, def.id, col, def.availability);
+      }
+    }
+  });
 })();
 
 // Накладываем выбранный предмет на канвас
