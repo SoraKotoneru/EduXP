@@ -456,8 +456,18 @@ function renderAvatar() {
 
 // 4. Сохранение образа
 saveBtn.addEventListener('click', () => {
-  // Сохраняем текущий конфиг (с availability), без удаления temporal скрытых
-  saveAvatarConfig(getAvatarConfig());
+  // Сохраняем текущий конфиг аватара
+  const config = getAvatarConfig();
+  saveAvatarConfig(config);
+  // Сохраняем все предметы, отображаемые игроку в момент сохранения
+  Object.values(itemsList).forEach(itemsArr => {
+    itemsArr.forEach(item => {
+      if (!unlockedItems.includes(item.id)) {
+        unlockedItems.push(item.id);
+      }
+    });
+  });
+  saveUnlockedItems();
 });
 
 // Функция генерации списка категорий с превью
