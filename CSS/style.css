@@ -23,8 +23,8 @@
 body, html {
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Отключаем прокрутку */
-  height: 100vh; /* Устанавливаем высоту на 100% от высоты экрана */
+  overflow: auto; /* Разрешаем прокрутку по умолчанию */
+  height: auto;
   display: flex;
   flex-direction: column;
   background: var(--bg-light);
