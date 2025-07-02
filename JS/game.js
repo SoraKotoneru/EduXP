@@ -11,6 +11,9 @@ const inventoryBar  = document.getElementById('inventory-bar');
 const avatarCanvas  = document.getElementById('avatar-canvas');
 const saveBtn       = document.getElementById('save-btn');
 const notifications = document.getElementById('notifications');
+// Хранилище заблокированных категорий и сопоставление основных и парных категорий
+const lockedCategories = {};
+const pairedMap = {};
 
 // FIRST_EDIT: кнопки прокрутки категорий
 const catUpBtn = document.getElementById('cat-up');
