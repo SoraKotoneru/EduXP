@@ -3,6 +3,7 @@
 const express  = require('express');
 const jwt      = require('jsonwebtoken');
 const Avatar   = require('../models/avatar');
+const User     = require('../models/user');
 require('dotenv').config();
 
 const router = express.Router();
@@ -20,6 +21,36 @@ router.use((req, res, next) => {
     next();
   } catch {
     return res.status(401).json({ error: 'Invalid token' });
+  }
+});
+
+// GET /api/avatar/all - возвращает аватарки всех пользователей (только для админа)
+router.get('/all', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ error: 'No token provided' });
+  const token = authHeader.split(' ')[1];
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+  if (!payload.isAdmin) return res.status(403).json({ error: 'Forbidden' });
+  try {
+    // Загружаем все аватары и пользователей
+    const avatars = await Avatar.findAll();
+    const users = await User.findAll({ attributes: ['id', 'username'] });
+    const userMap = {};
+    users.forEach(u => { userMap[u.id] = u.username; });
+    // Формируем результат
+    const result = avatars.map(a => {
+      const config = Array.isArray(a.config.avatarConfig) ? a.config.avatarConfig : [];
+      return { userId: a.userId, username: userMap[a.userId] || 'Unknown', avatarConfig: config };
+    });
+    res.json(result);
+  } catch (err) {
+    console.error('Error fetching all avatars:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
