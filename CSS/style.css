@@ -316,6 +316,12 @@ html {
   display: flex;
   gap: 8px;
 }
+.header-controls button {
+  flex: 1 1 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* Навигационные стрелки */
 .nav-button {

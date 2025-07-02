@@ -844,3 +844,22 @@ async function loadGallerySetting() {
 }
 loadGallerySetting();
 
+// Функция уменьшения шрифта кнопок шапки, если текст не помещается
+function adjustHeaderButtons() {
+  const btns = document.querySelectorAll('.header-controls button');
+  btns.forEach(btn => {
+    // Сбросим ранее установленный размер
+    btn.style.fontSize = '';
+    const style = getComputedStyle(btn);
+    let fontSize = parseFloat(style.fontSize);
+    // Пока текст не помещается и размер шрифта больше минимального (10px)
+    while (btn.scrollWidth > btn.clientWidth && fontSize > 10) {
+      fontSize -= 1;
+      btn.style.fontSize = fontSize + 'px';
+    }
+  });
+}
+// Вызываем при загрузке и изменении размера окна
+window.addEventListener('resize', adjustHeaderButtons);
+adjustHeaderButtons();
+
