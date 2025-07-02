@@ -37,13 +37,13 @@
     }
     #gallery-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, 160px);
-      justify-content: center;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 20px;
       padding: 24px;
       background: var(--bg-light);
     }
     .gallery-item {
+      width: 100%;
       background: var(--panel-bg);
       border-radius: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
