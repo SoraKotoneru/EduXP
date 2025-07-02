@@ -20,15 +20,16 @@
   margin-top: 4px;
 }
 /* --- Макет страницы игры --- */
-body {
+body, html {
   margin: 0;
+  padding: 0;
+  overflow: hidden; /* Отключаем прокрутку */
+  height: 100vh; /* Устанавливаем высоту на 100% от высоты экрана */
   display: flex;
   flex-direction: column;
-  height: 100vh;
   background: var(--bg-light);
   font-family: 'Poppins', sans-serif;
   color: var(--text-color);
-  overflow-y: auto;
 }
 #header {
   display: flex;
@@ -57,6 +58,8 @@ body {
   max-height: calc(100vh - 48px);
   position: relative;
   overflow: hidden;  /* добавлено: скрываем категории вне блока */
+  height: 100%;
+  overflow: auto; /* Включаем прокрутку, если контент не помещается */
 }
 #main-canvas {
   flex: 1;
@@ -279,6 +282,8 @@ html {
   gap: 16px;
   background: var(--bg-light);
   overflow: visible;
+  height: calc(100vh - 60px); /* Учитываем высоту шапки */
+  overflow: hidden; /* Отключаем прокрутку внутри контейнера */
 }
 
 /* Основная зона с аватаром и панелью предметов */
@@ -295,6 +300,8 @@ html {
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   box-sizing: border-box;
   overflow: hidden;
+  height: 100%;
+  overflow: auto; /* Включаем прокрутку, если контент не помещается */
 }
 
 /* Панель выбора цвета (цветовая палитра) */
