@@ -24,18 +24,8 @@ router.use((req, res, next) => {
   }
 });
 
-// GET /api/avatar/all - возвращает аватарки всех пользователей (только для админа)
+// GET /api/avatar/all - возвращает аватарки всех пользователей (для всех авторизованных)
 router.get('/all', async (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ error: 'No token provided' });
-  const token = authHeader.split(' ')[1];
-  let payload;
-  try {
-    payload = jwt.verify(token, process.env.JWT_SECRET);
-  } catch {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
-  if (!payload.isAdmin) return res.status(403).json({ error: 'Forbidden' });
   try {
     // Загружаем все аватары и пользователей
     const avatars = await Avatar.findAll();
