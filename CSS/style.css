@@ -318,8 +318,10 @@ html {
   gap: 10px;
 }
 .header-controls button {
-  flex: 1 1 auto;
-  min-width: 0;
+  padding: 8px 16px;
+  min-width: 100px; /* Задаем минимальную ширину для кнопок */
+  max-width: 150px; /* Задаем максимальную ширину для кнопок */
+  flex: none; /* Отключаем растягивание кнопок */
 }
 
 /* Навигационные стрелки */
