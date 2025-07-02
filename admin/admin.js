@@ -206,6 +206,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // Инициализируем список игроков
   renderUsersList();
 
+  // Загрузка и сохранение настроек приложения
+  async function loadAppSettings() {
+    try {
+      const res = await fetch('/api/settings');
+      if (!res.ok) throw new Error();
+      const settings = await res.json();
+      document.getElementById('setting-gallery').checked = !!settings.galleryEnabled;
+    } catch (e) {
+      console.error('Error loading settings', e);
+    }
+  }
+  async function saveAppSettings() {
+    const enabled = document.getElementById('setting-gallery').checked;
+    try {
+      await fetch('/api/settings', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ galleryEnabled: enabled })
+      });
+    } catch (e) {
+      console.error('Error saving settings', e);
+    }
+  }
+  document.getElementById('setting-gallery').addEventListener('change', saveAppSettings);
+  loadAppSettings();
+
   const storageKey = 'categoriesVisibility';
   let visibilitySettings = JSON.parse(localStorage.getItem(storageKey) || '{}');
   // Инициализация: если нет настроек, делаем все категории видимыми

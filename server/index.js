@@ -69,6 +69,10 @@ app.use('/api/unlockedItems', unlockedItemsRouter);
 app.use('/api/users', usersRouter);
 app.use(bodyVariantsRouter);
 
+// Маршруты для настроек приложения
+const settingsRouter = require('./routes/settings');
+app.use('/api/settings', settingsRouter);
+
 // 11. Для любых других GET-запросов отдаём index.html (незаменимо для SPA)
 app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));

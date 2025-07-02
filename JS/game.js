@@ -828,3 +828,19 @@ colorBar.addEventListener('wheel', (e) => {
   scheduleColor(action);
 });
 
+// Загружаем настройку отображения кнопки Галерея
+async function loadGallerySetting() {
+  try {
+    const res = await fetch('/api/settings', { cache: 'no-store' });
+    if (!res.ok) return;
+    const { galleryEnabled } = await res.json();
+    if (galleryEnabled) {
+      galleryBtn.classList.remove('hidden');
+      galleryBtn.addEventListener('click', () => window.location.href = 'gallery/index.html');
+    }
+  } catch (e) {
+    console.error('Error loading gallery setting', e);
+  }
+}
+loadGallerySetting();
+
