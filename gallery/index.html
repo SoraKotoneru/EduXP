@@ -153,8 +153,11 @@
     }
   </style>
   <script>
-    // Redirect to login if not authenticated
-    if (!localStorage.getItem('token')) {
+    // Redirect to login if not authenticated (user or admin)
+    const cookies = document.cookie;
+    const hasAdminAuth = cookies.includes('adminAuth=');
+    const hasToken = !!localStorage.getItem('token');
+    if (!hasToken && !hasAdminAuth) {
       window.location.href = '../index.html';
     }
   </script>
