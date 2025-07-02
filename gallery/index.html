@@ -42,6 +42,12 @@
       padding: 24px;
       background: var(--bg-light);
     }
+    /* При узком экране не менее 2 колонок, блоки не будут уходить в одну колонку */
+    @media (max-width: 360px) {
+      #gallery-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
     .gallery-item {
       width: 100%;
       background: var(--panel-bg);
