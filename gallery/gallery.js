@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       ears: 7, headwear: 8, shoes: 9, pants: 10, top: 11,
       dress: 10, jumpsuit: 10, coat: 12, accessory: 13, pet: 14
     };
-    data.forEach(user => {
+    data.forEach((user, index) => {
       const item = document.createElement('div');
       item.className = 'gallery-item';
       const avatarDiv = document.createElement('div');
@@ -41,6 +41,49 @@ document.addEventListener('DOMContentLoaded', async () => {
       item.appendChild(avatarDiv);
       item.appendChild(label);
       container.appendChild(item);
+      // Обработчик открытия lightbox
+      item.addEventListener('click', () => openLightbox(index));
+    });
+    // Функции lightbox
+    let galleryData = data;
+    let currentIndex = 0;
+    function openLightbox(index) {
+      currentIndex = index;
+      renderLightbox();
+      document.getElementById('lightbox').classList.remove('hidden');
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.add('hidden');
+      document.getElementById('lightbox-avatar').innerHTML = '';
+    }
+    function renderLightbox() {
+      const avatarContainer = document.getElementById('lightbox-avatar');
+      avatarContainer.innerHTML = '';
+      const user = galleryData[currentIndex];
+      const config = Array.isArray(user.avatarConfig) ? user.avatarConfig : [];
+      config.sort((a,b) => (layerOrder[a.category]||0)-(layerOrder[b.category]||0));
+      config.forEach(cfg => {
+        const img = document.createElement('img');
+        let src = `/assets/сlothes/${cfg.category}/${cfg.itemId}`;
+        if (cfg.color) src += `_${cfg.color.slice(1)}`;
+        img.src = src + '.png';
+        img.style.zIndex = layerOrder[cfg.category] || 0;
+        avatarContainer.appendChild(img);
+      });
+    }
+    // Обработчики навигации
+    document.getElementById('lightbox-prev').addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + galleryData.length) % galleryData.length;
+      renderLightbox();
+    });
+    document.getElementById('lightbox-next').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % galleryData.length;
+      renderLightbox();
+    });
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    // Закрытие по ESC
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLightbox();
     });
   } catch (err) {
     console.error(err);
