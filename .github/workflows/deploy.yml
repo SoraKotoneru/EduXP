@@ -29,8 +29,7 @@ jobs:
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd /root/EduXP &&
             git fetch origin &&
-            git checkout ${{ github.ref_name }} &&
-            git pull origin ${{ github.ref_name }} &&
+            git checkout -B ${{ github.ref_name }} origin/${{ github.ref_name }} &&
             cd server &&
             npm install &&
             pm2 restart eduxp
