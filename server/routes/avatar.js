@@ -8,8 +8,15 @@ require('dotenv').config();
 
 const router = express.Router();
 
-// Middleware для проверки JWT
+// Middleware для проверки JWT, разрешаем adminAuth cookie для просмотра всех аватаров
 router.use((req, res, next) => {
+  // Для эндпоинта /all разрешаем по adminAuth cookie
+  if (req.path === '/all') {
+    const cookieHeader = req.headers.cookie || '';
+    if (cookieHeader.includes('adminAuth=')) {
+      return next();
+    }
+  }
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ error: 'No token provided' });
