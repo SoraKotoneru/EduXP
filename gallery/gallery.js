@@ -70,6 +70,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         img.style.zIndex = layerOrder[cfg.category] || 0;
         avatarContainer.appendChild(img);
       });
+      // Показываем ник пользователя
+      const usernameEl = document.getElementById('lightbox-username');
+      if (usernameEl) usernameEl.textContent = user.username;
     }
     // Обработчики навигации
     document.getElementById('lightbox-prev').addEventListener('click', () => {

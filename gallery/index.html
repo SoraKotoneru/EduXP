@@ -130,6 +130,11 @@
       cursor: pointer;
       user-select: none;
     }
+    .lightbox-avatar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
   </style>
   <script>
     // Redirect to login if not authenticated
@@ -155,7 +160,10 @@
   <div id="lightbox" class="hidden">
     <div class="lightbox-content">
       <button id="lightbox-prev" class="lightbox-nav">‹</button>
-      <div id="lightbox-avatar" class="lightbox-avatar"></div>
+      <div class="lightbox-avatar-container">
+        <div id="lightbox-avatar" class="lightbox-avatar"></div>
+        <div id="lightbox-username" class="username"></div>
+      </div>
       <button id="lightbox-next" class="lightbox-nav">›</button>
     </div>
     <button id="lightbox-close">✕</button>
