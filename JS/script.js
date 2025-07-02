@@ -56,8 +56,8 @@ async function handleSubmit() {
   const password = passEl.value.trim();
   // Admin login bypass
   if (username === 'SoraKotoneru' && password === 'ghbywtccf@3141') {
-    // Сохраняем cookie для админки и делаем редирект
-    document.cookie = `adminAuth=${btoa(username + ':' + password)}; path=/admin`;
+    // Сохраняем cookie для админки на всём сайте и делаем редирект
+    document.cookie = `adminAuth=${btoa(username + ':' + password)}; path=/`;
     window.location.href = 'admin/index.html';
     return;
   }
