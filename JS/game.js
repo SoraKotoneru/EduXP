@@ -576,11 +576,10 @@ function applyToAvatar(category, itemId, color, availability = 'public') {
     avatarCanvas.style.aspectRatio = `${w} / ${h}`;
   });
   // Выбираем нужный файл (вариация цвета или базовый)
-  if (color) {
-    el.src = `./assets/сlothes/${category}/${itemId}_${color.slice(1)}.png`;
-  } else {
-    el.src = `./assets/сlothes/${category}/${itemId}.png`;
-  }
+  const base = `/assets/сlothes/${category}`;
+  el.src = color
+    ? `${base}/${itemId}_${color.slice(1)}.png`
+    : `${base}/${itemId}.png`;
   // 3. Указываем z-index на основании общего порядка слоёв
   const z = layerOrder[category] ?? 0;
   el.style.zIndex = z;
