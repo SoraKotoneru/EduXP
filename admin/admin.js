@@ -189,6 +189,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const tdName = document.createElement('td');
       tdName.textContent = user.username;
       tr.appendChild(tdName);
+      // Кнопка удаления игрока
+      const tdAct = document.createElement('td');
+      const delBtn = document.createElement('button');
+      delBtn.textContent = 'Удалить';
+      delBtn.addEventListener('click', async () => {
+        if (!confirm(`Вы уверены, что хотите удалить игрока "${user.username}" (ID ${user.id})?`)) return;
+        await fetch(`/api/users/${user.id}`, { method: 'DELETE' });
+        renderUsersList();
+      });
+      tdAct.appendChild(delBtn);
+      tr.appendChild(tdAct);
       usersListEl.appendChild(tr);
     });
   }
