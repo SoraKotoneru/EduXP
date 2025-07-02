@@ -315,12 +315,12 @@ html {
 .header-controls {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 .header-controls button {
-  flex: 1 1 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex: 0 1 auto;
+  white-space: normal;
+  word-break: break-word;
 }
 
 /* Навигационные стрелки */

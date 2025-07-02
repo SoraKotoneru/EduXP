@@ -848,14 +848,23 @@ loadGallerySetting();
 function adjustHeaderButtons() {
   const btns = document.querySelectorAll('.header-controls button');
   btns.forEach(btn => {
-    // Сбросим ранее установленный размер
-    btn.style.fontSize = '';
-    const style = getComputedStyle(btn);
-    let fontSize = parseFloat(style.fontSize);
-    // Пока текст не помещается и размер шрифта больше минимального (10px)
-    while (btn.scrollWidth > btn.clientWidth && fontSize > 10) {
-      fontSize -= 1;
-      btn.style.fontSize = fontSize + 'px';
+    // Сохраняем оригинальный размер шрифта
+    let origSize = btn.dataset.origFontSize;
+    if (!origSize) {
+      origSize = getComputedStyle(btn).fontSize;
+      btn.dataset.origFontSize = origSize;
+    }
+    const baseSize = parseFloat(origSize);
+    // Сброс размеров перед измерением
+    btn.style.fontSize = baseSize + 'px';
+    const scrollW = btn.scrollWidth;
+    const clientW = btn.clientWidth;
+    if (scrollW > clientW) {
+      // Рассчитываем новый размер по коэффициенту ширин
+      let newSize = baseSize * (clientW / scrollW);
+      const minSize = 10;
+      if (newSize < minSize) newSize = minSize;
+      btn.style.fontSize = newSize + 'px';
     }
   });
 }
