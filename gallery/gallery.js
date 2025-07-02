@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const container = document.getElementById('gallery-container');
+  const countEl = document.getElementById('gallery-count');
   container.innerHTML = '';
   const token = localStorage.getItem('token');
   try {
@@ -9,6 +10,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     if (!res.ok) throw new Error('Ошибка загрузки галереи');
     const data = await res.json(); // [{ userId, username, avatarConfig }]
+    // Обновляем количество
+    if (countEl) countEl.textContent = data.length;
     // Порядок слоёв
     const layerOrder = {
       background: 0, hair_back: 1, tail: 2, body: 3, eyes: 4,
@@ -34,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       const label = document.createElement('div');
       label.textContent = user.username;
+      label.className = 'username';
       item.appendChild(avatarDiv);
       item.appendChild(label);
       container.appendChild(item);

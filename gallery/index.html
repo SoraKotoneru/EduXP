@@ -6,31 +6,76 @@
   <link rel="icon" type="image/png" href="../favicon.png">
   <link rel="stylesheet" href="../CSS/style.css">
   <style>
-    /* Стили для галереи */
-    #gallery-container {
+    :root { --primary: var(--primary); --text-color: var(--text-color); }
+    .gallery-header {
       display: flex;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: var(--panel-bg);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-bottom: 1px solid #eee;
+    }
+    .gallery-count {
+      font-size: 1.2rem;
+      color: var(--text-color);
+      font-weight: 500;
+    }
+    .gallery-controls button {
+      border: none;
+      background: var(--accent);
+      color: var(--text-color);
+      padding: 8px 12px;
+      margin-left: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .gallery-controls button:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    #gallery-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 20px;
-      padding: 20px;
-      justify-content: center;
+      padding: 24px;
+      background: var(--bg-light);
     }
     .gallery-item {
-      width: 120px;
-      text-align: center;
+      background: var(--panel-bg);
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s;
+    }
+    .gallery-item:hover {
+      transform: scale(1.03);
     }
     .gallery-avatar {
       position: relative;
-      width: 100px;
-      height: 100px;
-      margin: 0 auto 8px;
+      width: 100%;
+      padding-top: 100%; /* square ratio */
+      background: var(--bg-light);
     }
     .gallery-avatar img {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      width: calc(100% - 16px);
+      height: calc(100% - 16px);
       object-fit: contain;
+    }
+    .username {
+      margin: 12px 0 16px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-color);
     }
   </style>
   <script>
@@ -41,6 +86,12 @@
   </script>
 </head>
 <body>
+  <header class="gallery-header">
+    <div class="gallery-count">Персонажей: <span id="gallery-count">0</span></div>
+    <div class="gallery-controls">
+      <!-- Можно добавить переключатели видов -->
+    </div>
+  </header>
   <div id="gallery-container"></div>
   <script src="./gallery.js"></script>
 </body>
