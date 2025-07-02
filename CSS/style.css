@@ -32,7 +32,7 @@ body {
 }
 #header {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
   padding: 10px;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -314,7 +314,8 @@ html {
 /* Перенос кнопок управления в шапке */
 .header-controls {
   display: flex;
-  gap: 8px;
+  justify-content: center;
+  gap: 10px;
 }
 .header-controls button {
   flex: 1 1 auto;
@@ -668,31 +669,10 @@ body {
 
 .header-inner {
   width: 100%;
-  max-width: 544px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: nowrap;
-  padding: 0 24px;
+  text-align: center;
 }
 
-/* Header styling for admins */
-.admin-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.admin-header .title {
-    margin-bottom: 10px;
-}
-
-.admin-header .buttons {
-    display: flex;
-    gap: 10px;
-}
-
-/* Hide admin header for players */
-.player-view .admin-header {
-    display: none;
+.header-title {
+  font-size: 24px;
+  margin-bottom: 10px;
 }
