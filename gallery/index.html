@@ -112,23 +112,25 @@
       width: 100%; height: 100%;
       object-fit: contain;
     }
-    .lightbox-nav {
-      background: none;
-      border: none;
-      color: #fff;
+    .lightbox-nav, #lightbox-close {
+      background: var(--accent);
+      color: var(--text-color);
       font-size: 2rem;
       cursor: pointer;
       user-select: none;
+      border: none;
+      padding: 8px;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      transition: background 0.2s, color 0.2s;
     }
     #lightbox-close {
       position: absolute;
       top: 20px; right: 20px;
-      background: none;
-      border: none;
+    }
+    .lightbox-nav:hover, #lightbox-close:hover {
+      background: var(--primary);
       color: #fff;
-      font-size: 2rem;
-      cursor: pointer;
-      user-select: none;
     }
     .lightbox-avatar-container {
       display: flex;
