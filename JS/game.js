@@ -6,11 +6,6 @@ if (!localStorage.getItem('token')) {
 // Получаем элементы
 const logoutBtn     = document.getElementById('logout-btn');
 const galleryBtn    = document.getElementById('gallery-btn');
-// Показываем кнопку Галерея и назначаем переход
-galleryBtn.classList.remove('hidden');
-galleryBtn.addEventListener('click', () => {
-  window.location.href = 'gallery/index.html';
-});
 const categoryList  = document.getElementById('category-list');
 const inventoryBar  = document.getElementById('inventory-bar');
 const avatarCanvas  = document.getElementById('avatar-canvas');
