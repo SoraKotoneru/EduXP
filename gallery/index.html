@@ -37,16 +37,12 @@
     }
     #gallery-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      /* фиксированная ширина карточек 280px, количество столбиков подгоняется под ширину контейнера */
+      grid-template-columns: repeat(auto-fill, 280px);
+      justify-content: center;
       gap: 20px;
       padding: 24px;
       background: var(--bg-light);
-    }
-    /* При узком экране не менее 2 колонок, блоки не будут уходить в одну колонку */
-    @media (max-width: 360px) {
-      #gallery-container {
-        grid-template-columns: repeat(2, 1fr);
-      }
     }
     .gallery-item {
       width: 100%;
