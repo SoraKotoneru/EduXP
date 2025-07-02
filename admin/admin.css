@@ -20,7 +20,13 @@ header {
 header a { color: #fff; text-decoration: none; font-weight: 500; }
 main {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  /* Узкая левая колонка для панелей, остальное для списка */
+  grid-template-columns: 300px 1fr;
+  grid-template-areas:
+    "add-item items-list"
+    "user-list items-list"
+    "category-settings items-list"
+    "app-settings items-list";
   gap: 24px;
   padding: 24px;
 }
@@ -99,3 +105,10 @@ section {
 #users-list-table tbody tr:nth-child(even) {
   background: #f9f9f9;
 }
+
+/* Задаём grid-area для секций */
+#add-item { grid-area: add-item; }
+#user-list { grid-area: user-list; }
+#category-settings { grid-area: category-settings; }
+#app-settings { grid-area: app-settings; }
+#items-list { grid-area: items-list; }
