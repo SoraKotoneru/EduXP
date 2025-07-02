@@ -336,10 +336,6 @@ function loadItems(category) {
     }
     // Обработчик клика по предмету: применяем предмет и показываем варианты цвета
     div.addEventListener('click', () => {
-      // Блокируем обычное переключение, если есть скрытый autoApplied предмет (разрешаем очистку)
-      if (item.id !== `${category}_empty` && avatarCanvas.querySelector(`img[data-auto-owner=\"${category}\"]`)) {
-        return;  // скрытые предметы данного раздела не дают переключаться
-      }
       inventoryBar.querySelectorAll('.inventory-item').forEach(el => el.classList.remove('selected'));
       div.classList.add('selected');
       if (item.id === category + '_empty') {
