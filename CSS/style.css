@@ -524,7 +524,9 @@ body {
 #auth-container {
   width: 90%;
   max-width: 360px;
-  margin: 6vh auto;
+  margin: 6vh auto 1vh;
+  max-height: 70vh;
+  overflow-y: auto;
   background: var(--panel-bg);
   padding: 24px;
   border-radius: 12px;
