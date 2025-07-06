@@ -50,7 +50,7 @@ body, html {
   display: flex;
 }
 #sidebar {
-  background: var(--bg-light); /* цвет блока категорий совпадает с фоном панели предметов */
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)); /* градиент, как в шапке */
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   width: 80px;
@@ -459,7 +459,7 @@ body {
 }
 
 #sidebar {
-  background: var(--bg-light); /* цвет блока категорий совпадает с фоном панели предметов */
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)); /* градиент, как в шапке */
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   width: 80px;
