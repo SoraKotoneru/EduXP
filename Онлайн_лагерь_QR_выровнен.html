@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Онлайн лагерь 7 – 21 июля</title>
+<style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #f3e5f5, #fffde7);
+      margin: 0;
+      padding: 20px;
+      color: #000;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #5e35b1;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+    .day {
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+    }
+    .date {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #7b1fa2;
+      text-align: center;
+    }
+    label {
+      font-weight: bold;
+      color: #000;
+      margin-top: 6px;
+      margin-bottom: 2px;
+    }
+    textarea {
+      width: 100%;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #d1c4e9;
+      background-color: #f8f5fc;
+      font-size: 13px;
+      font-family: inherit;
+      box-sizing: border-box;
+      overflow: hidden;
+      resize: none;
+    }
+    .prizes-block {
+      border: 1px solid #d1c4e9;
+      background: #f3f0fc;
+      padding: 8px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    .saturday {
+      background: #ede7f6;
+      border: 2px dashed #9575cd;
+      color: #4a148c;
+    }
+    .saturday .date {
+      text-align: center;
+      color: #6a1b9a;
+    }
+    .sunday {
+      background: #f3f3f3;
+      text-align: center;
+      font-weight: bold;
+      color: #999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+</style>
+</head>
+<body>
+<div style="max-width: 1200px; margin: 0 auto; padding: 30px; border: 4px double #ab47bc; border-radius: 20px; background: #ffffffcc; box-shadow: 0 0 30px rgba(171, 71, 188, 0.2);">
+<h1>Онлайн лагерь 7 – 21 июля</h1>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 30px; margin: 30px auto; max-width: 900px;">
+<div style="flex: 0 0 auto; max-width: 160px;; align-self: center"><div style="text-align:center; font-weight:bold; margin-bottom:8px; color:#6a1b9a;">📺 Трансляции</div>
+<img alt="QR код" src="8cb41ed5-79ec-4a6a-86bb-047b646b858a.jfif" style="width: 100%; border-radius: 16px; border: 2px solid #ba68c8; box-shadow: 0 4px 10px rgba(186, 104, 200, 0.3);"/>
+</div>
+<div class="reminder-box" style="flex: 0 1 500px; max-width: 500px; background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%); border-radius: 16px; border: 2px solid #ba68c8; box-shadow: 0 8px 20px rgba(186, 104, 200, 0.3); padding: 20px; text-align: center;">
+<h2 style="color: #6a1b9a; font-size: 24px; margin-bottom: 16px;">📅 Расписание</h2>
+<ul style="list-style: none; padding: 0; text-align: left; margin: 0 auto 16px auto; max-width: 400px;">
+<li><strong>11:45</strong> — открывается основная одежда</li>
+<li><strong>13:00–13:40</strong> — трансляция урока</li>
+<li><strong>до 11:30 следующего дня</strong> — выдаются призы за задания</li>
+</ul>
+<hr style="border: none; height: 1px; background: #ce93d8; margin: 16px 0;"/>
+<ul style="list-style: none; padding: 0; text-align: left; margin: 0 auto; max-width: 400px;">
+<li><strong>Суббота до 11:00</strong> — загадка</li>
+<li><strong>До понедельника 11:30</strong> — выдача призов за пятницу и субботу</li>
+</ul>
+</div>
+</div>
+<div class="grid" id="days-container"></div>
+<script>
+  function autoGrow(el) {
+    el.style.height = "auto";
+    el.style.height = (el.scrollHeight) + "px";
+  }
+  function saveData(date, field, value) {
+    const data = JSON.parse(localStorage.getItem("campPlannerData") || '{}');
+    if (!data[date]) data[date] = {};
+    data[date][field] = value;
+    localStorage.setItem("campPlannerData", JSON.stringify(data));
+  }
+
+  const startDate = new Date("2025-07-07");
+  const endDate = new Date("2025-07-21");
+  const container = document.getElementById("days-container");
+  const savedData = JSON.parse(localStorage.getItem("campPlannerData") || '{}');
+
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    const dateKey = d.toISOString().split("T")[0];
+    const weekday = d.getDay();
+    const isSunday = weekday === 0;
+    const isSaturday = weekday === 6;
+    const formattedDate = d.toLocaleDateString("ru-RU", { weekday: 'short', day: 'numeric', month: 'long' });
+
+    const div = document.createElement("div");
+    if (isSunday) {
+      div.className = "day sunday";
+      div.innerHTML = `
+        <div class="date">${formattedDate}</div>
+        <div style="font-size: 16px; margin-top: 10px;">Выходной</div>
+      `;
+    } else {
+      const data = savedData[dateKey] || { topic: "", prize_all: "" };
+      div.className = "day" + (isSaturday ? " saturday" : "");
+      div.innerHTML = `
+        <div class="date">${formattedDate}</div>
+        <label>Тема:</label>
+        <textarea rows="1" oninput="autoGrow(this)" onchange="saveData('${dateKey}', 'topic', this.value)">${data.topic || ''}</textarea>
+        <div class="prizes-block">
+          <label>Приз:</label>
+          <textarea oninput="autoGrow(this)" rows="2" onchange="saveData('${dateKey}', 'prize_all', this.value)">${data.prize_all || ''}</textarea>
+        </div>
+      `;
+    }
+    container.appendChild(div);
+  }
+
+  window.addEventListener("load", () => {
+    document.querySelectorAll("textarea").forEach(autoGrow);
+  });
+</script>
+</div>
+</body>
+</html>
