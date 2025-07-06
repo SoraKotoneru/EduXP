@@ -524,7 +524,7 @@ body {
 #auth-container {
   width: 90%;
   max-width: 360px;
-  margin: 6vh auto 4vh;
+  margin: 4vh auto;
   max-height: 70vh;
   overflow-y: auto;
   background: var(--panel-bg);
@@ -703,7 +703,7 @@ body {
 #qr-container {
   flex: 1 1 auto;
   width: 90%;
-  margin: 0 auto 4vh;
+  margin: 4vh auto;
   background: var(--panel-bg);
   padding: 8px 16px;
   border-radius: 12px;
