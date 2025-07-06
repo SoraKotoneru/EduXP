@@ -605,7 +605,7 @@ body {
 /* Стрелки категорий: видимые */
 #sidebar .nav-button {
   color: #fff;
-  background: inherit;  /* фон sidebar под стрелками */
+  background: transparent;
   width: 6vh;
   height: 6vh;
   font-size: 3vh;
