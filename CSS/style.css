@@ -701,11 +701,11 @@ body {
   flex: 0 0 auto;
 }
 #qr-container {
-  flex: 1 1 auto;
   width: 90%;
-  margin: 0 auto 4vh;
+  max-width: 360px;
+  margin: 4vh auto 4vh auto;
   background: var(--panel-bg);
-  padding: 8px 16px;
+  padding: 24px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
