@@ -686,3 +686,19 @@ body {
   font-size: 24px;
   margin-bottom: 10px;
 }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+#auth-container {
+  flex: 0 0 auto;
+}
+#qr-container {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
