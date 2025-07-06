@@ -91,15 +91,14 @@
     @media (max-width: 480px) {
       .grid { grid-template-columns: 1fr; }
     }
-    /* Растягиваем контейнер под высоту экрана и вторичный блок под размер */
+    /* Убираем жесткое растяжение расписания: блоку позволяем подстраиваться по контенту */
     #header-container {
-      height: 100vh;
-      align-items: stretch;
+      align-items: flex-start;
     }
     .reminder-box {
-      height: 100%;
       box-sizing: border-box;
       overflow-y: auto;
+      /* При необходимости можно задать max-height */
     }
     /* Центрируем блоки на узких экранах */
     @media (max-width: 768px) {
