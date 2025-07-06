@@ -101,6 +101,16 @@
       box-sizing: border-box;
       overflow-y: auto;
     }
+    /* Центрируем блоки на узких экранах */
+    @media (max-width: 768px) {
+      #header-container {
+        align-items: center !important;
+        height: auto !important;
+      }
+      .reminder-box {
+        align-self: center !important;
+      }
+    }
 </style>
 </head>
 <body>
