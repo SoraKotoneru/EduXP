@@ -172,10 +172,10 @@
       div.innerHTML = `
         <div class="date">${formattedDate}</div>
         <label>Тема:</label>
-        <textarea rows="1" oninput="autoGrow(this)" onchange="saveData('${dateKey}', 'topic', this.value)">${data.topic || ''}</textarea>
+        <textarea rows="1" readonly>${data.topic || ''}</textarea>
         <div class="prizes-block">
           <label>Приз:</label>
-          <textarea oninput="autoGrow(this)" rows="2" onchange="saveData('${dateKey}', 'prize_all', this.value)">${data.prize_all || ''}</textarea>
+          <textarea rows="2" readonly>${data.prize_all || ''}</textarea>
         </div>
       `;
     }
