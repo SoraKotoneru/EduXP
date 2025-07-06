@@ -157,6 +157,24 @@
   const endDate = new Date("2025-07-21");
   const container = document.getElementById("days-container");
   const savedData = JSON.parse(localStorage.getItem("campPlannerData") || '{}');
+  // Данные по умолчанию для предзаполнения блоков темы и приза
+  const defaultData = {
+    '2025-07-07': { topic: 'Нейросети', prize_all: 'Базовая одежда' },
+    '2025-07-08': { topic: 'Дизайн интерфейсов', prize_all: 'Больше гламура' },
+    '2025-07-09': { topic: 'Интернет и безопасность', prize_all: 'Аниме' },
+    '2025-07-10': { topic: 'Моя цифровая жизнь', prize_all: 'Пляжная вечеринка' },
+    '2025-07-11': { topic: 'Excel и таблицы', prize_all: 'Фэнтези' },
+    '2025-07-12': { topic: 'Интерстеллар', prize_all: 'Мими-ушки' },
+    // 13 июля - выходной
+    '2025-07-14': { topic: 'Первая игра', prize_all: 'Дождливые дни' },
+    '2025-07-15': { topic: 'Алгоритмы вокруг нас', prize_all: 'Это ФАНТАСТИКА' },
+    '2025-07-16': { topic: 'Как разговаривает компьютер', prize_all: 'Пижамная вечеринка' },
+    '2025-07-17': { topic: 'Реакция на мир', prize_all: 'Genshin тема' },
+    '2025-07-18': { topic: 'Страндбист — «пляжные звери»', prize_all: 'Инвентарь героя' },
+    '2025-07-19': { topic: 'Код имения', prize_all: 'Питомец' },
+    // 20 июля - выходной
+    '2025-07-21': { topic: 'Закрытие лагеря', prize_all: 'Секретное обновление' }
+  };
 
   for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
     const dateKey = d.toISOString().split("T")[0];
@@ -173,7 +191,7 @@
         <div style="font-size: 16px; margin-top: 10px;">Выходной</div>
       `;
     } else {
-      const data = savedData[dateKey] || { topic: "", prize_all: "" };
+      const data = savedData[dateKey] || defaultData[dateKey] || { topic: "", prize_all: "" };
       div.className = "day" + (isSaturday ? " saturday" : "");
       div.innerHTML = `
         <div class="date">${formattedDate}</div>
