@@ -111,11 +111,17 @@
         align-self: center !important;
       }
     }
+    /* Адаптивный перенос дат в заголовке */
+    @media (max-width: 768px) {
+      h1 .line-break {
+        display: block;
+      }
+    }
 </style>
 </head>
 <body>
 <div style="max-width: 1200px; margin: 0 auto; padding: 30px; border: 4px double #ab47bc; border-radius: 20px; background: #ffffffcc; box-shadow: 0 0 30px rgba(171, 71, 188, 0.2);">
-<h1>Онлайн лагерь 7 – 21 июля</h1>
+<h1>Онлайн лагерь <span class="line-break">7 – 21 июля</span></h1>
 <div id="header-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin: 30px auto; max-width: 900px;">
 <div style="flex: 0 0 auto; max-width: 160px;; align-self: center"><div style="text-align:center; font-weight:bold; margin-bottom:8px; color:#6a1b9a;">📺 Трансляции</div>
 <img alt="QR код" src="assets/qr/8cb41ed5-79ec-4a6a-86bb-047b646b858a.jfif" style="width: 100%; border-radius: 16px; border: 2px solid #ba68c8; box-shadow: 0 4px 10px rgba(186, 104, 200, 0.3);"/>
