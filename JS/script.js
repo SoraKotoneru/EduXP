@@ -14,13 +14,6 @@ function showForm(selectedMode) {
   // очистим поля
   document.getElementById('username').value = '';
   document.getElementById('password').value = '';
-  // Показываем или скрываем QR-контейнер
-  const qrContainer = document.getElementById('qr-container');
-  if (mode === 'register') {
-    qrContainer.classList.remove('hidden');
-  } else {
-    qrContainer.classList.add('hidden');
-  }
 }
 
 // Убираем оформление ошибок
