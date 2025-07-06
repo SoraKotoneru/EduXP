@@ -116,13 +116,14 @@
         display: block;
       }
     }
-    /* Убираем рамку, фон и выделение у полей темы и приза */
-    .reminder-box textarea {
-      border: none;
-      background: transparent;
-      outline: none;
-      user-select: none;
-      pointer-events: none;
+    /* Отключаем выделение и рамку полей темы и приза */
+    textarea[readonly] {
+      outline: none !important;
+    }
+    textarea[readonly]:hover,
+    textarea[readonly]:focus {
+      outline: none !important;
+      box-shadow: none !important;
     }
 </style>
 </head>
